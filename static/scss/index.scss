@@ -1,0 +1,96 @@
+@import "./_global";
+
+.auth {
+  &__inner {
+    min-height: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__block {
+    width: 340px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font-weight: 300;
+    text-align: center;
+  }
+
+  &__form {
+    margin: 15px 0;
+  }
+
+  &__callout {
+    &-desc {
+      text-align: center;
+    }
+
+    &-link {
+      color: $blue;
+    }
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+
+  &__field {
+    &:not(:last-child) {
+      margin-bottom: 20px;
+    }
+
+    &-title {
+      position: absolute;
+      z-index: 1;
+      transform: translate(10px, calc($inputHeight / 3.8));
+      left: 0;
+      top: 0;
+      color: $grey;
+      transition: transform, font-size, .2s;
+      background: $dark;
+      padding: 0 5px;
+      display: inline-block;
+
+      &--up {
+        transform: translate(8px, -6px);
+        font-size: 12px;
+      }
+    }
+  }
+
+  &__label {
+    position: relative;
+    display: block;
+  }
+
+  &__input {
+    width: 100%;
+    height: $inputHeight;
+    border: 1px solid $grey;
+    padding: 12px;
+    border-radius: 8px;
+    background: $dark;
+    color: $grey;
+    transition: border-color, color, .2s;
+
+    &--invalid {
+      border-color: $red;
+
+      & + span {
+        color: $red;
+      }
+    }
+
+    &:focus {
+      color: $white;
+    }
+
+    &:focus + span {
+      @extend .form__field-title--up;
+    }
+  }
+}
