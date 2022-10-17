@@ -7,9 +7,10 @@
             Вход
           </h1>
           <vForm
-            :valid-params="validParams"
             :fields="fields"
             :classes="['auth__form']"
+            :text-button="textButton"
+            :pending="pending"
           />
           <div class="auth__callout">
             <p class="auth__callout-desc">
@@ -36,32 +37,24 @@
     components: { vForm, },
     layout: "empty",
     data: () => ({
-      validParams: [
-        {
-          name: "email",
-          rules: {
-            email: true,
-            required: true,
-          },
-        },
-        {
-          name: "password",
-          rules: {
-            required: true,
-            minLength: 6,
-          },
-        }
-      ],
       fields: {
         email: {
           title: "Электронная почта",
+          isMatchRegexp(val) {
+            return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(val);
+          },
           type: "text",
         },
         password: {
           title: "Пароль",
+          isMatchRegexp(val) {
+            return /.{6,}/g.test(val);
+          },
           type: "password",
         },
       },
+      pending: false,
+      textButton: "Войти",
     }),
     head: { title: "Вход", },
   };

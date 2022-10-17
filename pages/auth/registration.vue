@@ -7,9 +7,10 @@
             Регистрация
           </h1>
           <vForm
-            :valid-params="validParams"
             :fields="fields"
             :classes="['auth__form']"
+            :text-button="textButton"
+            :pending="pending"
           />
           <div class="auth__callout">
             <p class="auth__callout-desc">
@@ -36,43 +37,35 @@
     components: { vForm, },
     layout: "empty",
     data: () => ({
-      validParams: [
-        {
-          name: "nickname",
-          rules: {
-            minLength: 3,
-            required: true,
-          },
-        },
-        {
-          name: "email",
-          rules: {
-            email: true,
-            required: true,
-          },
-        },
-        {
-          name: "password",
-          rules: {
-            required: true,
-            minLength: 6,
-          },
-        }
-      ],
       fields: {
+        avatar: {
+          type: "file",
+          accept: [".jpg", ".jpeg", ".png", ".svg"],
+        },
         nickname: {
           title: "Никнейм",
+          isMatchRegexp(val) {
+            return /.{3,}/g.test(val);
+          },
           type: "text",
         },
         email: {
           title: "Электронная почта",
+          isMatchRegexp(val) {
+            return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(val);
+          },
           type: "text",
         },
         password: {
           title: "Пароль",
+          isMatchRegexp(val) {
+            return /.{6,}/g.test(val);
+          },
           type: "password",
         },
       },
+      pending: false,
+      textButton: "Зарегистрироваться",
     }),
     head: { title: "Регистрация", },
   };

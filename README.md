@@ -1,5 +1,7 @@
 # videoPlatform
 
+With this project, you can upload and share your own videos, as well as view and rate others
+
 ## Build Setup
 
 ```bash

@@ -18,7 +18,6 @@ export default {
   ],
 
   plugins: [
-    "@/plugins/validation.plugin"
   ],
 
   components: true,
