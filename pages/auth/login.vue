@@ -11,6 +11,7 @@
             :classes="['auth__form']"
             :text-button="textButton"
             :pending="pending"
+            @sendReq="login"
           />
           <div class="auth__callout">
             <p class="auth__callout-desc">
@@ -36,6 +37,7 @@
     name: "LoginPage",
     components: { vForm, },
     layout: "empty",
+    middleware: "checkAlreadyAuth",
     data: () => ({
       fields: {
         email: {
@@ -57,5 +59,35 @@
       textButton: "Войти",
     }),
     head: { title: "Вход", },
+    methods: {
+      login(data) {
+        if (Object.keys(this.fields).length !== Object.keys(data).length) {
+          this.textButton = "Все поля должны быть заполнены правильно";
+
+          return;
+        }
+
+        const fd = Object.keys(data).reduce((acc, key) => {
+          acc[key] = data[key].model;
+          
+          return acc;
+        }, {});
+
+        const res = this.$store.dispatch("auth.store/login", fd);
+
+        this.pending = true;
+
+        res.then(({ ok, message, }) => {
+          this.pending = false;
+          this.textButton = message;
+
+          if (ok) {
+            this.$router.push("/");
+          }
+        }).catch((err) => {
+          throw err;
+        });
+      },
+    },
   };
 </script>

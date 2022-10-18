@@ -12,4 +12,10 @@ app.use(cors({ origin: [host], }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true, }));
 
+const authRouter = require("./routers/auth.router");
+const userRouter = require("./routers/user.router");
+
+app.use("/auth", authRouter);
+app.use("/user", userRouter);
+
 module.exports = app;

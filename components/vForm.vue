@@ -2,7 +2,7 @@
   <form
     class="form"
     :class="classes.filter(Boolean).join(' ')"
-    @submit.prevent="$emit('sendReq', dataForm)"
+    @submit.prevent="$emit('sendReq', getValidDataForm)"
   >
     <div
       v-for="(fieldKey, index) in getFieldsKeys"
@@ -99,6 +99,20 @@
     computed: {
       getFieldsKeys() {
         return Object.keys(this.fields);
+      },
+      getValidDataForm() {
+        return Object
+          .keys(this.dataForm)
+          .filter((key) => {
+            const itemForm = this.dataForm[key];
+
+            return this.fields[key].isMatchRegexp(itemForm["file" in itemForm ? "file" : "model"]);
+          })
+          .reduce((acc, key) => {
+            acc[key] = this.dataForm[key];
+
+            return acc;
+          }, {});
       },
     },
     created() {

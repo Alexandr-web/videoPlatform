@@ -11,6 +11,7 @@
             :classes="['auth__form']"
             :text-button="textButton"
             :pending="pending"
+            @sendReq="registration"
           />
           <div class="auth__callout">
             <p class="auth__callout-desc">
@@ -36,10 +37,14 @@
     name: "RegistrationPage",
     components: { vForm, },
     layout: "empty",
+    middleware: "checkAlreadyAuth",
     data: () => ({
       fields: {
         avatar: {
           type: "file",
+          isMatchRegexp(val) {
+            return val instanceof File;
+          },
           accept: [".jpg", ".jpeg", ".png", ".svg"],
         },
         nickname: {
@@ -68,5 +73,33 @@
       textButton: "Зарегистрироваться",
     }),
     head: { title: "Регистрация", },
+    methods: {
+      registration(data) {
+        if (Object.keys(this.fields).length !== Object.keys(data).length) {
+          this.textButton = "Все поля должны быть заполнены правильно";
+
+          return;
+        }
+
+        const fd = new FormData();
+
+        Object.keys(data).map((key) => fd.append(key, data[key]["file" in data[key] ? "file" : "model"]));
+        
+        const res = this.$store.dispatch("auth.store/registration", fd);
+
+        this.pending = true;
+
+        res.then(({ ok, message, }) => {
+          this.pending = false;
+          this.textButton = message;
+
+          if (ok) {
+            this.$router.push("/auth/login");
+          }
+        }).catch((err) => {
+          throw err;
+        });
+      },
+    },
   };
 </script>

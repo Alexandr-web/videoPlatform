@@ -45,5 +45,42 @@ export default {
         throw err;
       }
     },
+
+    async registration({}, fd) {
+      try {
+        const res = await fetch(`${host}/auth/registration`, {
+          method: "POST",
+          headers: { "Accept-Type": "application/json", },
+          body: fd,
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
+
+    async login({ commit, }, fd) {
+      try {
+        const res = await fetch(`${host}/auth/login`, {
+          method: "POST",
+          headers: {
+            "Accept-Type": "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(fd),
+        });
+
+        const data = await res.json();
+
+        if (data.ok && data.token) {
+          commit("setToken", data.token.replace(/^Bearer\s/, ""));
+        }
+
+        return data;
+      } catch (err) {
+        throw err;
+      }
+    },
   },
 };
