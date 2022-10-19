@@ -3,5 +3,8 @@
 </template>
 
 <script>
-  export default { name: "EmptyLayout", };
+  export default {
+    name: "EmptyLayout",
+    middleware: "checkAlreadyAuth",
+  };
 </script>

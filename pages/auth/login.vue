@@ -37,7 +37,6 @@
     name: "LoginPage",
     components: { vForm, },
     layout: "empty",
-    middleware: "checkAlreadyAuth",
     data: () => ({
       fields: {
         email: {

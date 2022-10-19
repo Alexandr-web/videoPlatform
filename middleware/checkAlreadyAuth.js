@@ -11,7 +11,9 @@ export default async ({ store, redirect, }) => {
       const res = await store.dispatch("user.store/getOne", data.id);
 
       if (!res.user) {
-        return store.commit("auth.store/clearToken");
+        store.commit("auth.store/clearToken");
+        store.commit("user.store/clearUser");
+        return;
       }
 
       return redirect("/");

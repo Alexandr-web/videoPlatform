@@ -1,6 +1,18 @@
+import jwtDecode from "jwt-decode";
+
 const host = require("../server/host");
 
 export default {
+  state: () => ({ user: null, }),
+  getters: { getUser: (state) => state.user, },
+  mutations: {
+    setUser(state, val) {
+      state.user = val;
+    },
+    clearUser(state) {
+      state.user = null;
+    },
+  },
   actions: {
     async getOne({}, id) {
       try {
@@ -10,6 +22,14 @@ export default {
         });
 
         return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
+
+    async getOneByToken({}, token) {
+      try {
+        return jwtDecode(token);
       } catch (err) {
         throw err;
       }

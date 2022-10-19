@@ -37,7 +37,6 @@
     name: "RegistrationPage",
     components: { vForm, },
     layout: "empty",
-    middleware: "checkAlreadyAuth",
     data: () => ({
       fields: {
         avatar: {

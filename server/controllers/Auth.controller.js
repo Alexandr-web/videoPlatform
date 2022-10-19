@@ -56,7 +56,16 @@ class Auth {
         return res.status(400).json({ ok: false, message: "Неверный пароль", status: 400, });
       }
 
-      const token = jwt.sign(user.dataValues, process.env.SECRET_KEY, { expiresIn: Math.floor(Date.now() / 1000) + (60 * 60), });
+      const userData = Object
+        .keys(user.dataValues)
+        .reduce((acc, key) => {
+          if (key !== "password") {
+            acc[key] = user.dataValues[key];
+          }
+          
+          return acc;
+        }, {});
+      const token = jwt.sign(userData, process.env.SECRET_KEY, { expiresIn: Math.floor(Date.now() / 1000) + (60 * 60), });
 
       return res.status(200).json({ ok: true, message: "Вы успешно вошли", status: 200, token: `Bearer ${token}`, });
     } catch (err) {
