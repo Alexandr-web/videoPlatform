@@ -1,11 +1,45 @@
 @font-face {
-  font-family: "Resist Font", sans-serif;
-  src: url("../fonts/ResistSansDisplayMediumOblique.otf");
-  font-weight: medium;
+  font-family: "Resist Sans Text";
+  src: url("../fonts/ResistSansText-Light.eot");
+  src: url("../fonts/ResistSansText-Light.eot?#iefix") format("embedded-opentype"),
+      url("../fonts/ResistSansText-Light.woff2") format("woff2"),
+      url("../fonts/ResistSansText-Light.woff") format("woff"),
+      url("../fonts/ResistSansText-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: "Resist Font", sans-serif;
-  src: url("../fonts/ResistSansTextLight.otf");
-  font-weight: light;
+  font-family: "Roboto Mono";
+  src: url("../fonts/RobotoMono-Regular.eot");
+  src: url("../fonts/RobotoMono-Regular.eot?#iefix") format("embedded-opentype"),
+      url("../fonts/RobotoMono-Regular.woff2") format("woff2"),
+      url("../fonts/RobotoMono-Regular.woff") format("woff"),
+      url("../fonts/RobotoMono-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("../fonts/RobotoMono-Light.eot");
+  src: url("../fonts/RobotoMono-Light.eot?#iefix") format("embedded-opentype"),
+      url("../fonts/RobotoMono-Light.woff2") format("woff2"),
+      url("../fonts/RobotoMono-Light.woff") format("woff"),
+      url("../fonts/RobotoMono-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Golos UI";
+  src: url("../fonts/subset-GolosUI-Regular.woff2") format("woff2"),
+      url("../fonts/subset-GolosUI-Regular.woff") format("woff"),
+      url("../fonts/subset-GolosUI-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }

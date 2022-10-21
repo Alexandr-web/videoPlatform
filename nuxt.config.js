@@ -13,6 +13,8 @@ export default {
     ],
   },
 
+  prefix: false,
+
   css: [
     "@/static/css/main.css"
   ],
@@ -26,10 +28,20 @@ export default {
     "@nuxtjs/eslint-module"
   ],
 
+  build: {
+    test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
+    use: [{
+      loader: "url-loader",
+      options: {
+         esModule: false,
+         limit: 1000, // 1kB
+         name: "fonts/[name].[contenthash:7].[ext]",
+      },
+    }],
+  },
+
   modules: [
   ],
-
-  build: {},
 
   serverMiddleware: [
     "@/server/app.js"
