@@ -44,6 +44,8 @@
           isMatchRegexp(val) {
             return val instanceof File;
           },
+          typeFile: "img",
+          isAvatar: true,
           accept: [".jpg", ".jpeg", ".png", ".svg"],
         },
         nickname: {

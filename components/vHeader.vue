@@ -48,13 +48,11 @@
 </template>
 
 <script>
-  import setValidAvatarUrlToUserMixin from "@/mixins/setValidAvatarUrlToUser";
   import vSearchIcon from "@/components/icons/vSearchIcon";
 
   export default {
     name: "HeaderComponent",
     components: { vSearchIcon, },
-    mixins: [setValidAvatarUrlToUserMixin],
     data: () => ({
       menu: [
         {
@@ -72,5 +70,10 @@
       ],
       search: "",
     }),
+    computed: {
+      getUser() {
+        return this.$store.getters["user.store/getUser"];
+      },
+    },
   };
 </script>

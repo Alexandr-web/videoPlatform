@@ -13,9 +13,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true, }));
 
 const authRouter = require("./routers/auth.router");
+const videoRouter = require("./routers/video.router");
 const userRouter = require("./routers/user.router");
 
 app.use("/auth", authRouter);
+app.use("/video", videoRouter);
 app.use("/user", userRouter);
 
 module.exports = app;

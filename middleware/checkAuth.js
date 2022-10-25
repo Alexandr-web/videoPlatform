@@ -1,4 +1,5 @@
 import jwtDecode from "jwt-decode";
+import getValidAvatarUrl from "../helpers/getValidAvatarUrl";
 
 export default async ({ store, redirect, }) => {
   try {
@@ -23,7 +24,14 @@ export default async ({ store, redirect, }) => {
     const { ok, user, } = await store.dispatch("user.store/getOne", id);
 
     if (ok) {
-      store.commit("user.store/setUser", user);
+      getValidAvatarUrl(user.avatar).then((avatar) => {
+        store.commit("user.store/setUser", {
+          ...user,
+          avatar,
+        });
+      }).catch((err) => {
+        throw err;
+      });
     }
   } catch (err) {
     throw err;

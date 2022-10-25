@@ -1,5 +1,5 @@
 <template>
-  <main class="main pt-120">
+  <main class="main pt-120 pb-20">
     <div class="container">
       <ul class="videos">
         <vVideoCard

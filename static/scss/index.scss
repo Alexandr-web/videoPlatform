@@ -40,6 +40,9 @@
 
   &__area-file {
     cursor: pointer;
+    background: $black;
+    border-radius: 10px;
+    padding: 10px;
 
     &--error {
       border: 1px solid $red;
@@ -49,10 +52,20 @@
   &__file {
     display: none;
 
-    &-res {
-      width: 128px;
-      height: 128px;
-      border-radius: 50%;
+    &-img {
+      object-fit: cover;
+
+      &--avatar {
+        width: 128px;
+        height: 128px;
+        border-radius: 50%;
+        border: 1px solid $grey;
+      }
+    }
+
+    &-video {
+      width: 100%;
+      object-fit: cover;
     }
 
     &-view {
@@ -63,7 +76,7 @@
 
       &-icon {
         fill: $white;
-        width: 128px;
+        width: 100px;
       }
     }
   }
@@ -243,12 +256,10 @@
 
   &__user {
     width: 20%;
+    display: flex;
+    justify-content: flex-end;
 
     &-avatar {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-
       &-image {
         max-width: 45px;
         min-width: 40px;
@@ -263,7 +274,7 @@
 .videos {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-gap: 15px;
+  gap: 15px;
 }
 
 .video-card {
@@ -349,8 +360,25 @@
   }
 }
 
+.load-page {
+  &__block {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__form {
+    width: 500px;
+  }
+}
+
 .pt-120 {
   padding-top: 120px;
+}
+
+.pb-20 {
+  padding-bottom: 20px;
 }
 
 @keyframes loader {

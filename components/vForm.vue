@@ -2,7 +2,7 @@
   <form
     class="form"
     :class="classes.filter(Boolean).join(' ')"
-    @submit.prevent="$emit('sendReq', getValidDataForm)"
+    @submit.prevent="sendReq"
   >
     <div
       v-for="(fieldKey, index) in getFieldsKeys"
@@ -24,16 +24,38 @@
           :accept="fields[fieldKey].accept.join(',')"
           @change="loadFile($event, fieldKey)"
         >
-        <div class="form__file-view">
+        <div
+          v-if="fields[fieldKey].typeFile === 'img'"
+          class="form__file-view"
+        >
           <vCameraIcon
             v-if="!dataForm[fieldKey].src"
             :classes="['form__file-view-icon']"
           />
           <img
             v-else
-            class="form__file-res"
+            class="form__file-img"
+            :class="{
+              'form__file-img--avatar': fields[fieldKey].isAvatar,
+            }"
             :src="dataForm[fieldKey].src"
-          >
+          />
+        </div>
+        <div
+          v-if="fields[fieldKey].typeFile === 'video'"
+          class="form__file-view"
+        >
+          <vVideoIcon
+            v-if="!dataForm[fieldKey].src"
+            :classes="['form__file-view-icon']"
+          />
+          <video
+            v-else
+            class="form__file-video"
+            :src="dataForm[fieldKey].src"
+            controls
+            @loadedmetadata="loadVideo($event)"
+          ></video>
         </div>
       </label>
       <label
@@ -73,10 +95,14 @@
 
 <script>
   import vCameraIcon from "@/components/icons/vCameraIcon";
+  import vVideoIcon from "@/components/icons/vVideoIcon";
 
   export default {
     name: "FormComponent",
-    components: { vCameraIcon, },
+    components: {
+      vCameraIcon,
+      vVideoIcon,
+    },
     props: {
       classes: {
         type: Array,
@@ -94,8 +120,12 @@
         type: Boolean,
         required: true,
       },
+      getVideoTime: Boolean,
     },
-    data: () => ({ dataForm: {}, }),
+    data: () => ({
+      dataForm: {},
+      videoTime: "",
+    }),
     computed: {
       getFieldsKeys() {
         return Object.keys(this.fields);
@@ -105,7 +135,7 @@
           .keys(this.dataForm)
           .filter((key) => {
             const itemForm = this.dataForm[key];
-
+            
             return this.fields[key].isMatchRegexp(itemForm["file" in itemForm ? "file" : "model"]);
           })
           .reduce((acc, key) => {
@@ -129,6 +159,21 @@
       });
     },
     methods: {
+      sendReq() {
+        const data = this.getValidDataForm;
+
+        this.$emit("sendReq", this.getVideoTime ? { ...data, time: this.videoTime, } : data);
+      },
+      getValidTimeFormat(time) {
+        return `${time < 10 ? "0" + time : time}`;
+      },
+      loadVideo(e) {
+        const s = Math.floor(parseInt(e.target.duration % 60));
+        const h = Math.floor(s / 60 / 60);
+        const m = Math.floor(s / 60) - (h * 60);
+
+        this.videoTime = `${this.getValidTimeFormat(h)}:${this.getValidTimeFormat(m)}:${this.getValidTimeFormat(s)}`;
+      },
       setOneKeyAtDataForm(key, val) {
         this.dataForm = Object.keys(this.dataForm).reduce((acc, dataKey) => {
           if (dataKey !== key) {
