@@ -1,22 +1,14 @@
 <template>
   <main class="main pt-120 pb-20">
     <div class="container">
-      <ul class="videos">
+      <ul
+        v-if="videos.length"
+        class="videos"
+      >
         <vVideoCard
-          v-for="n in 10"
-          :key="n"
-          :card="{
-            title: 'Привет, мир!',
-            views: 321412,
-            time: '12:32',
-            date: '12.22.2022',
-            poster: 'https://images.unsplash.com/photo-1624555130581-1d9cca783bc0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80',
-            author: {
-              name: 'ohyeah',
-              id: 1,
-            },
-            id: 1,
-          }"
+          v-for="(video, index) in videos"
+          :key="index"
+          :card="video"
         />
       </ul>
     </div>
@@ -25,11 +17,33 @@
 
 <script>
   import vVideoCard from "@/components/vVideoCard";
+  import getValidUrlDataFileMixin from "@/mixins/getValidUrlDataFile";
 
   export default {
     name: "MainPage",
     components: { vVideoCard, },
+    mixins: [getValidUrlDataFileMixin],
     layout: "default",
+    data: () => ({ videos: [], }),
+    async fetch() {
+      try {
+        const { ok, videos, } = await this.$store.dispatch("video.store/getAll");
+
+        if (ok) {
+          videos.map((video) => {
+            const { poster, } = video;
+
+            this.getValidUrlDataFile(poster).then((validPoster) => {
+              this.videos.push({ ...video, poster: validPoster, });
+            }).catch((err) => {
+              throw err;
+            });
+          });
+        }
+      } catch (err) {
+        throw err;
+      }
+    },
     head: { title: "Главная", },
   };
 </script>

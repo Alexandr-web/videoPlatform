@@ -2,7 +2,7 @@
   <div class="video-card">
     <nuxt-link
       class="video-card__inner"
-      :to="`/video/card.id`"
+      :to="`/video/${card.id}`"
     >
       <div class="video-card__picture">
         <img
@@ -35,7 +35,7 @@
         class="video-card__link"
         :to="`/user/${card.author.id}`"
       >
-        {{ card.author.name }}
+        {{ card.author.nickname }}
       </nuxt-link>
     </footer>
   </div>

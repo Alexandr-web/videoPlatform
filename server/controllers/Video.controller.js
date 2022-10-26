@@ -40,13 +40,13 @@ class Video {
 
       return Promise.all(promises)
         .then((data) => {
-          const videos = data.map(({ id, name, }) => {
+          const videos = data.map(({ id, nickname, }) => {
             const video = allVideos.find(({ userId, }) => userId === id);
 
             return {
-              ...video,
+              ...video.dataValues,
               author: {
-                name,
+                nickname,
                 id,
               },
             };
