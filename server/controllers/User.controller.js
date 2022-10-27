@@ -5,7 +5,7 @@ class User {
     try {
       const { id, } = req.params;
 
-      if (isNaN(parseInt(id))) {
+      if (isNaN(+id)) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, });
       }
 

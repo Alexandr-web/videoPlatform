@@ -21,7 +21,7 @@ export default {
 
     async getAll() {
       try {
-        const res = await fetch(`${host}/video`, {
+        const res = await fetch(`${host}/video/api`, {
           method: "GET",
           headers: { "Accept-Type": "application/json", },
         });

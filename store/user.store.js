@@ -16,7 +16,7 @@ export default {
   actions: {
     async getOne({}, id) {
       try {
-        const res = await fetch(`${host}/user/${id}`, {
+        const res = await fetch(`${host}/user/api/${id}`, {
           method: "GET",
           headers: { "Accept-Type": "application/json", },
         });
