@@ -7,6 +7,12 @@
           :user="user"
           :is-guest="isGuest"
         />
+        <div class="profile-page__tabs">
+          <vProfileVideos
+            v-if="$route.query.tab === 'videos' && Object.keys(user).length"
+            :user="user"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -14,22 +20,27 @@
 
 <script>
   import vProfileHeader from "@/components/vProfileHeader";
+  import vProfileVideos from "@/components/vProfileVideos";
   import getValidAvatarUrlMixin from "@/mixins/getValidAvatarUrl";
 
   export default {
     name: "ProfilePage",
-    components: { vProfileHeader, },
+    components: {
+      vProfileHeader,
+      vProfileVideos,
+    },
     mixins: [getValidAvatarUrlMixin],
     layout: "default",
-    validate({ store, params: { id, }, }) {
+    validate({ store, params: { id, }, query: { tab, }, }) {
       if (isNaN(+id)) {
         return false;
       }
 
       const res = store.dispatch("user.store/getOne", id);
+      const possibleWays = ["videos", "settings", "controls", "channels"];
 
       return res
-        .then(({ ok, user, }) => [ok, user].every(Boolean))
+        .then(({ ok, user, }) => [ok, user, possibleWays.includes(tab)].every(Boolean))
         .catch((err) => {
           throw err;
         });

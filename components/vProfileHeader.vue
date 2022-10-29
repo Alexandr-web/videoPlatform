@@ -29,9 +29,7 @@
                   class="profile__header-list-link"
                   :to="item.to"
                   exact-active-class="profile__header-list-link--active"
-                >
-                  {{ item.name }}
-                </nuxt-link>
+                >{{ item.name }}</nuxt-link>
               </li>
             </ul>
             <ul
@@ -47,9 +45,7 @@
                   class="profile__header-list-link"
                   :to="item.to"
                   exact-active-class="profile__header-list-link--active"
-                >
-                  {{ item.name }}
-                </nuxt-link>
+                >{{ item.name }}</nuxt-link>
               </li>
             </ul>
           </nav>

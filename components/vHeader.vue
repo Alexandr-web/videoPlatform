@@ -24,16 +24,14 @@
                 class="header__menu-link"
                 exact-active-class="header__menu-link--active"
                 :to="item.to"
-              >
-                {{ item.title }}
-              </nuxt-link>
+              >{{ item.title }}</nuxt-link>
             </li>
           </ul>
         </div>
         <div class="header__block header__user">
           <nuxt-link
             class="header__user-avatar"
-            :to="`/user/${getUser.id}`"
+            :to="`/user/${getUser.id}?tab=videos`"
           >
             <img
               class="header__user-avatar-image"

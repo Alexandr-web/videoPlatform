@@ -31,10 +31,14 @@
 
         if (ok) {
           videos.map((video) => {
-            const { poster, } = video;
+            const { poster, createdAt, } = video;
 
             this.getValidUrlDataFile(poster).then((validPoster) => {
-              this.videos.push({ ...video, poster: validPoster, });
+              this.videos.push({
+                ...video,
+                poster: validPoster,
+                date: new Date(createdAt).toLocaleDateString(),
+              });
             }).catch((err) => {
               throw err;
             });

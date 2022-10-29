@@ -84,5 +84,6 @@ module.exports = {
     "no-restricted-globals": "off",
     "func-names": "off",
     "no-extend-native": "off",
+    "vue/multiline-html-element-content-newline": "off",
   },
 };

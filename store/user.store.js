@@ -27,6 +27,22 @@ export default {
       }
     },
 
+    async getVideos({}, { token, id, }) {
+      try {
+        const res = await fetch(`${host}/user/api/${id}/videos`, {
+          method: "GET",
+          headers: {
+            "Accept-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
+
     async getOneByToken({}, token) {
       try {
         return jwtDecode(token);

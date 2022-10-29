@@ -33,7 +33,7 @@
     <footer class="video-card__footer">
       <nuxt-link
         class="video-card__link"
-        :to="`/user/${card.author.id}`"
+        :to="`/user/${card.author.id}?tab=videos`"
       >
         {{ card.author.nickname }}
       </nuxt-link>
