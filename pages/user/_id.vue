@@ -1,13 +1,50 @@
 <template>
   <div class="profile-page pt-120 pb-20">
-    <div class="container">
-      <div class="profile-page__inner">
-        <vProfileHeader
-          v-if="Object.keys(user).length"
-          :user="user"
-          :is-guest="isGuest"
-        />
-        <div class="profile-page__tabs">
+    <div class="profile-page__inner">
+      <vProfileHeader
+        v-if="Object.keys(user).length"
+        :user="user"
+      />
+      <div class="profile-page__content">
+        <header class="profile__content-header">
+          <div class="container">
+            <nav class="profile__nav">
+              <ul
+                v-if="isGuest"
+                class="profile__nav-list"
+              >
+                <li
+                  v-for="(item, index) in getNavListForGuest"
+                  :key="index"
+                  class="profile__nav-list-item"
+                >
+                  <nuxt-link
+                    class="profile__nav-list-link"
+                    :to="item.to"
+                    exact-active-class="profile__nav-list-link--active"
+                  >{{ item.name }}</nuxt-link>
+                </li>
+              </ul>
+              <ul
+                v-else
+                class="profile__nav-list"
+              >
+                <li
+                  v-for="(item, index) in navList"
+                  :key="index"
+                  class="profile__nav-list-item"
+                >
+                  <nuxt-link
+                    class="profile__nav-list-link"
+                    :to="item.to"
+                    exact-active-class="profile__nav-list-link--active"
+                  >{{ item.name }}</nuxt-link>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </header>
+        <div class="container">
           <vProfileVideos
             v-if="$route.query.tab === 'videos' && Object.keys(user).length"
             :user="user"
@@ -48,6 +85,26 @@
     data: () => ({
       user: {},
       isGuest: true,
+      navList: [
+        {
+          name: "Видео",
+          to: "?tab=videos",
+        },
+        {
+          name: "Настройки",
+          to: "?tab=settings",
+          onlyOwner: true,
+        },
+        {
+          name: "Управление",
+          to: "?tab=controls",
+          onlyOwner: true,
+        },
+        {
+          name: "Каналы",
+          to: "?tab=channels",
+        }
+      ],
     }),
     async fetch() {
       try {
@@ -67,6 +124,7 @@
         throw err;
       }
     },
+    head: { title: "Профиль", },
     computed: {
       getCurrentUser() {
         return this.$store.getters["user.store/getUser"];

@@ -1,5 +1,5 @@
 <template>
-  <div class="profile__tab profile__tab-videos">
+  <div class="profile__tab profile__tab-videos pb-20 pt-20">
     <ul
       v-if="videos.length"
       class="profile__videos"
