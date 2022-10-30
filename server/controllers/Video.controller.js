@@ -5,7 +5,7 @@ class Video {
   async load(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, });
+        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const body = req.body;
@@ -13,7 +13,7 @@ class Video {
       const requiredParams = ["title", "description", "video", "poster", "time"];
 
       if (!Object.keys({ ...body, ...files, }).every((key) => requiredParams.includes(key))) {
-        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, });
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
       const videoData = {
@@ -25,11 +25,11 @@ class Video {
 
       await VideoModel.create(videoData);
 
-      return res.status(200).json({ ok: true, message: "Видео загружено", status: 200, });
+      return res.status(200).json({ ok: true, message: "Видео загружено", status: 200, type: "success", });
     } catch (err) {
       console.log(err);
 
-      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, });
+      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
     }
   }
 
@@ -52,17 +52,17 @@ class Video {
             };
           });
 
-          return res.status(200).json({ ok: true, status: 200, videos, });
+          return res.status(200).json({ ok: true, status: 200, videos, type: "success", });
         })
         .catch((err) => {
           console.log(err);
 
-          return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, });
+          return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
         });
     } catch (err) {
       console.log(err);
 
-      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, });
+      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
     }
   }
 }

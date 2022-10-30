@@ -11,6 +11,7 @@
             :classes="['auth__form']"
             :text-button="textButton"
             :pending="pending"
+            :res-request="resRequest"
             @sendReq="login"
           />
           <div class="auth__callout">
@@ -56,6 +57,10 @@
       },
       pending: false,
       textButton: "Войти",
+      resRequest: {
+        type: "",
+        message: "",
+      },
     }),
     head: { title: "Вход", },
     methods: {
@@ -75,10 +80,17 @@
         const res = this.$store.dispatch("auth.store/login", fd);
 
         this.pending = true;
+        this.resRequest = {
+          message: "",
+          type: "",
+        };
 
-        res.then(({ ok, message, }) => {
+        res.then(({ ok, message, type, }) => {
           this.pending = false;
-          this.textButton = message;
+          this.resRequest = {
+            message,
+            type,
+          };
 
           if (ok) {
             this.$router.push("/");

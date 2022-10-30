@@ -90,6 +90,20 @@
     >
       {{ textButton }}
     </button>
+    <div
+      v-if="Object.values(resRequest).every(Boolean)"
+      class="form__res-request"
+    >
+      <p
+        class="form__res-request-text"
+        :class="{
+          'form__res-request--error': resRequest.type === 'error',
+          'form__res-request--success': resRequest.type === 'success',
+        }"
+      >
+        {{ resRequest.message }}
+      </p>
+    </div>
   </form>
 </template>
 
@@ -120,7 +134,17 @@
         type: Boolean,
         required: true,
       },
-      getVideoTime: Boolean,
+      getVideoTime: {
+        type: Boolean,
+        default: false,
+      },
+      resRequest: {
+        type: Object,
+        default: () => ({
+          type: "",
+          message: "",
+        }),
+      },
     },
     data: () => ({
       dataForm: {},
@@ -148,11 +172,11 @@
     created() {
       Object.keys(this.fields).map((key) => {
         if (this.fields[key].type !== "file") {
-          this.dataForm[key] = { model: "", };
+          this.dataForm[key] = { model: "model" in this.fields[key] ? this.fields[key].model : "", };
         } else {
           this.dataForm[key] = {
             file: null,
-            src: "",
+            src: "src" in this.fields[key] ? this.fields[key].src : "",
             error: false,
           };
         }

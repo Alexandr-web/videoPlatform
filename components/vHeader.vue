@@ -62,8 +62,8 @@
           to: "/load",
         },
         {
-          title: "Настройки",
-          to: "/settings",
+          title: "Каналы",
+          to: "/channels",
         }
       ],
       search: "",

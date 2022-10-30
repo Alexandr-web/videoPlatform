@@ -1,33 +1,13 @@
 <template>
-  <div class="auth">
-    <div class="container">
-      <div class="auth__inner">
-        <div class="auth__block">
-          <h1 class="auth__title">
-            Регистрация
-          </h1>
-          <vForm
-            :fields="fields"
-            :classes="['auth__form']"
-            :text-button="textButton"
-            :pending="pending"
-            :res-request="resRequest"
-            @sendReq="registration"
-          />
-          <div class="auth__callout">
-            <p class="auth__callout-desc">
-              Есть аккаунт?
-              <nuxt-link
-                class="auth__callout-link"
-                to="/auth/login"
-              >
-                Войти
-              </nuxt-link>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="profile__tab profile__tab-settings pb-20 pt-20">
+    <vForm
+      :classes="['profile__settings-form']"
+      :fields="fields"
+      :text-button="textButton"
+      :pending="pending"
+      :res-request="resRequest"
+      @sendReq="edit"
+    />
   </div>
 </template>
 
@@ -35,9 +15,14 @@
   import vForm from "@/components/vForm";
 
   export default {
-    name: "RegistrationPage",
+    name: "ProfileSettingsComponent",
     components: { vForm, },
-    layout: "empty",
+    props: {
+      user: {
+        type: Object,
+        required: true,
+      },
+    },
     data: () => ({
       fields: {
         avatar: {
@@ -72,31 +57,42 @@
         },
       },
       pending: false,
-      textButton: "Зарегистрироваться",
+      textButton: "Сохранить",
       resRequest: {
         type: "",
         message: "",
       },
     }),
-    head: { title: "Регистрация", },
-    methods: {
-      registration(data) {
-        if (Object.keys(this.fields).length !== Object.keys(data).length) {
-          this.textButton = "Все поля должны быть заполнены правильно";
-
-          return;
+    created() {
+      Object.keys(this.user).map((key) => {
+        if (key in this.fields) {
+          switch (this.fields[key].type) {
+            case "file":
+              this.fields[key].src = this.user[key];
+              break;
+            case "password":
+              this.fields[key].model = "";
+              break;
+            default:
+              this.fields[key].model = this.user[key];
+          }
         }
-
+      });
+    },
+    methods: {
+      edit(data) {
+        const token = this.$store.getters["auth.store/getToken"];
         const fd = new FormData();
-
-        Object.keys(data).map((key) => fd.append(key, data[key]["file" in data[key] ? "file" : "model"]));
+        const { id: userId, } = this.user;
         
-        const res = this.$store.dispatch("auth.store/registration", fd);
+        Object.keys(data).map((key) => fd.append(key, data[key]["model" in data[key] ? "model" : "file"]));
+
+        const res = this.$store.dispatch("user.store/edit", { token, fd, id: userId, });
 
         this.pending = true;
         this.resRequest = {
-          message: "",
           type: "",
+          message: "",
         };
 
         res.then(({ ok, message, type, }) => {
@@ -107,7 +103,7 @@
           };
 
           if (ok) {
-            this.$router.push("/auth/login");
+            this.$router.go(0);
           }
         }).catch((err) => {
           throw err;

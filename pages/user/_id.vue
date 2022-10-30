@@ -44,9 +44,16 @@
             </nav>
           </div>
         </header>
-        <div class="container">
+        <div
+          v-if="Object.keys(user).length"
+          class="container"
+        >
           <vProfileVideos
-            v-if="$route.query.tab === 'videos' && Object.keys(user).length"
+            v-if="$route.query.tab === 'videos'"
+            :user="user"
+          />
+          <vProfileSettings
+            v-if="$route.query.tab === 'settings' && !isGuest"
             :user="user"
           />
         </div>
@@ -58,6 +65,7 @@
 <script>
   import vProfileHeader from "@/components/vProfileHeader";
   import vProfileVideos from "@/components/vProfileVideos";
+  import vProfileSettings from "@/components/vProfileSettings";
   import getValidAvatarUrlMixin from "@/mixins/getValidAvatarUrl";
 
   export default {
@@ -65,6 +73,7 @@
     components: {
       vProfileHeader,
       vProfileVideos,
+      vProfileSettings,
     },
     mixins: [getValidAvatarUrlMixin],
     layout: "default",

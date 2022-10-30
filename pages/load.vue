@@ -8,6 +8,7 @@
           :text-button="textButton"
           :pending="pending"
           :get-video-time="true"
+          :res-request="resRequest"
           @sendReq="loadVideo"
         />
       </div>
@@ -57,6 +58,10 @@
       },
       textButton: "Загрузить",
       pending: false,
+      resRequest: {
+        type: "",
+        message: "",
+      },
     }),
     head: { title: "Загрузка видео", },
     methods: {
@@ -69,10 +74,17 @@
         const res = this.$store.dispatch("video.store/load", { fd, token, });
 
         this.pending = true;
+        this.resRequest = {
+          message: "",
+          type: "",
+        };
 
-        res.then(({ message, ok, }) => {
+        res.then(({ message, ok, type, }) => {
           this.pending = false;
-          this.textButton = message;
+          this.resRequest = {
+            message,
+            type,
+          };
 
           if (ok) {
             this.$router.push("/");

@@ -147,6 +147,27 @@
     color: $white;
     border: none;
   }
+
+  &__res-request {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+
+    &--error {
+      color: $red;
+    }
+
+    &--success {
+      color: $green;
+    }
+
+    &-text {
+      font-size: 14px;
+      line-height: 25px;
+      text-align: center;
+    }
+  }
 }
 
 .pending-btn {
@@ -385,7 +406,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow-x: auto;
     
     &-list {
       display: flex;
@@ -451,9 +471,23 @@
     &-header {
       position: sticky;
       top: 100px;
-      background: $opacityBlack;
+      background: $black;
       padding: 15px;
       z-index: 999;
+    }
+  }
+
+  &__tab {
+    &-settings {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  &__settings {
+    &-form {
+      width: 500px;
     }
   }
 }
@@ -479,6 +513,7 @@
 @supports (backdrop-filter: blur(10px)) {
   .profile {
     &__content-header {
+      background: $opacityBlack;
       backdrop-filter: blur(10px);
     }
   }
