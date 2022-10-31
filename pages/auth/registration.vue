@@ -82,36 +82,37 @@
     methods: {
       registration(data) {
         if (Object.keys(this.fields).length !== Object.keys(data).length) {
-          this.textButton = "Все поля должны быть заполнены правильно";
-
-          return;
-        }
-
-        const fd = new FormData();
-
-        Object.keys(data).map((key) => fd.append(key, data[key]["file" in data[key] ? "file" : "model"]));
-        
-        const res = this.$store.dispatch("auth.store/registration", fd);
-
-        this.pending = true;
-        this.resRequest = {
-          message: "",
-          type: "",
-        };
-
-        res.then(({ ok, message, type, }) => {
-          this.pending = false;
           this.resRequest = {
-            message,
-            type,
+            message: "Все поля должны быть заполнены правильно",
+            type: "error",
+          };
+        } else {
+          const fd = new FormData();
+
+          Object.keys(data).map((key) => fd.append(key, data[key]["file" in data[key] ? "file" : "model"]));
+
+          const res = this.$store.dispatch("auth.store/registration", fd);
+
+          this.pending = true;
+          this.resRequest = {
+            message: "",
+            type: "",
           };
 
-          if (ok) {
-            this.$router.push("/auth/login");
-          }
-        }).catch((err) => {
-          throw err;
-        });
+          res.then(({ ok, message, type, }) => {
+            this.pending = false;
+            this.resRequest = {
+              message,
+              type,
+            };
+
+            if (ok) {
+              this.$router.push("/auth/login");
+            }
+          }).catch((err) => {
+            throw err;
+          });
+        }
       },
     },
   };

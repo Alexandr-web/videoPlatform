@@ -65,39 +65,41 @@
     head: { title: "Вход", },
     methods: {
       login(data) {
+        console.log(data, this.fields);
         if (Object.keys(this.fields).length !== Object.keys(data).length) {
-          this.textButton = "Все поля должны быть заполнены правильно";
-
-          return;
-        }
-
-        const fd = Object.keys(data).reduce((acc, key) => {
-          acc[key] = data[key].model;
-          
-          return acc;
-        }, {});
-
-        const res = this.$store.dispatch("auth.store/login", fd);
-
-        this.pending = true;
-        this.resRequest = {
-          message: "",
-          type: "",
-        };
-
-        res.then(({ ok, message, type, }) => {
-          this.pending = false;
           this.resRequest = {
-            message,
-            type,
+            message: "Все поля должны быть заполнены правильно",
+            type: "error",
+          };
+        } else {
+          const fd = Object.keys(data).reduce((acc, key) => {
+            acc[key] = data[key].model;
+            
+            return acc;
+          }, {});
+
+          const res = this.$store.dispatch("auth.store/login", fd);
+
+          this.pending = true;
+          this.resRequest = {
+            message: "",
+            type: "",
           };
 
-          if (ok) {
-            this.$router.push("/");
-          }
-        }).catch((err) => {
-          throw err;
-        });
+          res.then(({ ok, message, type, }) => {
+            this.pending = false;
+            this.resRequest = {
+              message,
+              type,
+            };
+
+            if (ok) {
+              this.$router.push("/");
+            }
+          }).catch((err) => {
+            throw err;
+          });
+        }
       },
     },
   };

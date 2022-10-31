@@ -26,10 +26,5 @@
         required: true,
       },
     },
-    computed: {
-      getNavListForGuest() {
-        return this.navList.filter(({ onlyOwner, }) => !onlyOwner);
-      },
-    },
   };
 </script>

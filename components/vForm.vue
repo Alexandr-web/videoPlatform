@@ -154,20 +154,6 @@
       getFieldsKeys() {
         return Object.keys(this.fields);
       },
-      getValidDataForm() {
-        return Object
-          .keys(this.dataForm)
-          .filter((key) => {
-            const itemForm = this.dataForm[key];
-            
-            return this.fields[key].isMatchRegexp(itemForm["file" in itemForm ? "file" : "model"]);
-          })
-          .reduce((acc, key) => {
-            acc[key] = this.dataForm[key];
-
-            return acc;
-          }, {});
-      },
     },
     created() {
       Object.keys(this.fields).map((key) => {
@@ -184,7 +170,20 @@
     },
     methods: {
       sendReq() {
-        const data = this.getValidDataForm;
+        const data = Object
+          .keys(this.dataForm)
+          .filter((key) => {
+            const itemForm = this.dataForm[key];
+
+            console.log(this.fields[key].isMatchRegexp(itemForm["file" in itemForm ? "file" : "model"]), itemForm["file" in itemForm ? "file" : "model"]);
+            
+            return this.fields[key].isMatchRegexp(itemForm["file" in itemForm ? "file" : "model"]);
+          })
+          .reduce((acc, key) => {
+            acc[key] = this.dataForm[key];
+
+            return acc;
+          }, {});
 
         this.$emit("sendReq", this.getVideoTime ? { ...data, time: this.videoTime, } : data);
       },

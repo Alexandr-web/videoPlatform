@@ -83,10 +83,18 @@
       }
 
       const res = store.dispatch("user.store/getOne", id);
-      const possibleWays = ["videos", "settings", "controls", "channels"];
+      const currentUser = store.getters["user.store/getUser"];
+      const possibleQueryWaysForGuest = ["videos", "channels"];
+      const possibleQueryWaysForOwner = ["videos", "settings", "controls", "channels"];
 
       return res
-        .then(({ ok, user, }) => [ok, user, possibleWays.includes(tab)].every(Boolean))
+        .then(({ ok, user, }) => {
+          if (currentUser.id !== +id) {
+            return [ok, user, possibleQueryWaysForGuest.includes(tab)].every(Boolean);
+          }
+
+          return [ok, user, possibleQueryWaysForOwner.includes(tab)].every(Boolean);
+        })
         .catch((err) => {
           throw err;
         });
@@ -137,6 +145,9 @@
     computed: {
       getCurrentUser() {
         return this.$store.getters["user.store/getUser"];
+      },
+      getNavListForGuest() {
+        return this.navList.filter(({ onlyOwner, }) => !onlyOwner);
       },
     },
   };

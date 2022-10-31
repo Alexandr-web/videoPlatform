@@ -81,33 +81,40 @@
     },
     methods: {
       edit(data) {
-        const token = this.$store.getters["auth.store/getToken"];
-        const fd = new FormData();
-        const { id: userId, } = this.user;
-        
-        Object.keys(data).map((key) => fd.append(key, data[key]["model" in data[key] ? "model" : "file"]));
-
-        const res = this.$store.dispatch("user.store/edit", { token, fd, id: userId, });
-
-        this.pending = true;
-        this.resRequest = {
-          type: "",
-          message: "",
-        };
-
-        res.then(({ ok, message, type, }) => {
-          this.pending = false;
+        if (!Object.keys(data).length) {
           this.resRequest = {
-            message,
-            type,
+            type: "error",
+            message: "Все поля должны быть заполнены правильно",
+          };
+        } else {
+          const token = this.$store.getters["auth.store/getToken"];
+          const fd = new FormData();
+          const { id: userId, } = this.user;
+          
+          Object.keys(data).map((key) => fd.append(key, data[key]["model" in data[key] ? "model" : "file"]));
+
+          const res = this.$store.dispatch("user.store/edit", { token, fd, id: userId, });
+
+          this.pending = true;
+          this.resRequest = {
+            type: "",
+            message: "",
           };
 
-          if (ok) {
-            this.$router.go(0);
-          }
-        }).catch((err) => {
-          throw err;
-        });
+          res.then(({ ok, message, type, }) => {
+            this.pending = false;
+            this.resRequest = {
+              message,
+              type,
+            };
+
+            if (ok) {
+              this.$router.go(0);
+            }
+          }).catch((err) => {
+            throw err;
+          });
+        }
       },
     },
   };

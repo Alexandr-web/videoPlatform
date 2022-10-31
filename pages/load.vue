@@ -66,32 +66,39 @@
     head: { title: "Загрузка видео", },
     methods: {
       loadVideo(data) {
-        const token = this.$store.getters["auth.store/getToken"];
-        const fd = new FormData();
-
-        Object.keys(data).map((key) => fd.append(key, typeof data[key] === "object" ? data[key]["file" in data[key] ? "file" : "model"] : data[key]));
-
-        const res = this.$store.dispatch("video.store/load", { fd, token, });
-
-        this.pending = true;
-        this.resRequest = {
-          message: "",
-          type: "",
-        };
-
-        res.then(({ message, ok, type, }) => {
-          this.pending = false;
+        if (Object.keys(this.fields).length !== Object.keys(data).length) {
           this.resRequest = {
-            message,
-            type,
+            message: "Все поля должны быть заполнены правильн",
+            type: "error",
+          };
+        } else {
+          const token = this.$store.getters["auth.store/getToken"];
+          const fd = new FormData();
+
+          Object.keys(data).map((key) => fd.append(key, typeof data[key] === "object" ? data[key]["file" in data[key] ? "file" : "model"] : data[key]));
+
+          const res = this.$store.dispatch("video.store/load", { fd, token, });
+
+          this.pending = true;
+          this.resRequest = {
+            message: "",
+            type: "",
           };
 
-          if (ok) {
-            this.$router.push("/");
-          }
-        }).catch((err) => {
-          throw err;
-        });
+          res.then(({ message, ok, type, }) => {
+            this.pending = false;
+            this.resRequest = {
+              message,
+              type,
+            };
+
+            if (ok) {
+              this.$router.push("/");
+            }
+          }).catch((err) => {
+            throw err;
+          });
+        }
       },
     },
   };
