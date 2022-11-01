@@ -20,9 +20,9 @@ module.exports = sequelize.define("user", {
     type: DataTypes.TEXT,
     required: true,
   },
-  followers: {
-    type: DataTypes.INTEGER,
-    defaultValue: 0,
+  followersId: {
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
+    defaultValue: [],
   },
   id: {
     type: DataTypes.INTEGER,

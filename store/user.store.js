@@ -14,7 +14,7 @@ export default {
     },
   },
   actions: {
-    async getOne({}, id) {
+    async getOne({ }, id) {
       try {
         const res = await fetch(`${host}/user/api/${id}`, {
           method: "GET",
@@ -27,7 +27,7 @@ export default {
       }
     },
 
-    async getVideos({}, { token, id, }) {
+    async getVideos({ }, { token, id, }) {
       try {
         const res = await fetch(`${host}/user/api/${id}/videos`, {
           method: "GET",
@@ -43,7 +43,39 @@ export default {
       }
     },
 
-    async getOneByToken({}, token) {
+    async getFollowers({ }, { token, id, }) {
+      try {
+        const res = await fetch(`${host}/user/api/${id}/followers`, {
+          method: "GET",
+          headers: {
+            "Accept-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
+
+    async getFollowings({ }, { token, id, }) {
+      try {
+        const res = await fetch(`${host}/user/api/${id}/followings`, {
+          method: "GET",
+          headers: {
+            "Accept-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
+
+    async getOneByToken({ }, token) {
       try {
         return jwtDecode(token);
       } catch (err) {
@@ -51,7 +83,7 @@ export default {
       }
     },
 
-    async edit({}, { token, fd, id, }) {
+    async edit({ }, { token, fd, id, }) {
       try {
         const res = await fetch(`${host}/user/${id}/edit`, {
           method: "PUT",
@@ -60,6 +92,23 @@ export default {
             Authorization: `Bearer ${token || ""}`,
           },
           body: fd,
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
+
+    async setFollowing({ }, { token, currentUserId, followingUserId, }) {
+      try {
+        const res = await fetch(`${host}/user/${currentUserId}/following/${followingUserId}`, {
+          method: "POST",
+          headers: {
+            "Accept-Type": "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
         });
 
         return res.json();

@@ -56,6 +56,10 @@
             v-if="$route.query.tab === 'settings' && !isGuest"
             :user="user"
           />
+          <vProfileChannels
+            v-if="$route.query.tab === 'channels'"
+            :user="user"
+          />
         </div>
       </div>
     </div>
@@ -66,6 +70,7 @@
   import vProfileHeader from "@/components/vProfileHeader";
   import vProfileVideos from "@/components/vProfileVideos";
   import vProfileSettings from "@/components/vProfileSettings";
+  import vProfileChannels from "@/components/vProfileChannels";
   import getValidAvatarUrlMixin from "@/mixins/getValidAvatarUrl";
 
   export default {
@@ -74,6 +79,7 @@
       vProfileHeader,
       vProfileVideos,
       vProfileSettings,
+      vProfileChannels,
     },
     mixins: [getValidAvatarUrlMixin],
     layout: "default",

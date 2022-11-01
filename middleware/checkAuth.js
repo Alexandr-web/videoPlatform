@@ -16,6 +16,7 @@ export default async ({ store, redirect, }) => {
 
     if (!res.user) {
       store.commit("auth.store/clearToken");
+      store.commit("user.store/clearUser");
 
       return redirect("/auth/login");
     }

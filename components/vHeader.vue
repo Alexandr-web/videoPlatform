@@ -26,6 +26,13 @@
                 :to="item.to"
               >{{ item.title }}</nuxt-link>
             </li>
+            <li class="header__menu-item">
+              <nuxt-link
+                class="header__menu-link"
+                exact-active-class="header__menu-link--active"
+                :to="`/user/${getUser.id}?tab=channels`"
+              >Каналы</nuxt-link>
+            </li>
           </ul>
         </div>
         <div class="header__block header__user">
@@ -60,10 +67,7 @@
         {
           title: "Загрузить",
           to: "/load",
-        },
-        {
-          title: "Каналы",
-          to: "/channels",
+          id: "load",
         }
       ],
       search: "",
