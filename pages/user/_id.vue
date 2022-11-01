@@ -91,7 +91,7 @@
       const res = store.dispatch("user.store/getOne", id);
       const currentUser = store.getters["user.store/getUser"];
       const possibleQueryWaysForGuest = ["videos", "channels"];
-      const possibleQueryWaysForOwner = ["videos", "settings", "controls", "channels"];
+      const possibleQueryWaysForOwner = ["videos", "settings", "channels"];
 
       return res
         .then(({ ok, user, }) => {
@@ -116,11 +116,6 @@
         {
           name: "Настройки",
           to: "?tab=settings",
-          onlyOwner: true,
-        },
-        {
-          name: "Управление",
-          to: "?tab=controls",
           onlyOwner: true,
         },
         {

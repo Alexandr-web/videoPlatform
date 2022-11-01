@@ -66,9 +66,9 @@
     head: { title: "Загрузка видео", },
     methods: {
       loadVideo(data) {
-        if (Object.keys(this.fields).length !== Object.keys(data).length) {
+        if (Object.keys(this.fields).length !== Object.keys(data).length - 1) {
           this.resRequest = {
-            message: "Все поля должны быть заполнены правильн",
+            message: "Все поля должны быть заполнены правильно",
             type: "error",
           };
         } else {

@@ -174,8 +174,6 @@
           .keys(this.dataForm)
           .filter((key) => {
             const itemForm = this.dataForm[key];
-
-            console.log(this.fields[key].isMatchRegexp(itemForm["file" in itemForm ? "file" : "model"]), itemForm["file" in itemForm ? "file" : "model"]);
             
             return this.fields[key].isMatchRegexp(itemForm["file" in itemForm ? "file" : "model"]);
           })

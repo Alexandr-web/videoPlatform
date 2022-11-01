@@ -11,17 +11,22 @@
           :card="video"
         />
       </ul>
+      <vNothing v-else />
     </div>
   </main>
 </template>
 
 <script>
   import vVideoCard from "@/components/vVideoCard";
+  import vNothing from "@/components/vNothing";
   import getValidUrlDataFileMixin from "@/mixins/getValidUrlDataFile";
 
   export default {
     name: "MainPage",
-    components: { vVideoCard, },
+    components: {
+      vVideoCard,
+      vNothing,
+    },
     mixins: [getValidUrlDataFileMixin],
     layout: "default",
     data: () => ({ videos: [], }),

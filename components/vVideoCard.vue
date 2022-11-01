@@ -9,9 +9,7 @@
           class="video-card__poster"
           :src="card.poster"
         >
-        <div class="video-card__time">
-          {{ card.time }}
-        </div>
+        <div class="video-card__time">{{ card.time }}</div>
       </div>
       <div class="video-card__info">
         <header class="video-card__info-header">
@@ -19,14 +17,10 @@
             <vViewsIcon :classes="['video-card__views-icon']" />
             {{ card.views }}
           </div>
-          <div class="video-card__date">
-            {{ card.date }}
-          </div>
+          <div class="video-card__date">{{ card.date }}</div>
         </header>
         <div class="video-card__info-main">
-          <h3 class="video-card__title">
-            {{ card.title }}
-          </h3>
+          <h3 class="video-card__title">{{ card.title }}</h3>
         </div>
       </div>
     </nuxt-link>

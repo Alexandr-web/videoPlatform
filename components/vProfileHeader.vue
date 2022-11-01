@@ -9,9 +9,7 @@
             :src="user.avatar"
           >
         </div>
-        <div class="profile__header-nickname">
-          {{ user.nickname }}
-        </div>
+        <div class="profile__header-nickname">{{ user.nickname }}</div>
       </div>
     </div>
   </header>

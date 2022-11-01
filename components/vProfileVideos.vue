@@ -10,16 +10,21 @@
         :card="video"
       />
     </ul>
+    <vNothing v-else />
   </div>
 </template>
 
 <script>
   import vVideoCard from "@/components/vVideoCard";
+  import vNothing from "@/components/vNothing";
   import getValidUrlDataFileMixin from "@/mixins/getValidUrlDataFile";
 
   export default {
     name: "ProfileVideosComponent",
-    components: { vVideoCard, },
+    components: {
+      vVideoCard,
+      vNothing,
+    },
     mixins: [getValidUrlDataFileMixin],
     props: {
       user: {

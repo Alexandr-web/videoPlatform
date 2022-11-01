@@ -10,16 +10,21 @@
         :channel="channel"
       />
     </ul>
+    <vNothing v-else />
   </div>
 </template>
 
 <script>
   import vChannelCard from "@/components/vChannelCard";
+  import vNothing from "@/components/vNothing";
   import getValidAvatarUrlMixin from "@/mixins/getValidAvatarUrl";
 
   export default {
     name: "ProfileChannelsComponent",
-    components: { vChannelCard, },
+    components: {
+      vChannelCard,
+      vNothing,
+    },
     mixins: [getValidAvatarUrlMixin],
     props: {
       user: {

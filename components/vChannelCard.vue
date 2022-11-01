@@ -8,9 +8,7 @@
         class="channel-card__img"
         :src="channel.avatar"
       />
-      <h3 class="channel-card__nickname">
-        {{ channel.nickname }}
-      </h3>
+      <h3 class="channel-card__nickname">{{ channel.nickname }}</h3>
       <div class="channel-card__followers">
         Подписок: 
         {{ getValidNumberFormat(channel.followersId.length) }}

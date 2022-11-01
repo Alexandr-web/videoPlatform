@@ -431,6 +431,17 @@
   }
 }
 
+.nothing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__text {
+    color: $grey;
+    font-family: "Golos UI", sans-serif;
+  }
+}
+
 .profile {
   &__nav {
     display: flex;
