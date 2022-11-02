@@ -28,12 +28,16 @@
           v-if="fields[fieldKey].typeFile === 'img'"
           class="form__file-view"
         >
+          <vLoader
+            v-if="dataForm[fieldKey].loading"
+            :classes="['form__loader-file']"
+          />
           <vCameraIcon
-            v-if="!dataForm[fieldKey].src"
+            v-if="!dataForm[fieldKey].src && !dataForm[fieldKey].loading"
             :classes="['form__file-view-icon']"
           />
           <img
-            v-else
+            v-if="dataForm[fieldKey].src"
             class="form__file-img"
             :class="{
               'form__file-img--avatar': fields[fieldKey].isAvatar,
@@ -45,16 +49,20 @@
           v-if="fields[fieldKey].typeFile === 'video'"
           class="form__file-view"
         >
+          <vLoader
+            v-if="dataForm[fieldKey].loading"
+            :classes="['form__loader-file']"
+          />
           <vVideoIcon
-            v-if="!dataForm[fieldKey].src"
+            v-if="!dataForm[fieldKey].src && !dataForm[fieldKey].loading"
             :classes="['form__file-view-icon']"
           />
           <video
-            v-else
+            v-if="dataForm[fieldKey].src"
             class="form__file-video"
             :src="dataForm[fieldKey].src"
             controls
-            @loadedmetadata="loadVideo($event)"
+            @loadedmetadata="videoIsLoad($event)"
           ></video>
         </div>
       </label>
@@ -110,12 +118,14 @@
 <script>
   import vCameraIcon from "@/components/icons/vCameraIcon";
   import vVideoIcon from "@/components/icons/vVideoIcon";
+  import vLoader from "@/components/vLoader";
 
   export default {
     name: "FormComponent",
     components: {
       vCameraIcon,
       vVideoIcon,
+      vLoader,
     },
     props: {
       classes: {
@@ -164,6 +174,7 @@
             file: null,
             src: "src" in this.fields[key] ? this.fields[key].src : "",
             error: false,
+            loading: false,
           };
         }
       });
@@ -188,7 +199,7 @@
       getValidTimeFormat(time) {
         return `${time < 10 ? "0" + time : time}`;
       },
-      loadVideo(e) {
+      videoIsLoad(e) {
         const s = Math.floor(parseInt(e.target.duration % 60));
         const h = Math.floor(s / 60 / 60);
         const m = Math.floor(s / 60) - (h * 60);
@@ -212,12 +223,20 @@
         if (file) {
           const reader = new FileReader();
 
+          this.setOneKeyAtDataForm(fieldKey, {
+            file: null,
+            src: null,
+            error: false,
+            loading: true,
+          });
+
           reader.readAsDataURL(file);
           reader.addEventListener("load", () => {
             this.setOneKeyAtDataForm(fieldKey, {
               file,
               src: reader.result,
               error: false,
+              loading: false,
             });
           });
           

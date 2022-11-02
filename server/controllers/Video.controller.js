@@ -65,6 +65,28 @@ class Video {
       return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
     }
   }
+
+  async getOne(req, res) {
+    try {
+      if (!req.isAuth) {
+        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
+      }
+
+      const { id, } = req.params;
+
+      if (!id || isNaN(+id)) {
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
+      }
+
+      const video = await VideoModel.findOne({ where: { id, }, });
+
+      return res.status(200).json({ ok: true, video, status: 200, type: "success", });
+    } catch (err) {
+      console.log(err);
+
+      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+    }
+  }
 }
 
 module.exports = new Video();

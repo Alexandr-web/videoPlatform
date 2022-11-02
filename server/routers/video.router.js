@@ -25,5 +25,6 @@ router.post("/load", isAuth, upload.fields([
   }
 ]), videoController.load);
 router.get("/api", videoController.getAll);
+router.get("/api/:id", isAuth, videoController.getOne);
 
 module.exports = router;

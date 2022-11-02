@@ -1,6 +1,6 @@
 <template>
   <div class="default-layout">
-    <vHeader />
+    <vHeader v-if="!getFullscreen" />
     <Nuxt />
   </div>
 </template>
@@ -12,5 +12,10 @@
     name: "DefaultLayout",
     components: { vHeader, },
     middleware: "checkAuth",
+    computed: {
+      getFullscreen() {
+        return this.$store.getters["video.store/getFullscreen"];
+      },
+    },
   };
 </script>
