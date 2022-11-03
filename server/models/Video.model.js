@@ -34,6 +34,10 @@ module.exports = sequelize.define("video", {
     type: DataTypes.TEXT,
     required: true,
   },
+  duration: {
+    type: DataTypes.FLOAT,
+    required: true,
+  },
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,

@@ -10,7 +10,7 @@ class Video {
 
       const body = req.body;
       const files = req.files || {};
-      const requiredParams = ["title", "description", "video", "poster", "time"];
+      const requiredParams = ["title", "description", "video", "poster", "time", "duration"];
 
       if (!Object.keys({ ...body, ...files, }).every((key) => requiredParams.includes(key))) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });

@@ -7,7 +7,7 @@
           :fields="fields"
           :text-button="textButton"
           :pending="pending"
-          :get-video-time="true"
+          :is-video="true"
           :res-request="resRequest"
           @sendReq="loadVideo"
         />
@@ -66,7 +66,9 @@
     head: { title: "Загрузка видео", },
     methods: {
       loadVideo(data) {
-        if (Object.keys(this.fields).length !== Object.keys(data).length - 1) {
+        const isContainsRequiredItems = Object.keys(this.fields).every((key) => data[key]);
+
+        if (!isContainsRequiredItems) {
           this.resRequest = {
             message: "Все поля должны быть заполнены правильно",
             type: "error",

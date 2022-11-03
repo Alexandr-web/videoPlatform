@@ -9,8 +9,9 @@
       <video
         ref="video"
         class="videoplayer__video"
-        autoplay
-        src="https://cdn.coverr.co/videos/coverr-autumn-lisbon-5773/1080p.mp4"
+        :poster="getVideo.poster"
+        :src="getVideo.src"
+        @timeupdate="timeupdateHandler"
       ></video>
       <div
         class="videoplayer__controls"
@@ -19,11 +20,11 @@
         }"
       >
         <div class="videoplayer__progress">
-          <div class="videoplayer__progress-time">01:04</div>
+          <div class="videoplayer__progress-time">{{ getVideo.currentTime }}</div>
           <div class="videoplayer__progress-line">
             <div class="videoplayer__progress-slider"></div>
           </div>
-          <div class="videoplayer__progress-time">10:00</div>
+          <div class="videoplayer__progress-time">{{ getVideo.duration }}</div>
         </div>
         <div class="videoplayer__controls-block videoplayer__controls-volume">
           <button class="videoplayer__btn">
@@ -71,6 +72,7 @@
   import vFullScreenIcon from "@/components/icons/vFullScreenIcon";
   import vPrevIcon from "@/components/icons/vPrevIcon";
   import vNextIcon from "@/components/icons/vNextIcon";
+  import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
 
   export default {
     name: "VideoplayerComponent",
@@ -82,6 +84,7 @@
       vNextIcon,
       vPrevIcon,
     },
+    mixins: [getValidTimeFormatMixin],
     props: {
       simplyFunctionality: {
         type: Boolean,
@@ -97,6 +100,9 @@
       },
       getVideo() {
         return this.$store.getters["video.store/getVideo"];
+      },
+      getVideoElement() {
+        return this.$refs.video;
       },
     },
     watch: {
@@ -122,6 +128,19 @@
           } else if (document.msExitFullscreen) {
             document.msExitFullscreen();
           }
+      },
+    },
+    methods: {
+      timeupdateHandler() {
+        const { duration, currentTime, } = this.getVideoElement;
+        const validDurationTimeFormat = this.getValidTimeFormat(duration - currentTime);
+        const validCurrentTimeFormat = this.getValidTimeFormat(currentTime);
+
+        this.$store.commit("video.store/setVideo", {
+          ...this.getVideo,
+          duration: validDurationTimeFormat,
+          currentTime: validCurrentTimeFormat,
+        });
       },
     },
   };

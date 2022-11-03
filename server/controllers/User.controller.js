@@ -13,7 +13,7 @@ class User {
       }
 
       const user = await UserModel.findOne({ where: { id, }, });
-      const userData = Object
+      const userData = user ? Object
         .keys(user.dataValues)
         .reduce((acc, key) => {
           if (key !== "password") {
@@ -21,7 +21,7 @@ class User {
           }
 
           return acc;
-        }, {});
+        }, {}) : null;
 
       return res.status(200).json({ ok: true, user: userData, status: 200, type: "success", });
     } catch (err) {

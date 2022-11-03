@@ -119,6 +119,7 @@
   import vCameraIcon from "@/components/icons/vCameraIcon";
   import vVideoIcon from "@/components/icons/vVideoIcon";
   import vLoader from "@/components/vLoader";
+  import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
 
   export default {
     name: "FormComponent",
@@ -127,6 +128,7 @@
       vVideoIcon,
       vLoader,
     },
+    mixins: [getValidTimeFormatMixin],
     props: {
       classes: {
         type: Array,
@@ -144,7 +146,7 @@
         type: Boolean,
         required: true,
       },
-      getVideoTime: {
+      isVideo: {
         type: Boolean,
         default: false,
       },
@@ -158,7 +160,10 @@
     },
     data: () => ({
       dataForm: {},
-      videoTime: "",
+      video: {
+        time: "",
+        duration: 0,
+      },
     }),
     computed: {
       getFieldsKeys() {
@@ -194,17 +199,11 @@
             return acc;
           }, {});
 
-        this.$emit("sendReq", this.getVideoTime ? { ...data, time: this.videoTime, } : data);
-      },
-      getValidTimeFormat(time) {
-        return `${time < 10 ? "0" + time : time}`;
+        this.$emit("sendReq", this.isVideo ? { ...data, ...this.video, } : data);
       },
       videoIsLoad(e) {
-        const s = Math.floor(parseInt(e.target.duration % 60));
-        const h = Math.floor(s / 60 / 60);
-        const m = Math.floor(s / 60) - (h * 60);
-
-        this.videoTime = `${this.getValidTimeFormat(h)}:${this.getValidTimeFormat(m)}:${this.getValidTimeFormat(s)}`;
+        this.video.time = this.getValidTimeFormat(e.target.duration);
+        this.video.duration = e.target.duration;
       },
       setOneKeyAtDataForm(key, val) {
         this.dataForm = Object.keys(this.dataForm).reduce((acc, dataKey) => {

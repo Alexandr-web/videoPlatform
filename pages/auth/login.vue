@@ -65,8 +65,9 @@
     head: { title: "Вход", },
     methods: {
       login(data) {
-        console.log(data, this.fields);
-        if (Object.keys(this.fields).length !== Object.keys(data).length) {
+        const isContainsRequiredItems = Object.keys(this.fields).every((key) => key in data);
+        
+        if (!isContainsRequiredItems) {
           this.resRequest = {
             message: "Все поля должны быть заполнены правильно",
             type: "error",
