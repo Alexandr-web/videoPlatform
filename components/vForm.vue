@@ -170,6 +170,7 @@
         return Object.keys(this.fields);
       },
     },
+    // Creating similar elements in the dataForm object that contain the keys needed to check the validation
     created() {
       Object.keys(this.fields).map((key) => {
         if (this.fields[key].type !== "file") {
@@ -185,6 +186,7 @@
       });
     },
     methods: {
+      // Sends values that pass validation
       sendReq() {
         const data = Object
           .keys(this.dataForm)
@@ -201,10 +203,16 @@
 
         this.$emit("sendReq", this.isVideo ? { ...data, ...this.video, } : data);
       },
+      // Assigns the time and duration of the video when it is fully loaded
       videoIsLoad(e) {
         this.video.time = this.getValidTimeFormat(e.target.duration);
         this.video.duration = e.target.duration;
       },
+      /**
+       * Replacing the value of the dataForm element by key
+       * @param {string} key dataForm object key
+       * @param {string} val The new value for the element of the dataForm object
+       */
       setOneKeyAtDataForm(key, val) {
         this.dataForm = Object.keys(this.dataForm).reduce((acc, dataKey) => {
           if (dataKey !== key) {
@@ -216,6 +224,11 @@
           return acc;
         }, {});
       },
+      /**
+       * Loads a file and puts its data into the dataForm[fieldKey] element
+       * @param {object} e Event object
+       * @param {string} fieldKey Element key of the dataForm object
+       */
       loadFile(e, fieldKey) {
         const file = e.currentTarget.files[0];
 

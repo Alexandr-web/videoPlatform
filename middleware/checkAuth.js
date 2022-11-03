@@ -1,6 +1,11 @@
 import jwtDecode from "jwt-decode";
 import getValidAvatarUrl from "../helpers/getValidAvatarUrl";
 
+/**
+ * This middleware is used on all pages, except pages with authorization
+ * Checks if the user is logged in
+ * Also, if the user exists, then set it to the store with a valid avatar
+ */
 export default async ({ store, redirect, }) => {
   try {
     store.dispatch("auth.store/autoLogin");
@@ -21,19 +26,14 @@ export default async ({ store, redirect, }) => {
       return redirect("/auth/login");
     }
 
-    const { id, } = data;
-    const { ok, user, } = await store.dispatch("user.store/getOne", id);
-
-    if (ok) {
-      getValidAvatarUrl(user.avatar).then((avatar) => {
-        store.commit("user.store/setUser", {
-          ...user,
-          avatar,
-        });
-      }).catch((err) => {
-        throw err;
+    getValidAvatarUrl(res.user.avatar).then((avatar) => {
+      store.commit("user.store/setUser", {
+        ...res.user,
+        avatar,
       });
-    }
+    }).catch((err) => {
+      throw err;
+    });
   } catch (err) {
     throw err;
   }

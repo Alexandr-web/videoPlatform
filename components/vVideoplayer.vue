@@ -156,6 +156,10 @@
       },
     },
     watch: {
+      /**
+       * Changing the state of full screen mode
+       * @param {boolean} val The new value of the fullscreen key
+       */
       getFullscreen(val) {
         const page = document.documentElement;
 
@@ -179,6 +183,10 @@
             document.msExitFullscreen();
           }
       },
+      /**
+       * Change video state
+       * @param {boolean} play The new value of the play key
+       */
       getPlay(play) {
         const video = this.getVideoElement;
 
@@ -203,9 +211,17 @@
           }
         }
       },
+      /**
+       * Changing the video muting state
+       * @param {boolean} isMute The new value of the mute key
+       */
       getMute(isMute) {
         this.getVideoElement.muted = isMute;
       },
+      /**
+       * Changing the audio status of a video
+       * @param {boolean} volume The new value of the mute key
+       */
       getVolume(volume) {
         this.getVideoElement.volume = volume;
         this.$store.commit("video.store/setMute", false);
@@ -223,6 +239,10 @@
       endedHandler() {
         this.$store.commit("video.store/setPlay", false);
       },
+      /**
+       * Setting sound value on click on a line
+       * @param {object} e Event object
+       */
       setVolumeByClick(e) {
         const widthLine = e.currentTarget.offsetWidth;
         const x = e.layerX;
@@ -234,6 +254,10 @@
           this.$store.commit("video.store/setVolume", volume);
         }
       },
+      /**
+       * Set the current time of the video by clicking on the line
+       * @param {object} e Event object
+       */
       setDistanceVideoByClick(e) {
         if (!this.loading) {
           const widthLine = e.currentTarget.offsetWidth;
@@ -247,13 +271,13 @@
           }
         }
       },
+      // Changing the current video time
       timeupdateHandler() {
         const { duration, currentTime, } = this.getVideoElement;
         const validDurationTimeFormat = this.getValidTimeFormat(duration - currentTime);
         const validCurrentTimeFormat = this.getValidTimeFormat(currentTime);
         
         this.distanceVideo = Math.ceil((currentTime / duration) * 100);
-
         this.$store.commit("video.store/setVideo", {
           ...this.getVideo,
           duration: validDurationTimeFormat,

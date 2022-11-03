@@ -43,6 +43,7 @@
           followings.map((following) => {
             const { avatar, } = following;
 
+            // Filling channels with a valid avatar url
             this.getValidAvatarUrl(avatar)
               .then((newAvatar) => {
                 this.channels.push({

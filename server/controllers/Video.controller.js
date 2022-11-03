@@ -2,6 +2,7 @@ const VideoModel = require("../models/Video.model");
 const User = require("../models/User.model");
 
 class Video {
+  // Upload video file
   async load(req, res) {
     try {
       if (!req.isAuth) {
@@ -12,6 +13,7 @@ class Video {
       const files = req.files || {};
       const requiredParams = ["title", "description", "video", "poster", "time", "duration"];
 
+      // When requesting, there must be required data
       if (!Object.keys({ ...body, ...files, }).every((key) => requiredParams.includes(key))) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
@@ -33,9 +35,12 @@ class Video {
     }
   }
 
+  // Get all videos
   async getAll(req, res) {
     try {
       const allVideos = await VideoModel.findAll();
+
+      // Getting video data (author, title, description, ...)
       const promises = allVideos.map((video) => {
         return User.findOne({ where: { id: video.userId, }, })
           .then(({ id, nickname, }) => {
@@ -65,6 +70,7 @@ class Video {
     }
   }
 
+  // Get video by id
   async getOne(req, res) {
     try {
       if (!req.isAuth) {
@@ -87,6 +93,7 @@ class Video {
     }
   }
 
+  // Setting the view for video
   async setView(req, res) {
     try {
       if (!req.isAuth) {

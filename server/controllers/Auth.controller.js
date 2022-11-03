@@ -3,10 +3,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 class Auth {
+  // User registration in the system
   async registration(req, res) {
     try {
       const body = req.body;
 
+      // When requesting, there must be required data
       if (!Object.keys(body).every((key) => ["nickname", "email", "password"].includes(key)) || !req.file) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
@@ -18,6 +20,7 @@ class Auth {
         return res.status(400).json({ ok: false, message: "Такой пользователь уже существует", status: 400, type: "error", });
       }
 
+      // Adding a hashed password
       const hashPassword = await bcrypt.hash(password, 7);
       const userData = {
         ...body,
@@ -35,10 +38,12 @@ class Auth {
     }
   }
 
+  // User login and creation of his personal token
   async login(req, res) {
     try {
       const body = req.body;
 
+      // When requesting, there must be required data
       if (!Object.keys(body).every((key) => ["email", "password"].includes(key))) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
@@ -56,13 +61,14 @@ class Auth {
         return res.status(400).json({ ok: false, message: "Неверный пароль", status: 400, type: "error", });
       }
 
+      // We save all data in the token, except for the password
       const userData = Object
         .keys(user.dataValues)
         .reduce((acc, key) => {
           if (key !== "password") {
             acc[key] = user.dataValues[key];
           }
-          
+
           return acc;
         }, {});
       const token = jwt.sign(userData, process.env.SECRET_KEY, { expiresIn: Math.floor(Date.now() / 1000) + (60 * 60), });

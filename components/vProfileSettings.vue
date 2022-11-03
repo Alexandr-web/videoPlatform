@@ -64,6 +64,7 @@
         message: "",
       },
     }),
+    // Defining a default value depending on the element type of the fields object
     created() {
       Object.keys(this.user).map((key) => {
         if (key in this.fields) {
@@ -81,12 +82,20 @@
       });
     },
     methods: {
+      /**
+       * Initializing an error by passing its message to the resRequest object, which prints the message
+       * @param {string} errMessage Error message
+       */
       setError(errMessage) {
         this.resRequest = {
           message: errMessage,
           type: "error",
         };
       },
+      /**
+       * Submits a profile change request
+       * @param {object} data Data that was validated when filling out the form
+       */
       edit(data) {
         if (!Object.keys(data).length) {
           this.resRequest = {
@@ -98,6 +107,7 @@
           const fd = new FormData();
           const { id: userId, } = this.user;
           
+          // Filling formData
           Object.keys(data).map((key) => fd.append(key, data[key]["model" in data[key] ? "model" : "file"]));
 
           const res = this.$store.dispatch("user.store/edit", { token, fd, id: userId, });

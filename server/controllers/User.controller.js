@@ -4,6 +4,7 @@ const removeFile = require("../helpers/removeFile");
 const bcrypt = require("bcrypt");
 
 class User {
+  // Get user by id
   async getOne(req, res) {
     try {
       const { id, } = req.params;
@@ -13,6 +14,8 @@ class User {
       }
 
       const user = await UserModel.findOne({ where: { id, }, });
+
+      // We get everything except the password
       const userData = user ? Object
         .keys(user.dataValues)
         .reduce((acc, key) => {
@@ -31,6 +34,7 @@ class User {
     }
   }
 
+  // Getting a user's video by its id
   async getVideos(req, res) {
     try {
       if (!req.isAuth) {
@@ -54,6 +58,7 @@ class User {
     }
   }
 
+  // Getting followers of a user
   async getFollowers(req, res) {
     try {
       if (!req.isAuth) {
@@ -76,6 +81,7 @@ class User {
 
       return Promise.all(followersPromises)
         .then((followers) => {
+          // We take only nickname, id, followersId, avatar
           const validFollowers = followers.map(({ nickname, id: followerId, followersId, avatar, }) => {
             return { nickname, id: followerId, followersId, avatar, };
           });
@@ -93,6 +99,7 @@ class User {
     }
   }
 
+  // Getting followings of a user
   async getFollowings(req, res) {
     try {
       if (!req.isAuth) {
@@ -112,6 +119,8 @@ class User {
       }
 
       const allUsers = await UserModel.findAll();
+
+      // We take only nickname, id, followersId, avatar
       const followings = allUsers
         .filter(({ followersId, }) => followersId.includes(+id))
         .map(({ nickname, id: followingId, followersId, avatar, }) => {
@@ -126,6 +135,7 @@ class User {
     }
   }
 
+  // Changing user data
   async edit(req, res) {
     try {
       if (!req.isAuth) {
@@ -140,6 +150,7 @@ class User {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
+      // When requesting, there must be required data
       if (!Object.keys(body).some((key) => ["nickname", "email", "password"].includes(key)) && !file) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
@@ -154,6 +165,7 @@ class User {
         return res.status(403).json({ ok: false, message: "Нет доступа", status: 403, type: "error", });
       }
 
+      // All data that needs to be changed will be stored here.
       const userData = {};
 
       Object.keys(body).map((key) => {
@@ -163,9 +175,11 @@ class User {
       });
 
       if ("password" in body) {
+        // Setting a hashed password
         userData.password = await bcrypt.hash(body.password, 7);
       }
 
+      // If there is a file, then delete the old one
       if (file) {
         await removeFile([__dirname, "../../", "avatars", user.avatar], res);
 
@@ -182,6 +196,7 @@ class User {
     }
   }
 
+  // Follow the user
   async setFollowing(req, res) {
     try {
       if (!req.isAuth) {
@@ -208,8 +223,10 @@ class User {
       let isFollowing = false;
 
       if (alreadyFollowing) {
+        // Unsubscribe the user from the channel if he is already subscribed to it
         copyFollowingUserFollowersId = copyFollowingUserFollowersId.filter((id) => id !== +currentUserId);
       } else {
+        // Signing if not already signed
         copyFollowingUserFollowersId.push(+currentUserId);
 
         isFollowing = true;
