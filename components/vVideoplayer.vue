@@ -13,7 +13,19 @@
         :src="getVideo.src"
         @timeupdate="timeupdateHandler"
         @ended="endedHandler"
+        @progress="loading = true"
+        @stalled="loading = true"
+        @waiting="loading = true"
+        @loadedmetadata="loading = false"
+        @canplaythrough="loading = false"
+        @playing="loading = false"
       ></video>
+      <div
+        v-if="loading"
+        class="videoplayer__wrapper"
+      >
+        <vLoader />
+      </div>
       <div
         class="videoplayer__controls"
         :class="{
@@ -63,7 +75,7 @@
           </button>
           <button
             class="videoplayer__btn"
-            @click="$store.commit('video.store/setPlay', !getPlay)"
+            @click="setPlay"
           >
             <vPauseIcon
               v-if="getPlay"
@@ -99,6 +111,7 @@
   import vPrevIcon from "@/components/icons/vPrevIcon";
   import vNextIcon from "@/components/icons/vNextIcon";
   import vMuteVolumeIcon from "@/components/icons/vMuteVolumeIcon";
+  import vLoader from "@/components/vLoader";
   import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
 
   export default {
@@ -111,9 +124,13 @@
       vNextIcon,
       vPrevIcon,
       vMuteVolumeIcon,
+      vLoader,
     },
     mixins: [getValidTimeFormatMixin],
-    data: () => ({ distanceVideo: 0, }),
+    data: () => ({
+      distanceVideo: 0,
+      loading: false,
+    }),
     computed: {
       getPlay() {
         return this.$store.getters["video.store/getPlay"];
@@ -162,17 +179,23 @@
         const video = this.getVideoElement;
 
         if (video) {
+          this.loading = true;
+
           const promise = fetch(video.src)
             .then((res) => res.blob())
-            .then(() => video.play());
+            .then(() => {
+              this.loading = false;
+              video.play();
+            });
             
           if (promise !== undefined) {
-            promise.then(() => {
-              video[play ? "play" : "pause"]();
-            })
-            .catch((err) => {
-              throw err;
-            });
+            promise
+              .then(() => {
+                this.loading = false;
+                video[play ? "play" : "pause"]();
+              }).catch((err) => {
+                throw err;
+              });
           }
         }
       },
@@ -184,7 +207,15 @@
         this.$store.commit("video.store/setMute", false);
       },
     },
+    beforeDestroy() {
+      this.$store.commit("video.store/setPlay", false);
+    },
     methods: {
+      setPlay() {
+        if (!this.loading) {
+          this.$store.commit("video.store/setPlay", !this.getPlay);
+        }
+      },
       endedHandler() {
         this.$store.commit("video.store/setPlay", false);
       },
@@ -200,14 +231,16 @@
         }
       },
       setDistanceVideoByClick(e) {
-        const widthLine = e.currentTarget.offsetWidth;
-        const x = e.layerX;
+        if (!this.loading) {
+          const widthLine = e.currentTarget.offsetWidth;
+          const x = e.layerX;
 
-        if (x >= 0 && x <= widthLine) {
-          const duration = this.getVideoElement.duration;
+          if (x >= 0 && x <= widthLine) {
+            const duration = this.getVideoElement.duration;
 
-          this.distanceVideo = Math.ceil((x / widthLine) * 100);
-          this.getVideoElement.currentTime = (this.distanceVideo * duration) / 100;
+            this.distanceVideo = Math.ceil((x / widthLine) * 100);
+            this.getVideoElement.currentTime = (this.distanceVideo * duration) / 100;
+          }
         }
       },
       timeupdateHandler() {

@@ -15,7 +15,7 @@
         <header class="video-card__info-header">
           <div class="video-card__views">
             <vViewsIcon :classes="['video-card__views-icon']" />
-            {{ card.views }}
+            {{ getValidNumberFormat(card.views) }}
           </div>
           <div class="video-card__date">{{ card.date }}</div>
         </header>
@@ -37,10 +37,12 @@
 
 <script>
   import vViewsIcon from "@/components/icons/vViewsIcon";
+  import getValidNumberFormatMixin from "@/mixins/getValidNumberFormat";
 
   export default {
     name: "VideoCardComponent",
     components: { vViewsIcon, },
+    mixins: [getValidNumberFormatMixin],
     props: {
       card: {
         type: Object,

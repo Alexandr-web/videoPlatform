@@ -36,6 +36,23 @@ export default {
     getVolume: (state) => state.volume,
   },
   actions: {
+    async setView({ }, { videoId, token, }) {
+      try {
+        const res = await fetch(`${host}/video/${videoId}/view`, {
+          method: "PUT",
+          headers: {
+            "Accept-Type": "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
+
     async load({ }, { fd, token, }) {
       try {
         const res = await fetch(`${host}/video/load`, {

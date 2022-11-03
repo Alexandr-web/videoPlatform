@@ -42,6 +42,8 @@
         const { id, } = this.$route.params;
         const { ok, video, } = await this.$store.dispatch("video.store/getOne", { token, id, });
 
+        await this.$store.dispatch("video.store/setView", { token, videoId: id, });
+
         if (ok) {
           const { poster: videoPoster, src: srcVideo, } = video;
           const poster = await this.getValidUrlDataFile(videoPoster);
