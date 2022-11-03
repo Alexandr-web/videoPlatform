@@ -13,6 +13,7 @@
             :pending="pending"
             :res-request="resRequest"
             @sendReq="login"
+            @setError="setError"
           />
           <div class="auth__callout">
             <p class="auth__callout-desc">
@@ -64,6 +65,12 @@
     }),
     head: { title: "Вход", },
     methods: {
+      setError(errMessage) {
+        this.resRequest = {
+          message: errMessage,
+          type: "error",
+        };
+      },
       login(data) {
         const isContainsRequiredItems = Object.keys(this.fields).every((key) => key in data);
         

@@ -12,6 +12,7 @@
         :poster="getVideo.poster"
         :src="getVideo.src"
         @timeupdate="timeupdateHandler"
+        @ended="endedHandler"
       ></video>
       <div
         class="videoplayer__controls"
@@ -21,24 +22,49 @@
       >
         <div class="videoplayer__progress">
           <div class="videoplayer__progress-time">{{ getVideo.currentTime }}</div>
-          <div class="videoplayer__progress-line">
-            <div class="videoplayer__progress-slider"></div>
+          <div
+            class="videoplayer__progress-line"
+            @click="setDistanceVideoByClick($event)"
+          >
+            <div
+              class="videoplayer__progress-slider"
+              :style="{ 'width': `${distanceVideo}%`, }"
+            ></div>
           </div>
           <div class="videoplayer__progress-time">{{ getVideo.duration }}</div>
         </div>
         <div class="videoplayer__controls-block videoplayer__controls-volume">
-          <button class="videoplayer__btn">
-            <vVolumeIcon :classes="['videoplayer__icon', 'videoplayer__icon-volume']" />
+          <button
+            class="videoplayer__btn"
+            @click="$store.commit('video.store/setMute', !getMute)"
+          >
+            <vVolumeIcon
+              v-if="!getMute"
+              :classes="['videoplayer__icon', 'videoplayer__icon-volume']"
+            />
+            <vMuteVolumeIcon
+              v-else
+              :classes="['videoplayer__icon', 'videoplayer__icon-mute-volume']"
+            />
           </button>
-          <div class="videoplayer__volume-line">
-            <div class="videoplayer__volume-slider"></div>
+          <div
+            class="videoplayer__volume-line"
+            @click="setVolumeByClick($event)"
+          >
+            <div
+              class="videoplayer__volume-slider"
+              :style="{ 'width': `${(getVolume / 1) * 100}%` }"
+            ></div>
           </div>
         </div>
         <div class="videoplayer__controls-block videoplayer__controls-state">
           <button class="videoplayer__btn">
             <vPrevIcon :classes="['videoplayer__icon', 'videoplayer__icon-prev']" />
           </button>
-          <button class="videoplayer__btn">
+          <button
+            class="videoplayer__btn"
+            @click="$store.commit('video.store/setPlay', !getPlay)"
+          >
             <vPauseIcon
               v-if="getPlay"
               :classes="['videoplayer__icon', 'videoplayer__icon-pause']"
@@ -72,6 +98,7 @@
   import vFullScreenIcon from "@/components/icons/vFullScreenIcon";
   import vPrevIcon from "@/components/icons/vPrevIcon";
   import vNextIcon from "@/components/icons/vNextIcon";
+  import vMuteVolumeIcon from "@/components/icons/vMuteVolumeIcon";
   import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
 
   export default {
@@ -83,14 +110,10 @@
       vFullScreenIcon,
       vNextIcon,
       vPrevIcon,
+      vMuteVolumeIcon,
     },
     mixins: [getValidTimeFormatMixin],
-    props: {
-      simplyFunctionality: {
-        type: Boolean,
-        default: true,
-      },
-    },
+    data: () => ({ distanceVideo: 0, }),
     computed: {
       getPlay() {
         return this.$store.getters["video.store/getPlay"];
@@ -100,6 +123,12 @@
       },
       getVideo() {
         return this.$store.getters["video.store/getVideo"];
+      },
+      getMute() {
+        return this.$store.getters["video.store/getMute"];
+      },
+      getVolume() {
+        return this.$store.getters["video.store/getVolume"];
       },
       getVideoElement() {
         return this.$refs.video;
@@ -129,12 +158,64 @@
             document.msExitFullscreen();
           }
       },
+      getPlay(play) {
+        const video = this.getVideoElement;
+
+        if (video) {
+          const promise = fetch(video.src)
+            .then((res) => res.blob())
+            .then(() => video.play());
+            
+          if (promise !== undefined) {
+            promise.then(() => {
+              video[play ? "play" : "pause"]();
+            })
+            .catch((err) => {
+              throw err;
+            });
+          }
+        }
+      },
+      getMute(isMute) {
+        this.getVideoElement.muted = isMute;
+      },
+      getVolume(volume) {
+        this.getVideoElement.volume = volume;
+        this.$store.commit("video.store/setMute", false);
+      },
     },
     methods: {
+      endedHandler() {
+        this.$store.commit("video.store/setPlay", false);
+      },
+      setVolumeByClick(e) {
+        const widthLine = e.currentTarget.offsetWidth;
+        const x = e.layerX;
+
+        if (x >= 0 && x <= widthLine) {
+          const percent = Math.ceil((x / widthLine) * 100);
+          const volume = (percent * 1) / 100;
+
+          this.$store.commit("video.store/setVolume", volume);
+        }
+      },
+      setDistanceVideoByClick(e) {
+        const widthLine = e.currentTarget.offsetWidth;
+        const x = e.layerX;
+
+        if (x >= 0 && x <= widthLine) {
+          const duration = this.getVideoElement.duration;
+
+          this.distanceVideo = Math.ceil((x / widthLine) * 100);
+          this.getVideoElement.currentTime = (this.distanceVideo * duration) / 100;
+        }
+      },
       timeupdateHandler() {
         const { duration, currentTime, } = this.getVideoElement;
         const validDurationTimeFormat = this.getValidTimeFormat(duration - currentTime);
         const validCurrentTimeFormat = this.getValidTimeFormat(currentTime);
+        
+        this.distanceVideo = Math.ceil((currentTime / duration) * 100);
 
         this.$store.commit("video.store/setVideo", {
           ...this.getVideo,

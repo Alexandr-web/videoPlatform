@@ -10,6 +10,7 @@
           :is-video="true"
           :res-request="resRequest"
           @sendReq="loadVideo"
+          @setError="setError"
         />
       </div>
     </div>
@@ -45,7 +46,7 @@
             return val instanceof File;
           },
           typeFile: "video",
-          accept: [".mp4"],
+          accept: [".mp4", ".avi", ".mkv"],
         },
         poster: {
           type: "file",
@@ -65,6 +66,12 @@
     }),
     head: { title: "Загрузка видео", },
     methods: {
+      setError(errMessage) {
+        this.resRequest = {
+          message: errMessage,
+          type: "error",
+        };
+      },
       loadVideo(data) {
         const isContainsRequiredItems = Object.keys(this.fields).every((key) => data[key]);
 

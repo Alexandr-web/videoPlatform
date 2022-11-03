@@ -245,6 +245,8 @@
               error: true,
             });
 
+            this.$emit("setError", `Произошла ошибка при скачивании файла: ${reader.error}`);
+
             throw reader.error;
           });
         } else {
@@ -252,6 +254,8 @@
             ...this.dataForm[fieldKey],
             error: true,
           });
+
+          this.$emit("setError", "Произошла ошибка при скачивании файла");
         }
       },
     },

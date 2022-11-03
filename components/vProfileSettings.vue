@@ -7,6 +7,7 @@
       :pending="pending"
       :res-request="resRequest"
       @sendReq="edit"
+      @setError="setError"
     />
   </div>
 </template>
@@ -80,6 +81,12 @@
       });
     },
     methods: {
+      setError(errMessage) {
+        this.resRequest = {
+          message: errMessage,
+          type: "error",
+        };
+      },
       edit(data) {
         if (!Object.keys(data).length) {
           this.resRequest = {

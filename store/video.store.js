@@ -4,6 +4,8 @@ export default {
   state: () => ({
     video: null,
     isPlay: false,
+    mute: false,
+    volume: 0.5,
     fullscreen: false,
   }),
   mutations: {
@@ -19,11 +21,19 @@ export default {
     setFullscreen(state, val) {
       state.fullscreen = val;
     },
+    setMute(state, val) {
+      state.mute = val;
+    },
+    setVolume(state, val) {
+      state.volume = val;
+    },
   },
   getters: {
     getVideo: (state) => state.video,
     getPlay: (state) => state.isPlay,
     getFullscreen: (state) => state.fullscreen,
+    getMute: (state) => state.mute,
+    getVolume: (state) => state.volume,
   },
   actions: {
     async load({ }, { fd, token, }) {

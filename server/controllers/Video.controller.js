@@ -36,22 +36,21 @@ class Video {
   async getAll(req, res) {
     try {
       const allVideos = await VideoModel.findAll();
-      const promises = allVideos.map(({ userId, }) => User.findOne({ where: { id: userId, }, }));
-
-      return Promise.all(promises)
-        .then((data) => {
-          const videos = data.map(({ id, nickname, }) => {
-            const video = allVideos.find(({ userId, }) => userId === id);
-
+      const promises = allVideos.map((video) => {
+        return User.findOne({ where: { id: video.userId, }, })
+          .then(({ id, nickname, }) => {
             return {
               ...video.dataValues,
               author: {
-                nickname,
                 id,
+                nickname,
               },
             };
           });
+      });
 
+      return Promise.all(promises)
+        .then((videos) => {
           return res.status(200).json({ ok: true, status: 200, videos, type: "success", });
         })
         .catch((err) => {
