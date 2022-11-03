@@ -27,7 +27,7 @@ const stylesTask = () => {
 };
 
 const watching = () => {
-  return watch(paths.scss.watchSrc, parallel(stylesTask));
+  watch(paths.scss.watchSrc, parallel(stylesTask));
 };
 
 const buildTask = () => parallel(stylesTask);

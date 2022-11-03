@@ -4,6 +4,8 @@
     :class="{
       'videoplayer--fullscreen': getFullscreen,
     }"
+    @mouseleave="hideControls = true"
+    @mouseenter="hideControls = false"
   >
     <div class="videoplayer__inner">
       <video
@@ -30,6 +32,7 @@
         class="videoplayer__controls"
         :class="{
           'videoplayer__controls--fullscreen': getFullscreen,
+          'videoplayer__controls--hide': hideControls,
         }"
       >
         <div class="videoplayer__progress">
@@ -130,6 +133,7 @@
     data: () => ({
       distanceVideo: 0,
       loading: false,
+      hideControls: false,
     }),
     computed: {
       getPlay() {

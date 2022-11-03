@@ -1,17 +1,15 @@
 <template>
-  <div class="video-page pt-120 pb-20">
-    <div class="container">
-      <div class="video-page__inner">
-        <div
-          class="video-page__video-block"
-          :class="{
-            'video-page__video--fullscreen': getFullscreen,
-          }"
-        >
-          <vVideoplayer v-if="getVideo" />
-        </div>
-        <div class="video-page__info-block"></div>
+  <div class="video-page pt-100 pb-20">
+    <div class="video-page__inner">
+      <div
+        class="video-page__video-block"
+        :class="{
+          'video-page__video--fullscreen': getFullscreen,
+        }"
+      >
+        <vVideoplayer v-if="getVideo" />
       </div>
+      <div class="video-page__info-block"></div>
     </div>
   </div>
 </template>
