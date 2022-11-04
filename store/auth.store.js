@@ -20,6 +20,7 @@ export default {
     },
   },
   actions: {
+    // Checks for the presence of a token in the cookie, and then sets its value to the store if its time has not passed
     async autoLogin({ commit, }) {
       try {
         const cookieStr = process.browser ? document.cookie : this.app.context.req.headers.cookie || "";
@@ -46,7 +47,12 @@ export default {
       }
     },
 
-    async registration({}, fd) {
+    /**
+     * Submits a registration request
+     * @param {object} fd Form data that contains the required parameters for user registration
+     * @returns {promise} Request result
+     */
+    async registration({ }, fd) {
       try {
         const res = await fetch(`${host}/auth/registration`, {
           method: "POST",
@@ -60,6 +66,11 @@ export default {
       }
     },
 
+    /**
+     * Sends a user authorization request
+     * @param {object} fd Form data that contains the required parameters for user login
+     * @returns {promise} Request result
+     */
     async login({ commit, }, fd) {
       try {
         const res = await fetch(`${host}/auth/login`, {
@@ -73,6 +84,7 @@ export default {
 
         const data = await res.json();
 
+        // Set the token in the store
         if (data.ok && data.token) {
           commit("setToken", data.token.replace(/^Bearer\s/, ""));
         }

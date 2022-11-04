@@ -36,6 +36,12 @@ export default {
     getVolume: (state) => state.volume,
   },
   actions: {
+    /**
+     * Sends a request to register a video view
+     * @param {string|number} videoId id of the video to register a new view
+     * @param {string} token User token
+     * @returns {promise} Request result
+     */
     async setView({ }, { videoId, token, }) {
       try {
         const res = await fetch(`${host}/video/${videoId}/view`, {
@@ -53,6 +59,12 @@ export default {
       }
     },
 
+    /**
+     * Sends a request to upload a video
+     * @param {object} fd Form data containing the required parameters for uploading a video
+     * @param {string} token User token
+     * @returns {promise} Request result
+     */
     async load({ }, { fd, token, }) {
       try {
         const res = await fetch(`${host}/video/load`, {
@@ -70,6 +82,7 @@ export default {
       }
     },
 
+    // Gets all videos from the database
     async getAll() {
       try {
         const res = await fetch(`${host}/video/api`, {
@@ -83,6 +96,12 @@ export default {
       }
     },
 
+    /**
+     * Get video by id
+     * @param {string} token User token
+     * @param {string|number} id Id of the video we want to get
+     * @returns {promise} Request result
+     */
     async getOne({ }, { token, id, }) {
       try {
         const res = await fetch(`${host}/video/api/${id}`, {

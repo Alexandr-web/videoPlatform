@@ -14,6 +14,11 @@ export default {
     },
   },
   actions: {
+    /**
+     * Gets a user by their id
+     * @param {number|string} id Id of the user who will be searched for in the database
+     * @returns {promise} Request result
+     */
     async getOne({ }, id) {
       try {
         const res = await fetch(`${host}/user/api/${id}`, {
@@ -27,6 +32,12 @@ export default {
       }
     },
 
+    /**
+     * Gets all user videos
+     * @param {string} token User Token
+     * @param {number|string} id User id
+     * @returns {promise} Request result
+     */
     async getVideos({ }, { token, id, }) {
       try {
         const res = await fetch(`${host}/user/api/${id}/videos`, {
@@ -43,6 +54,12 @@ export default {
       }
     },
 
+    /**
+     * Gets the user's followers
+     * @param {string} token User Token
+     * @param {number|string} id User id
+     * @returns {promise} Request result
+     */
     async getFollowers({ }, { token, id, }) {
       try {
         const res = await fetch(`${host}/user/api/${id}/followers`, {
@@ -59,6 +76,12 @@ export default {
       }
     },
 
+    /**
+     * Gets the user's followings
+     * @param {string} token User Token
+     * @param {number|string} id User id
+     * @returns {promise} Request result
+     */
     async getFollowings({ }, { token, id, }) {
       try {
         const res = await fetch(`${host}/user/api/${id}/followings`, {
@@ -75,6 +98,11 @@ export default {
       }
     },
 
+    /**
+     * Gets data from a token
+     * @param {string} token User Token
+     * @returns {promise} Promise containing token data
+     */
     async getOneByToken({ }, token) {
       try {
         return jwtDecode(token);
@@ -83,6 +111,13 @@ export default {
       }
     },
 
+    /**
+     * Sends a request to change user data
+     * @param {string} token User Token
+     * @param {object} fd Form data containing the necessary parameters for editing user data
+     * @param {number|string} id User id
+     * @returns {promise} Request result
+     */
     async edit({ }, { token, fd, id, }) {
       try {
         const res = await fetch(`${host}/user/${id}/edit`, {
@@ -100,6 +135,13 @@ export default {
       }
     },
 
+    /**
+     * Sends a following request
+     * @param {string} token User Token
+     * @param {string|number} currentUserId id of the user who wants to follow
+     * @param {string|number} followingUserId id of the user he want to follow
+     * @returns {promise} Request result
+     */
     async setFollowing({ }, { token, currentUserId, followingUserId, }) {
       try {
         const res = await fetch(`${host}/user/${currentUserId}/following/${followingUserId}`, {
