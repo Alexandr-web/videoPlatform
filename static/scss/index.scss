@@ -790,6 +790,108 @@
     top: 0;
     left: 0;
   }
+
+  &__info {
+    &-rate {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &-icon {
+        fill: $grey;
+        transition: fill .3s;
+      }
+
+      &-count {
+        margin-right: 10px;
+        font-size: 14px;
+        font-family: "Roboto Mono", sans-serif;
+      }
+
+      &-btn {
+        cursor: pointer;
+        border: none;
+        background: $dark;
+        padding: 10px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 45px;
+        height: 45px;
+
+        &:hover {
+          @extend .video-page__info-rate-btn--active;
+        }
+
+        &--active {
+          & > svg {
+            fill: $white;
+          }
+        }
+      }
+
+      &-block {
+        display: flex;
+        align-items: center;
+
+        &:not(:last-child) {
+          margin-right: 25px;
+        }
+      }
+    }
+
+    &-block {
+      margin-top: 15px;
+    }
+
+    &-header {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 10px;
+      background: $black;
+      position: sticky;
+      top: 120px;
+      z-index: 999;
+
+      &-subscribe-block {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+
+    &-main {
+      margin-top: 10px;
+    }
+
+    &-desc {
+      line-height: 25px;
+      font-size: 18px;
+    }
+
+    &-user {
+      &-link {
+        display: inline-flex;
+        align-items: center;
+        color: $blue;
+      }
+
+      &-avatar {
+        margin-right: 8px;
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+
+      &-nickname {
+        font-family: "Roboto Mono";
+      }
+    }
+  }
 }
 
 .loader {
@@ -799,6 +901,22 @@
   border-left: 2px solid $red;
   animation: rotateCircle 1s infinite;
   transform: rotateZ(0deg);
+}
+
+.follow-btn {
+  border: 2px solid $red;
+  color: $red;
+  background: transparent;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Golos UI", sans-serif;
+
+  &--disabled {
+    opacity: .8;
+    color: $grey;
+    border-color: $grey;
+  }
 }
 
 .pt-120 {

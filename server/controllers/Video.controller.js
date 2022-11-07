@@ -84,8 +84,22 @@ class Video {
       }
 
       const video = await VideoModel.findOne({ where: { id, }, });
+      const author = await User.findOne({ where: { id: video.userId, }, });
+      const authorData = Object
+        .keys(author.dataValues)
+        .filter((key) => ["id", "nickname", "avatar", "followersId"].includes(key))
+        .reduce((acc, key) => {
+          acc[key] = author.dataValues[key];
 
-      return res.status(200).json({ ok: true, video, status: 200, type: "success", });
+          return acc;
+        }, {});
+
+      const videoData = {
+        ...video.dataValues,
+        author: authorData,
+      };
+
+      return res.status(200).json({ ok: true, video: videoData, status: 200, type: "success", });
     } catch (err) {
       console.log(err);
 

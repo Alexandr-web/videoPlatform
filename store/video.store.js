@@ -23,9 +23,13 @@ export default {
     },
     setMute(state, val) {
       state.mute = val;
+
+      localStorage.setItem("mute", val);
     },
     setVolume(state, val) {
       state.volume = val;
+
+      localStorage.setItem("volume", val);
     },
   },
   getters: {

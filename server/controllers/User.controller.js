@@ -209,6 +209,10 @@ class User {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
+      if (followingUserId === currentUserId) {
+        return res.status(403).json({ ok: false, message: "Нельзя следить за собой", status: 403, type: "error", });
+      }
+
       const currentUser = await UserModel.findOne({ where: { id: currentUserId, }, });
       const followingUser = await UserModel.findOne({ where: { id: followingUserId, }, });
 

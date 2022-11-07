@@ -6,6 +6,7 @@
     }"
     @mouseleave="hideControls = true"
     @mouseenter="hideControls = false"
+    @dblclick="$store.commit('video.store/setFullscreen', !getFullscreen)"
   >
     <div class="videoplayer__inner">
       <video
@@ -160,12 +161,12 @@
        * Changing the state of full screen mode
        * @param {boolean} val The new value of the fullscreen key
        */
-      getFullscreen(val) {
+      async getFullscreen(val) {
         const page = document.documentElement;
-
+        
         if (val) {
           if (page.requestFullscreen) {
-            page.requestFullscreen();
+            await page.requestFullscreen();
           } else if (page.mozRequestFullScreen) {
             page.mozRequestFullScreen();
           } else if (page.webkitRequestFullscreen) {
@@ -174,7 +175,7 @@
             page.msRequestFullscreen();
           }
         } else if (document.exitFullscreen) {
-            document.exitFullscreen();
+            await document.exitFullscreen();
           } else if (document.mozCancelFullScreen) {
             document.mozCancelFullScreen();
           } else if (document.webkitExitFullscreen) {
@@ -228,9 +229,35 @@
       },
     },
     beforeDestroy() {
+      // Turning off the video
       this.$store.commit("video.store/setPlay", false);
+      // Set default key behavior
+      window.removeEventListener("keydown", this.setHotkeys);
+    },
+    mounted() {
+      window.addEventListener("keydown", this.setHotkeys);
     },
     methods: {
+      /**
+       * Setting hotkeys
+       * @param {object} e Event object
+       */
+      setHotkeys(e) {
+        e.preventDefault();
+
+        switch (e.keyCode) {
+          // Space
+          case 32:
+            this.setPlay();
+            break;
+          // F key
+          case 70:
+            if (!this.getFullscreen) {
+              this.$store.commit("video.store/setFullscreen", true);
+            }
+            break;
+        }
+      },
       setPlay() {
         if (!this.loading) {
           this.$store.commit("video.store/setPlay", !this.getPlay);
