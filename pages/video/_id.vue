@@ -15,11 +15,14 @@
       <div class="video-page__info-block">
         <div class="container">
           <vVideoPageHeader
-            :rate="rate"
             :pending-set-rate="pendingSetRate"
             :hide-follow-btn="followingUserIsCurrentUser"
             :follow="follow"
             :pending-following="pendingFollowing"
+            :likes="likesCount"
+            :dislikes="dislikesCount"
+            :is-like="isLike"
+            :is-dislike="isDislike"
             @setFollow="setFollow"
             @setRate="setRate"
           />
@@ -60,11 +63,11 @@
     },
     data: () => ({
       pendingSetRate: false,
-      rate: {
-        complete: false,
-        isLike: false,
-      },
       followingUserIsCurrentUser: false,
+      likesCount: 0,
+      dislikesCount: 0,
+      isLike: false,
+      isDislike: false,
     }),
     // Getting video data
     async fetch() {
@@ -81,12 +84,21 @@
           const poster = await this.getValidUrlDataFile(videoPoster);
           const src = await this.getValidUrlDataFile(srcVideo);
           const authorAvatar = await this.getValidAvatarUrl(video.author.avatar);
+          const { id: userId, } = this.getUser;
 
           // Whether the current user is following the author of the video
-          this.follow = video.author.followersId.includes(this.getUser.id);
+          this.follow = video.author.followersId.includes(userId);
 
           // The current user is the user he wants to follow
-          this.followingUserIsCurrentUser = video.author.id === this.getUser.id;
+          this.followingUserIsCurrentUser = video.author.id === userId;
+
+          // Recording the number of positive and negative ratings
+          this.likesCount = video.likes.length;
+          this.dislikesCount = video.dislikes.length;
+
+          // Record current user rating
+          this.isLike = video.likes.includes(userId);
+          this.isDislike = video.dislikes.includes(userId);
 
           this.$store.commit("video.store/setVideo", {
             ...video,
@@ -122,7 +134,29 @@
        * @param {boolean} isLike Liked this video
        */
       setRate(isLike) {
-        console.log(isLike);
+        const token = this.$store.getters["auth.store/getToken"];
+        const { id, } = this.$route.params;
+        const res = this.$store.dispatch("video.store/setRate", {
+          token,
+          id,
+          isLike,
+        });
+
+        this.pendingSetRate = true;
+
+        res.then(({ ok, positiveRating, negativeRating, likes, dislikes, }) => {
+          this.pendingSetRate = false;
+
+          if (ok) {
+            this.likesCount = likes;
+            this.dislikesCount = dislikes;
+
+            this.isLike = positiveRating;
+            this.isDislike = negativeRating;
+          }
+        }).catch((err) => {
+          throw err;
+        });
       },
     },
   };

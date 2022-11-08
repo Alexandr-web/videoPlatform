@@ -15,11 +15,11 @@
     <div class="video-page__info-header-block">
       <div class="video-page__info-rate">
         <div class="video-page__info-rate-block">
-          <div class="video-page__info-rate-count">{{ getValidNumberFormat(getVideo.likes.length) }}</div>
+          <div class="video-page__info-rate-count">{{ getValidNumberFormat(likes) }}</div>
           <button
             class="video-page__info-rate-btn"
             :class="{
-              'video-page__info-rate-btn--active': rate.complete && rate.isLike,
+              'video-page__info-rate-btn--active': isLike,
             }"
             :disabled="pendingSetRate"
             @click="$emit('setRate', true)"
@@ -28,11 +28,11 @@
           </button>
         </div>
         <div class="video-page__info-rate-block">
-          <div class="video-page__info-rate-count">{{ getValidNumberFormat(getVideo.dislikes.length) }}</div>
+          <div class="video-page__info-rate-count">{{ getValidNumberFormat(dislikes) }}</div>
           <button
             class="video-page__info-rate-btn"
             :class="{
-              'video-page__info-rate-btn--active': rate.complete && !rate.isLike,
+              'video-page__info-rate-btn--active': isDislike,
             }"
             :disabled="pendingSetRate"
             @click="$emit('setRate', false)"
@@ -71,10 +71,6 @@
     },
     mixins: [getValidNumberFormatMixin],
     props: {
-      rate: {
-        type: Object,
-        required: true,
-      },
       pendingSetRate: {
         type: Boolean,
         required: true,
@@ -88,6 +84,22 @@
         required: true,
       },
       pendingFollowing: {
+        type: Boolean,
+        required: true,
+      },
+      likes: {
+        type: Number,
+        required: true,
+      },
+      dislikes: {
+        type: Number,
+        required: true,
+      },
+      isLike: {
+        type: Boolean,
+        required: true,
+      },
+      isDislike: {
         type: Boolean,
         required: true,
       },

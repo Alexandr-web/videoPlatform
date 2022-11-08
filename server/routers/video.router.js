@@ -27,5 +27,6 @@ router.post("/load", isAuth, upload.fields([
 router.get("/api", videoController.getAll);
 router.get("/api/:id", isAuth, videoController.getOne);
 router.put("/:id/view", isAuth, videoController.setView);
+router.put("/:id/rate", isAuth, videoController.setRate);
 
 module.exports = router;

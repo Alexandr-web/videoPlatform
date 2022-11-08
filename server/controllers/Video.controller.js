@@ -1,5 +1,7 @@
 const VideoModel = require("../models/Video.model");
 const User = require("../models/User.model");
+const setLike = require("../helpers/setLike");
+const setDislike = require("../helpers/setDislike");
 
 class Video {
   // Upload video file
@@ -129,6 +131,73 @@ class Video {
       await video.update({ views: video.views + 1, });
 
       return res.status(200).json({ ok: true, status: 200, type: "success", });
+    } catch (err) {
+      console.log(err);
+
+      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+    }
+  }
+
+  // Adds a video rating from the user
+  async setRate(req, res) {
+    try {
+      if (!req.isAuth) {
+        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
+      }
+
+      const { params: { id, }, query: { isLike, }, } = req;
+
+      if (!id || isNaN(+id) || typeof JSON.parse(isLike || "") !== "boolean") {
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
+      }
+
+      const video = await VideoModel.findOne({ where: { id, }, });
+
+      if (!video) {
+        return res.status(404).json({ ok: false, message: "Такого видео не существует", status: 404, type: "error", });
+      }
+
+      const userLikedThisVideo = video.likes.includes(req.userId);
+      const userDislikedThisVideo = video.dislikes.includes(req.userId);
+      const copyLikesVideo = [...video.likes];
+      const copyDislikesVideo = [...video.dislikes];
+      const ratingMethodOptions = {
+        req,
+        res,
+        userLikedThisVideo,
+        userDislikedThisVideo,
+        video,
+        copyLikesVideo,
+        copyDislikesVideo,
+      };
+
+      // The user gave a positive rating
+      if (JSON.parse(isLike)) {
+        const { posRating = false, dislikesVideo = [], likesVideo = [], } = await setLike(ratingMethodOptions);
+
+        return res.status(200).json({
+          ok: true,
+          positiveRating: posRating,
+          negativeRating: false,
+          likes: likesVideo.length,
+          dislikes: dislikesVideo.length,
+          status: 200,
+          type: "success",
+        });
+      }
+
+      // The user gave a negative rating
+      const { negRating = false, dislikesVideo = [], likesVideo = [], } = await setDislike(ratingMethodOptions);
+
+      return res.status(200).json({
+        ok: true,
+        positiveRating: false,
+        negativeRating: negRating,
+        likes: likesVideo.length,
+        dislikes: dislikesVideo.length,
+        status: 200,
+        type: "success",
+      });
     } catch (err) {
       console.log(err);
 

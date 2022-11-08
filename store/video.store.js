@@ -121,5 +121,29 @@ export default {
         throw err;
       }
     },
+
+    /**
+     * Submits a request for video rating
+     * @param {string} token User token
+     * @param {string|number} id Video id 
+     * @param {boolean} isLike The user liked the video
+     * @returns {promise} Request result
+     */
+    async setRate({ }, { token, id, isLike, }) {
+      try {
+        const res = await fetch(`${host}/video/${id}/rate?isLike=${isLike}`, {
+          method: "PUT",
+          headers: {
+            "Accept-Type": "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
   },
 };
