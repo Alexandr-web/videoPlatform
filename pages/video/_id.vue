@@ -109,7 +109,7 @@
             poster,
             src,
             currentTime: this.getValidTimeFormat(0),
-            duration: this.getValidTimeFormat(video.duration),
+            duration: video.duration,
           });
         }
       } catch (err) {

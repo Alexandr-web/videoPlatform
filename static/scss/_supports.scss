@@ -1,0 +1,18 @@
+@supports (backdrop-filter: blur(10px)) {
+  .profile {
+    &__content-header {
+      background: $opacityBlack;
+      backdrop-filter: blur(10px);
+    }
+  }
+
+  .videoplayer {
+    &__controls {
+      backdrop-filter: blur(10px);
+    }
+
+    &__wrapper {
+      backdrop-filter: blur(10px);
+    }
+  }
+}

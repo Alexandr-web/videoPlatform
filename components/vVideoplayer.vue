@@ -23,12 +23,13 @@
         @canplaythrough="loading = false"
         @playing="loading = false"
       ></video>
-      <div
-        v-if="loading"
-        class="videoplayer__wrapper"
-      >
-        <vLoader />
-      </div>
+      <vVideoplayerLoaderWindow v-if="loading" />
+      <vVideoplayerRewindVideoWindow
+        :show="rewindVideo"
+        :is-fast-forward-video="isFastForwardVideo"
+        :time="rewindTime"
+        @hide="rewindVideo = false"
+      />
       <div
         class="videoplayer__controls"
         :class="{
@@ -55,7 +56,7 @@
               :style="{ 'width': `${distanceVideo}%`, }"
             ></div>
           </div>
-          <div class="videoplayer__progress-time">{{ getVideo.duration }}</div>
+          <div class="videoplayer__progress-time">{{ getVideo.time }}</div>
         </div>
         <div class="videoplayer__controls-block videoplayer__controls-volume">
           <button
@@ -123,8 +124,9 @@
   import vPrevIcon from "@/components/icons/vPrevIcon";
   import vNextIcon from "@/components/icons/vNextIcon";
   import vMuteVolumeIcon from "@/components/icons/vMuteVolumeIcon";
-  import vLoader from "@/components/vLoader";
   import vVideoChunk from "@/components/vVideoChunk";
+  import vVideoplayerLoaderWindow from "@/components/vVideoplayerLoaderWindow";
+  import vVideoplayerRewindVideoWindow from "@/components/vVideoplayerRewindVideoWindow";
   import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
 
   export default {
@@ -137,14 +139,18 @@
       vNextIcon,
       vPrevIcon,
       vMuteVolumeIcon,
-      vLoader,
       vVideoChunk,
+      vVideoplayerLoaderWindow,
+      vVideoplayerRewindVideoWindow,
     },
     mixins: [getValidTimeFormatMixin],
     data: () => ({
-      distanceVideo: 0,
       loading: false,
       hideControls: false,
+      isFastForwardVideo: false,
+      rewindVideo: false,
+      rewindTime: 3,
+      distanceVideo: 0,
       chunkVideo: {
         duration: 0,
         left: 0,
@@ -289,6 +295,24 @@
           case 70:
             if (!this.getFullscreen) {
               this.$store.commit("video.store/setFullscreen", true);
+            }
+            break;
+          // Arrow right
+          case 39:
+            // Fast forward video 5 seconds
+            if (!this.loading) {
+              this.getVideoElement.currentTime += this.rewindTime;
+              this.rewindVideo = true;
+              this.isFastForwardVideo = true;
+            }
+            break;
+          // Arrow left
+          case 37:
+            // Rewind video by 5 seconds
+            if (!this.loading) {
+              this.getVideoElement.currentTime -= this.rewindTime;
+              this.rewindVideo = true;
+              this.isFastForwardVideo = false;
             }
             break;
         }

@@ -86,5 +86,6 @@ module.exports = {
     "no-extend-native": "off",
     "vue/multiline-html-element-content-newline": "off",
     "vue/singleline-html-element-content-newline": "off",
+    "no-case-declarations": "off",
   },
 };

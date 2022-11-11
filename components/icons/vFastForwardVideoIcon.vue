@@ -1,0 +1,22 @@
+<template>
+  <svg
+    viewBox="0 0 48 48"
+    xmlns="http://www.w3.org/2000/svg"
+    :class="classes.filter(Boolean).join(' ')"
+  ><path d="M8 36l17-12L8 12v24zm18-24v24l17-12-17-12z" /><path
+    d="M0 0h48v48H0z"
+    fill="none"
+  /></svg>
+</template>
+
+<script>
+  export default {
+    name: "FastForwardVideoIconComponent",
+    props: {
+      classes: {
+        type: Array,
+        default: () => ([]),
+      },
+    },
+  };
+</script>

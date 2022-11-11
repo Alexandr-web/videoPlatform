@@ -24,18 +24,14 @@ export default {
 
   components: true,
 
-  buildModules: [
-    "@nuxtjs/eslint-module"
-  ],
-
   build: {
     test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
     use: [{
       loader: "url-loader",
       options: {
-         esModule: false,
-         limit: 1000, // 1kB
-         name: "fonts/[name].[contenthash:7].[ext]",
+        esModule: false,
+        limit: 1000, // 1kB
+        name: "fonts/[name].[contenthash:7].[ext]",
       },
     }],
   },
