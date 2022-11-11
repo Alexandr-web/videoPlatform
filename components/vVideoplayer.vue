@@ -36,11 +36,19 @@
           'videoplayer__controls--hide': hideControls,
         }"
       >
+        <vVideoChunk
+          v-if="!chunkVideo.hide"
+          :duration="chunkVideo.duration"
+          :left="chunkVideo.left"
+        />
         <div class="videoplayer__progress">
           <div class="videoplayer__progress-time">{{ getVideo.currentTime }}</div>
           <div
             class="videoplayer__progress-line"
             @click="setDistanceVideoByClick($event)"
+            @mouseenter="switchingVideoChunkPosition($event)"
+            @mousemove="switchingVideoChunkPosition($event)"
+            @mouseleave="chunkVideo.hide = true"
           >
             <div
               class="videoplayer__progress-slider"
@@ -116,6 +124,7 @@
   import vNextIcon from "@/components/icons/vNextIcon";
   import vMuteVolumeIcon from "@/components/icons/vMuteVolumeIcon";
   import vLoader from "@/components/vLoader";
+  import vVideoChunk from "@/components/vVideoChunk";
   import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
 
   export default {
@@ -129,12 +138,18 @@
       vPrevIcon,
       vMuteVolumeIcon,
       vLoader,
+      vVideoChunk,
     },
     mixins: [getValidTimeFormatMixin],
     data: () => ({
       distanceVideo: 0,
       loading: false,
       hideControls: false,
+      chunkVideo: {
+        duration: 0,
+        left: 0,
+        hide: true,
+      },
     }),
     computed: {
       getPlay() {
@@ -238,6 +253,26 @@
       window.addEventListener("keydown", this.setHotkeys);
     },
     methods: {
+      /**
+       * Determines the position of the video segment, as well as its time
+       * @param {object} e Event object
+       */
+      switchingVideoChunkPosition(e) {
+        // Position entry
+        this.chunkVideo.left = e.x;
+        this.chunkVideo.hide = false;
+
+        // Recording time
+        const widthLine = e.currentTarget.offsetWidth;
+        const x = e.layerX;
+
+        if (x >= 0 && x <= widthLine) {
+          const duration = this.getVideoElement.duration;
+          const percent = Math.ceil((x / widthLine) * 100);
+
+          this.chunkVideo.duration = (percent * duration) / 100;
+        }
+      },
       /**
        * Setting hotkeys
        * @param {object} e Event object
