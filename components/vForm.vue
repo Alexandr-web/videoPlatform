@@ -174,11 +174,11 @@
     created() {
       Object.keys(this.fields).map((key) => {
         if (this.fields[key].type !== "file") {
-          this.dataForm[key] = { model: "model" in this.fields[key] ? this.fields[key].model : "", };
+          this.dataForm[key] = { model: this.fields[key].model || "", };
         } else {
           this.dataForm[key] = {
             file: null,
-            src: "src" in this.fields[key] ? this.fields[key].src : "",
+            src: this.fields[key].src || "",
             error: false,
             loading: false,
           };
@@ -201,6 +201,7 @@
             return acc;
           }, {});
 
+        // If there is a video, then we send its data with the main data
         this.$emit("sendReq", this.isVideo ? { ...data, ...this.video, } : data);
       },
       // Assigns the time and duration of the video when it is fully loaded

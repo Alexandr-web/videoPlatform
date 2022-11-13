@@ -5,7 +5,7 @@
  */
 export default {
   methods: {
-    async getValidUrlDataFile(path) {
+    async getValidUrlVideoDataFile(path) {
       if (/^\/\_nuxt\//.test(path)) {
         return path;
       }

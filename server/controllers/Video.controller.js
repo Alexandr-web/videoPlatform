@@ -2,6 +2,7 @@ const VideoModel = require("../models/Video.model");
 const User = require("../models/User.model");
 const setLike = require("../helpers/setLike");
 const setDislike = require("../helpers/setDislike");
+const removeFile = require("../helpers/removeFile");
 
 class Video {
   // Upload video file
@@ -198,6 +199,60 @@ class Video {
         status: 200,
         type: "success",
       });
+    } catch (err) {
+      console.log(err);
+
+      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+    }
+  }
+
+  // Edit video data
+  async edit(req, res) {
+    try {
+      if (!req.isAuth) {
+        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
+      }
+
+      const { id, } = req.params;
+      const body = req.body;
+      const files = req.files || {};
+      const optionalParams = ["title", "description", "video", "poster", "time", "duration"];
+
+      if (!id || isNaN(id) || !Object.keys({ ...body, ...files, }).some((key) => optionalParams.includes(key))) {
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
+      }
+
+      const video = await VideoModel.findOne({ where: { id, }, });
+
+      if (!video) {
+        return res.status(404).json({ ok: false, message: "Такого видео не существует", status: 404, type: "error", });
+      }
+
+      if (video.userId !== req.userId) {
+        return res.status(403).json({ ok: false, message: "У вас нет доступа для редатирования этого видео", status: 403, type: "error", });
+      }
+
+      // This is where the data to be edited is stored
+      const videoData = body;
+      const { poster: posterFile = [], video: videoFile = [], } = files;
+
+      if (posterFile.length) {
+        videoData.poster = posterFile[0].filename;
+
+        // Delete the old poster file
+        await removeFile([__dirname, "../../", process.env.VIDEO_DATA_FILES_FOLDER, video.poster], res);
+      }
+
+      if (videoFile.length) {
+        videoData.src = videoFile[0].filename;
+
+        // Delete old video file
+        await removeFile([__dirname, "../../", process.env.VIDEO_DATA_FILES_FOLDER, video.src], res);
+      }
+
+      await video.update(videoData);
+
+      return res.status(200).json({ ok: true, message: "Видео отредактировано", status: 200, type: "success", });
     } catch (err) {
       console.log(err);
 

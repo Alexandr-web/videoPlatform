@@ -38,7 +38,7 @@
 <script>
   import vVideoplayer from "@/components/vVideoplayer";
   import vVideoPageHeader from "@/components/vVideoPageHeader";
-  import getValidUrlDataFileMixin from "@/mixins/getValidUrlDataFile";
+  import getValidUrlVideoDataFileMixin from "@/mixins/getValidUrlVideoDataFile";
   import getValidAvatarUrlMixin from "@/mixins/getValidAvatarUrl";
   import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
   import setFollowMixin from "@/mixins/setFollow";
@@ -49,7 +49,7 @@
       vVideoplayer,
       vVideoPageHeader,
     },
-    mixins: [getValidTimeFormatMixin, getValidUrlDataFileMixin, getValidAvatarUrlMixin, setFollowMixin],
+    mixins: [getValidTimeFormatMixin, getValidUrlVideoDataFileMixin, getValidAvatarUrlMixin, setFollowMixin],
     layout: "default",
     validate({ store, params: { id, }, }) {
       const token = store.getters["auth.store/getToken"];
@@ -81,8 +81,8 @@
 
         if (ok) {
           const { poster: videoPoster, src: srcVideo, } = video;
-          const poster = await this.getValidUrlDataFile(videoPoster);
-          const src = await this.getValidUrlDataFile(srcVideo);
+          const poster = await this.getValidUrlVideoDataFile(videoPoster);
+          const src = await this.getValidUrlVideoDataFile(srcVideo);
           const authorAvatar = await this.getValidAvatarUrl(video.author.avatar);
           const { id: userId, } = this.getUser;
 

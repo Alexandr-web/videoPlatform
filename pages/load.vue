@@ -66,6 +66,12 @@
     }),
     head: { title: "Загрузка видео", },
     methods: {
+      setError(errMessage) {
+        this.resRequest = {
+          message: errMessage,
+          type: "error",
+        };
+      },
       loadVideo(data) {
         const isContainsRequiredItems = Object.keys(this.fields).every((key) => data[key]);
 

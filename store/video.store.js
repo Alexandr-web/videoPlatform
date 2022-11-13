@@ -145,5 +145,29 @@ export default {
         throw err;
       }
     },
+
+    /**
+     * Submits a video editing request
+     * @param {string} token User token
+     * @param {string|number} id Video if
+     * @param {object} fd Data to be edited
+     * @returns {promise} Request result
+     */
+    async edit({ }, { token, id, fd, }) {
+      try {
+        const res = await fetch(`${host}/video/${id}/edit`, {
+          method: "PUT",
+          headers: {
+            "Accept-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+          body: fd,
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
   },
 };

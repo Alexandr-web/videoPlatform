@@ -181,7 +181,7 @@ class User {
 
       // If there is a file, then delete the old one
       if (file) {
-        await removeFile([__dirname, "../../", "avatars", user.avatar], res);
+        await removeFile([__dirname, "../../", process.env.AVATARS_FILES_FOLDER, user.avatar], res);
 
         userData.avatar = file.filename;
       }

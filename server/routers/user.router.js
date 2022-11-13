@@ -5,7 +5,7 @@ const isAuth = require("../middleware/isAuth");
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, "avatars");
+    cb(null, process.env.AVATARS_FILES_FOLDER);
   },
   filename(req, file, cb) {
     cb(null, `${Date.now()}-${file.originalname}`);

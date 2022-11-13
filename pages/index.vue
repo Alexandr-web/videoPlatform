@@ -19,7 +19,7 @@
 <script>
   import vVideoCard from "@/components/vVideoCard";
   import vNothing from "@/components/vNothing";
-  import getValidUrlDataFileMixin from "@/mixins/getValidUrlDataFile";
+  import getValidUrlVideoDataFileMixin from "@/mixins/getValidUrlVideoDataFile";
 
   export default {
     name: "MainPage",
@@ -27,7 +27,7 @@
       vVideoCard,
       vNothing,
     },
-    mixins: [getValidUrlDataFileMixin],
+    mixins: [getValidUrlVideoDataFileMixin],
     layout: "default",
     data: () => ({ videos: [], }),
     async fetch() {
@@ -38,7 +38,7 @@
           videos.map((video) => {
             const { poster, createdAt, } = video;
 
-            this.getValidUrlDataFile(poster).then((validPoster) => {
+            this.getValidUrlVideoDataFile(poster).then((validPoster) => {
               this.videos.push({
                 ...video,
                 poster: validPoster,

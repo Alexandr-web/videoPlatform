@@ -17,7 +17,7 @@
 <script>
   import vVideoCard from "@/components/vVideoCard";
   import vNothing from "@/components/vNothing";
-  import getValidUrlDataFileMixin from "@/mixins/getValidUrlDataFile";
+  import getValidUrlVideoDataFileMixin from "@/mixins/getValidUrlVideoDataFile";
 
   export default {
     name: "ProfileVideosComponent",
@@ -25,7 +25,7 @@
       vVideoCard,
       vNothing,
     },
-    mixins: [getValidUrlDataFileMixin],
+    mixins: [getValidUrlVideoDataFileMixin],
     props: {
       user: {
         type: Object,
@@ -43,7 +43,7 @@
             const { poster, createdAt, } = video;
 
             // Completing a video with a valid poster
-            this.getValidUrlDataFile(poster)
+            this.getValidUrlVideoDataFile(poster)
               .then((validPoster) => {
                 const { id, nickname, } = this.user;
 
