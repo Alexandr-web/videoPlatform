@@ -9,10 +9,7 @@
         :src="channel.avatar"
       />
       <h3 class="channel-card__nickname">{{ channel.nickname }}</h3>
-      <div class="channel-card__followers">
-        Подписчиков: 
-        {{ getValidNumberFormat(channel.followersId.length) }}
-      </div>
+      <div class="channel-card__followers">Подписчиков: {{ getValidNumberFormat(channel.followersId.length) }}</div>
     </nuxt-link>
   </div>
 </template>
