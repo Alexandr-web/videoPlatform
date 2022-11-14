@@ -27,6 +27,7 @@
             @setRate="setRate"
           />
           <div class="video-page__info-main">
+            <h1 class="video-page__info-title">{{ getVideo.title }}</h1>
             <p class="video-page__info-desc">{{ getVideo.description }}</p>
           </div>
         </div>

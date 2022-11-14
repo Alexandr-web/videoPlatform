@@ -4,46 +4,12 @@
       <vProfileHeader
         v-if="Object.keys(user).length"
         :user="user"
+        :is-guest="isGuest"
+        :following-id="user.id"
+        :is-follow="isFollow"
       />
       <div class="profile-page__content">
-        <header class="profile__content-header">
-          <div class="container">
-            <nav class="profile__nav">
-              <ul
-                v-if="isGuest"
-                class="profile__nav-list"
-              >
-                <li
-                  v-for="(item, index) in getNavListForGuest"
-                  :key="index"
-                  class="profile__nav-list-item"
-                >
-                  <nuxt-link
-                    class="profile__nav-list-link"
-                    :to="item.to"
-                    exact-active-class="profile__nav-list-link--active"
-                  >{{ item.name }}</nuxt-link>
-                </li>
-              </ul>
-              <ul
-                v-else
-                class="profile__nav-list"
-              >
-                <li
-                  v-for="(item, index) in navList"
-                  :key="index"
-                  class="profile__nav-list-item"
-                >
-                  <nuxt-link
-                    class="profile__nav-list-link"
-                    :to="item.to"
-                    exact-active-class="profile__nav-list-link--active"
-                  >{{ item.name }}</nuxt-link>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </header>
+        <vProfileNav :is-guest="isGuest" />
         <div
           v-if="Object.keys(user).length"
           class="container"
@@ -68,6 +34,7 @@
 
 <script>
   import vProfileHeader from "@/components/vProfileHeader";
+  import vProfileNav from "@/components/vProfileNav";
   import vProfileVideos from "@/components/vProfileVideos";
   import vProfileSettings from "@/components/vProfileSettings";
   import vProfileChannels from "@/components/vProfileChannels";
@@ -80,6 +47,7 @@
       vProfileVideos,
       vProfileSettings,
       vProfileChannels,
+      vProfileNav,
     },
     mixins: [getValidAvatarUrlMixin],
     layout: "default",
@@ -95,11 +63,7 @@
 
       return res
         .then(({ ok, user, }) => {
-          if (currentUser.id !== +id) {
-            return [ok, user, possibleQueryWaysForGuest.includes(tab)].every(Boolean);
-          }
-
-          return [ok, user, possibleQueryWaysForOwner.includes(tab)].every(Boolean);
+          return [ok, user, (currentUser.id !== +id ? possibleQueryWaysForGuest : possibleQueryWaysForOwner).includes(tab)].every(Boolean);
         })
         .catch((err) => {
           throw err;
@@ -107,22 +71,8 @@
     },
     data: () => ({
       user: {},
+      isFollow: false,
       isGuest: true,
-      navList: [
-        {
-          name: "Видео",
-          to: "?tab=videos",
-        },
-        {
-          name: "Настройки",
-          to: "?tab=settings",
-          onlyOwner: true,
-        },
-        {
-          name: "Каналы",
-          to: "?tab=channels",
-        }
-      ],
     }),
     async fetch() {
       try {
@@ -137,6 +87,7 @@
             avatar,
           };
           this.isGuest = this.getCurrentUser.id !== user.id;
+          this.isFollow = user.followersId.includes(this.getCurrentUser.id);
         }
       } catch (err) {
         throw err;
@@ -146,9 +97,6 @@
     computed: {
       getCurrentUser() {
         return this.$store.getters["user.store/getUser"];
-      },
-      getNavListForGuest() {
-        return this.navList.filter(({ onlyOwner, }) => !onlyOwner);
       },
     },
   };

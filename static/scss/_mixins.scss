@@ -1,0 +1,5 @@
+@mixin gradientColor($gradientValue) {
+  background: $gradientValue;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

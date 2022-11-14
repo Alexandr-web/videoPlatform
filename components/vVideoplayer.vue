@@ -37,24 +37,23 @@
           'videoplayer__controls--hide': hideControls,
         }"
       >
-        <vVideoChunk
-          v-if="!chunkVideo.hide"
-          :duration="chunkVideo.duration"
-          :left="chunkVideo.left"
-        />
         <div class="videoplayer__progress">
           <div class="videoplayer__progress-time">{{ getVideo.currentTime }}</div>
           <div
             class="videoplayer__progress-line"
             @click="setDistanceVideoByClick($event)"
-            @mouseenter="switchingVideoChunkPosition($event)"
-            @mousemove="switchingVideoChunkPosition($event)"
             @mouseleave="chunkVideo.hide = true"
+            @mousemove="switchingVideoChunkPosition($event)"
           >
             <div
               class="videoplayer__progress-slider"
               :style="{ 'width': `${distanceVideo}%`, }"
             ></div>
+            <vVideoChunk
+              v-if="!chunkVideo.hide"
+              :duration="chunkVideo.duration"
+              :left="chunkVideo.left"
+            />
           </div>
           <div class="videoplayer__progress-time">{{ getVideo.time }}</div>
         </div>
@@ -366,7 +365,7 @@
         this.distanceVideo = Math.ceil((currentTime / duration) * 100);
         this.$store.commit("video.store/setVideo", {
           ...this.getVideo,
-          duration: validDurationTimeFormat,
+          time: validDurationTimeFormat,
           currentTime: validCurrentTimeFormat,
         });
       },

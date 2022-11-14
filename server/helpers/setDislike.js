@@ -19,6 +19,7 @@ module.exports = async ({ res, req, userLikedThisVideo, userDislikedThisVideo, v
 
       return {
         dislikesVideo: dislikesWithCurrentUser,
+        likesVideo: video.likes,
         negRating: true,
       };
     }
@@ -29,7 +30,10 @@ module.exports = async ({ res, req, userLikedThisVideo, userDislikedThisVideo, v
 
       await video.update({ dislikes: dislikesWithoutCurrentUser, });
 
-      return { dislikesVideo: dislikesWithoutCurrentUser, };
+      return {
+        dislikesVideo: dislikesWithoutCurrentUser,
+        likesVideo: video.likes,
+      };
     }
 
     // Video already rated positively by this user

@@ -174,7 +174,7 @@ class Video {
 
       // The user gave a positive rating
       if (JSON.parse(isLike)) {
-        const { posRating = false, dislikesVideo = [], likesVideo = [], } = await setLike(ratingMethodOptions);
+        const { posRating = false, dislikesVideo, likesVideo, } = await setLike(ratingMethodOptions);
 
         return res.status(200).json({
           ok: true,
@@ -188,7 +188,7 @@ class Video {
       }
 
       // The user gave a negative rating
-      const { negRating = false, dislikesVideo = [], likesVideo = [], } = await setDislike(ratingMethodOptions);
+      const { negRating = false, dislikesVideo, likesVideo, } = await setDislike(ratingMethodOptions);
 
       return res.status(200).json({
         ok: true,
