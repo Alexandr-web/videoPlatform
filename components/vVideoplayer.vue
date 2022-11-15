@@ -240,12 +240,11 @@
         this.getVideoElement.muted = isMute;
       },
       /**
-       * Changing the audio status of a video
-       * @param {boolean} volume The new value of the mute key
+       * Changes the sound level of the video when the state of the sound in the store changes
+       * @param {number} volume The new value of the volume key
        */
       getVolume(volume) {
         this.getVideoElement.volume = volume;
-        this.$store.commit("video.store/setMute", false);
       },
     },
     beforeDestroy() {

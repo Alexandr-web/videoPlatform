@@ -39,6 +39,11 @@
       });
     },
     methods: {
+      /**
+       * Changes state, by local value
+       * @param {string} localData Value from local storage
+       * @param {object} toSetData Data that specifies where the state is stored and its data
+       */
       setLocalData(localData, toSetData) {
         if (localData) {
           this.$store.commit(toSetData.place, toSetData.data);
@@ -46,7 +51,7 @@
           localStorage.setItem(toSetData.name, toSetData.default);
           this.$store.commit(toSetData.place, toSetData.default);
         }
-      },
+      },  
     },
   };
 </script>
