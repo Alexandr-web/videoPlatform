@@ -245,6 +245,72 @@ class User {
       return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
     }
   }
+
+  // Gets the user's history
+  async getHistory(req, res) {
+    try {
+      if (!req.isAuth) {
+        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+      }
+
+      const { id, } = req.params;
+      const { myVideos, search, } = req.query;
+
+      if ([id, myVideos, search].some((val) => val === undefined) || isNaN(id)) {
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
+      }
+
+      const user = await UserModel.findOne({ where: { id, }, });
+
+      if (!user) {
+        return res.status(404).json({ ok: false, message: "Такого пользователя не существует", status: 404, type: "error", });
+      }
+
+      // We get promises with videos and their authors
+      const promises = user.history.map(async (videoId) => {
+        try {
+          const video = await Video.findOne({ where: { id: videoId, }, });
+
+          // We take all videos, except those created by the current user
+          if (!JSON.parse(myVideos) && video.userId === req.userId) {
+            return undefined;
+          }
+
+          // We take only those that match the search
+          if (search.length > 2 && ![video.title, video.description].some((val) => val.toLowerCase().includes(search.toLowerCase()))) {
+            return undefined;
+          }
+
+          const author = await UserModel.findOne({ where: { id: video.userId, }, });
+
+          return {
+            ...video.dataValues,
+            author: {
+              id: author.id,
+              nickname: author.nickname,
+            },
+          };
+        } catch (err) {
+          console.log(err);
+
+          return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+        }
+      });
+
+      return Promise.all(promises)
+        .then((videos) => {
+          return res.status(200).json({ ok: true, videos: videos.filter(Boolean), status: 200, type: "success", });
+        }).catch((err) => {
+          console.log(err);
+
+          return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+        });
+    } catch (err) {
+      console.log(err);
+
+      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+    }
+  }
 }
 
 module.exports = new User();

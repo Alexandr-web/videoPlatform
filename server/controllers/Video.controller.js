@@ -60,8 +60,7 @@ class Video {
       return Promise.all(promises)
         .then((videos) => {
           return res.status(200).json({ ok: true, status: 200, videos, type: "success", });
-        })
-        .catch((err) => {
+        }).catch((err) => {
           console.log(err);
 
           return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
@@ -129,6 +128,20 @@ class Video {
         return res.status(404).json({ ok: false, message: "Такого видео не существует", status: 404, type: "error", });
       }
 
+      const user = await User.findOne({ where: { id: req.userId, }, });
+      const copyUserHistory = [...user.history];
+
+      if (copyUserHistory.includes(video.id)) {
+        // Move to 1 place
+        const indexVideoId = copyUserHistory.indexOf(video.id);
+
+        copyUserHistory.splice(indexVideoId, 1);
+        copyUserHistory.unshift(video.id);
+      } else {
+        copyUserHistory.unshift(video.id);
+      }
+
+      await user.update({ history: copyUserHistory, });
       await video.update({ views: video.views + 1, });
 
       return res.status(200).json({ ok: true, status: 200, type: "success", });

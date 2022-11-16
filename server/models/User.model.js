@@ -24,6 +24,10 @@ module.exports = sequelize.define("user", {
     type: DataTypes.ARRAY(DataTypes.INTEGER),
     defaultValue: [],
   },
+  history: {
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
+    defaultValue: [],
+  },
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,

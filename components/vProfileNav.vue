@@ -62,6 +62,11 @@
         {
           name: "Каналы",
           to: "?tab=channels",
+        },
+        {
+          name: "История",
+          to: "?tab=history&myVideos=true&search=",
+          onlyOwner: true,
         }
       ],
     }),

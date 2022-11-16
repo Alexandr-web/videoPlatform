@@ -158,5 +158,30 @@ export default {
         throw err;
       }
     },
+
+    /**
+     * Sends a request to get a user's history
+     * @param {string} token User token
+     * @param {number|string} id User id
+     * @param {boolean} myVideos We take all videos, including the video of the current user
+     * @param {string} search We take a video, by this value
+     * @returns {promise} Request result
+     */
+    async getHistory({ }, { token, id, myVideos, search, }) {
+      try {
+        console.log(myVideos, search);
+        const res = await fetch(`${host}/user/api/${id}/history?myVideos=${myVideos}&search=${search}`, {
+          method: "GET",
+          headers: {
+            "Accept-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
   },
 };

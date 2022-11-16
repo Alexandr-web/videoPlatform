@@ -26,6 +26,10 @@
             v-if="$route.query.tab === 'channels'"
             :user="user"
           />
+          <vProfileHistory
+            v-if="$route.query.tab === 'history'"
+            :user="user"
+          />
         </div>
       </div>
     </div>
@@ -38,6 +42,7 @@
   import vProfileVideos from "@/components/vProfileVideos";
   import vProfileSettings from "@/components/vProfileSettings";
   import vProfileChannels from "@/components/vProfileChannels";
+  import vProfileHistory from "@/components/vProfileHistory";
   import getValidAvatarUrlMixin from "@/mixins/getValidAvatarUrl";
 
   export default {
@@ -48,6 +53,7 @@
       vProfileSettings,
       vProfileChannels,
       vProfileNav,
+      vProfileHistory,
     },
     mixins: [getValidAvatarUrlMixin],
     layout: "default",
@@ -58,12 +64,12 @@
 
       const res = store.dispatch("user.store/getOne", id);
       const currentUser = store.getters["user.store/getUser"];
-      const possibleQueryWaysForGuest = ["videos", "channels"];
-      const possibleQueryWaysForOwner = ["videos", "settings", "channels"];
+      const queryForGuest = ["videos", "channels"];
+      const queryForOwner = ["videos", "settings", "channels", "history", "search", "myVideos"];
 
       return res
         .then(({ ok, user, }) => {
-          return [ok, user, (currentUser.id !== +id ? possibleQueryWaysForGuest : possibleQueryWaysForOwner).includes(tab)].every(Boolean);
+          return [ok, user, (currentUser.id !== +id ? queryForGuest : queryForOwner).includes(tab)].every(Boolean);
         })
         .catch((err) => {
           throw err;

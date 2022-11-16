@@ -3,15 +3,7 @@
     <div class="container">
       <nav class="header__nav">
         <div class="header__block header__search">
-          <input
-            v-model.trim="search"
-            class="header__search-input"
-            type="text"
-            placeholder="Поиск"
-          >
-          <button class="header__search-btn">
-            <vSearchIcon :classes="['header__search-icon']" />
-          </button>
+          <vSearch />
         </div>
         <div class="header__block header__menu">
           <ul class="header__menu-list">
@@ -53,11 +45,11 @@
 </template>
 
 <script>
-  import vSearchIcon from "@/components/icons/vSearchIcon";
+  import vSearch from "@/components/vSearch";
 
   export default {
     name: "HeaderComponent",
-    components: { vSearchIcon, },
+    components: { vSearch, },
     data: () => ({
       menu: [
         {
@@ -70,7 +62,6 @@
           id: "load",
         }
       ],
-      search: "",
     }),
     computed: {
       getUser() {
