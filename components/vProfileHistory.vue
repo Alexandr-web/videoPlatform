@@ -2,7 +2,10 @@
   <div class="profile__tab profile__tab-history pb-20 pt-20">
     <header class="profile__history-header">
       <div class="profile__history-header-block profile__history-header-search">
-        <vSearch @enter="setSearchQuery" />
+        <vSearch
+          @enter="setSearchQuery"
+          @byClick="setSearchQuery"
+        />
       </div>
       <div class="profile__history-header-block profile__history-header-filters">
         <label

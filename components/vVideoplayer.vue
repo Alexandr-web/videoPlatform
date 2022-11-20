@@ -214,21 +214,14 @@
         const video = this.getVideoElement;
 
         if (video) {
-          this.loading = true;
-
           const promise = fetch(video.src)
             .then((res) => res.blob())
-            .then(() => {
-              this.loading = false;
-              video.play();
-            });
+            .then(() => video.play());
             
           if (promise !== undefined) {
             promise
-              .then(() => {
-                this.loading = false;
-                video[play ? "play" : "pause"]();
-              }).catch((err) => {
+              .then(() => video[play ? "play" : "pause"]())
+              .catch((err) => {
                 throw err;
               });
           }

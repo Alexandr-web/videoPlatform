@@ -12,7 +12,10 @@
       @keydown.enter="$emit('enter', search)"
       @blur="$emit('writed', search)"
     >
-    <button class="search__btn">
+    <button
+      class="search__btn"
+      @click="$emit('byClick', search)"
+    >
       <vSearchIcon :classes="['search__icon']" />
     </button>
   </div>

@@ -5,5 +5,5 @@
 }
 
 @mixin opacityBlack($property, $opacity) {
-  $property: rgba(23,24,26, $opacity);
+  #{$property}: rgba(23,24,26, $opacity);
 }
