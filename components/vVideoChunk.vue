@@ -48,7 +48,7 @@
       setValidLeftPosition(val) {
         const { offsetWidth, } = this.getVideoChunkElement;
 
-        this.leftPos = val - offsetWidth - offsetWidth / 2;
+        this.leftPos = val - offsetWidth / 2;
       },
     },
   };

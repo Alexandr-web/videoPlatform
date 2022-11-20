@@ -17,10 +17,12 @@
         @timeupdate="timeupdateHandler"
         @ended="endedHandler"
         @progress="loading = true"
+        @loadstart="loading = true"
         @stalled="loading = true"
         @waiting="loading = true"
         @loadedmetadata="loading = false"
-        @canplaythrough="loading = false"
+        @loadeddata="loading = false"
+        @canplay="loading = false"
         @playing="loading = false"
       ></video>
       <vVideoplayerLoaderWindow v-if="loading" />
@@ -263,7 +265,7 @@
        */
       switchingVideoChunkPosition(e) {
         // Position entry
-        this.chunkVideo.left = e.x;
+        this.chunkVideo.left = e.layerX;
         this.chunkVideo.hide = false;
 
         // Recording time
@@ -357,16 +359,18 @@
       },
       // Changing the current video time
       timeupdateHandler() {
-        const { duration, currentTime, } = this.getVideoElement;
-        const validDurationTimeFormat = this.getValidTimeFormat(duration - currentTime);
-        const validCurrentTimeFormat = this.getValidTimeFormat(currentTime);
-        
-        this.distanceVideo = Math.ceil((currentTime / duration) * 100);
-        this.$store.commit("video.store/setVideo", {
-          ...this.getVideo,
-          time: validDurationTimeFormat,
-          currentTime: validCurrentTimeFormat,
-        });
+        if (this.getPlay) {
+          const { duration, currentTime, } = this.getVideoElement;
+          const validDurationTimeFormat = this.getValidTimeFormat(duration - currentTime);
+          const validCurrentTimeFormat = this.getValidTimeFormat(currentTime);
+          
+          this.distanceVideo = Math.ceil((currentTime / duration) * 100);
+          this.$store.commit("video.store/setVideo", {
+            ...this.getVideo,
+            time: validDurationTimeFormat,
+            currentTime: validCurrentTimeFormat,
+          });
+        }
       },
     },
   };

@@ -16,7 +16,7 @@
             type="checkbox"
           >
           <div class="profile__history-filter-btn">
-            Показывать свои видео
+            Показать мои видео
             <div
               class="profile__history-filter-checkbox"
               :class="{
@@ -74,9 +74,12 @@
         const { ok, videos, } = await this.$store.dispatch("user.store/getHistory", {
           token,
           id,
-          search,
+          search: search || "",
           myVideos: JSON.parse(myVideos),
         });
+
+        // Give initial value to filter if query parameter exists
+        this.filter.myVideos = JSON.parse(myVideos);
 
         if (ok) {
           this.videos = [];

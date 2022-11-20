@@ -21,6 +21,9 @@ With this project, you can upload and share your own videos, as well as view and
 ## Profile followings page
 <img src="./readmeImages/profileFollowings.jpg" alt="Profile followings page" />
 
+## Profile history page
+<img src="./readmeImages/profileHistory.jpg" alt="Profile history page" />
+
 ## Video page
 <img src="./readmeImages/videoPage1.jpg" alt="Video page" />
 <img src="./readmeImages/videoPage2.jpg" alt="Video page" />

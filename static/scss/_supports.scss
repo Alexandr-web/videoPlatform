@@ -1,7 +1,7 @@
 @supports (backdrop-filter: blur(10px)) {
   .profile {
     &__content-header {
-      background: $opacityBlack;
+      @include opacityBlack(background, .7);
       backdrop-filter: blur(10px);
     }
   }

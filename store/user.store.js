@@ -169,7 +169,6 @@ export default {
      */
     async getHistory({ }, { token, id, myVideos, search, }) {
       try {
-        console.log(myVideos, search);
         const res = await fetch(`${host}/user/api/${id}/history?myVideos=${myVideos}&search=${search}`, {
           method: "GET",
           headers: {

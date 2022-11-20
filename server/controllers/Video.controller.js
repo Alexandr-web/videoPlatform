@@ -41,7 +41,7 @@ class Video {
   // Get all videos
   async getAll(req, res) {
     try {
-      const allVideos = await VideoModel.findAll();
+      const allVideos = await VideoModel.findAll({ order: [["createdAt", "DESC"]], });
 
       // Getting video data (author, title, description, ...)
       const promises = allVideos.map((video) => {

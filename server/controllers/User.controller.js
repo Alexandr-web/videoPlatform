@@ -2,6 +2,7 @@ const UserModel = require("../models/User.model");
 const Video = require("../models/Video.model");
 const removeFile = require("../helpers/removeFile");
 const bcrypt = require("bcrypt");
+const { Op, } = require("sequelize");
 
 class User {
   // Get user by id
@@ -269,27 +270,43 @@ class User {
       // We get promises with videos and their authors
       const promises = user.history.map(async (videoId) => {
         try {
-          const video = await Video.findOne({ where: { id: videoId, }, });
+          const defaultFindOptions = { id: videoId, };
 
-          // We take all videos, except those created by the current user
-          if (!JSON.parse(myVideos) && video.userId === req.userId) {
-            return undefined;
+          // Options by which we will search for videos
+          const videoFindOptions = Object.keys(defaultFindOptions).reduce((videoOpt, key) => {
+            // The data must match the search
+            if (search.length > 2) {
+              videoOpt[Op.or] = [
+                { title: { [Op.substring]: search, }, },
+                { description: { [Op.substring]: search, }, }
+              ];
+            }
+
+            // Should not contain the video of the current user
+            if (!JSON.parse(myVideos)) {
+              videoOpt.userId = { [Op.ne]: req.userId, };
+            }
+
+            videoOpt[key] = defaultFindOptions[key];
+
+            return videoOpt;
+          }, {});
+
+          const video = await Video.findOne({ where: videoFindOptions, });
+
+          if (video) {
+            const author = await UserModel.findOne({ where: { id: video.userId, }, });
+
+            return {
+              ...video.dataValues,
+              author: {
+                id: author.id,
+                nickname: author.nickname,
+              },
+            };
           }
 
-          // We take only those that match the search
-          if (search.length > 2 && ![video.title, video.description].some((val) => val.toLowerCase().includes(search.toLowerCase()))) {
-            return undefined;
-          }
-
-          const author = await UserModel.findOne({ where: { id: video.userId, }, });
-
-          return {
-            ...video.dataValues,
-            author: {
-              id: author.id,
-              nickname: author.nickname,
-            },
-          };
+          return false;
         } catch (err) {
           console.log(err);
 
