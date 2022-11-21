@@ -1,6 +1,7 @@
 <template>
   <div class="video-edit pt-120 pb-20">
     <div class="container">
+      <h1 class="title">Редактирование</h1>
       <div class="video-edit__block">
         <vForm
           :classes="['video-edit__form']"
@@ -106,8 +107,8 @@
        * @param {object} data Form data to be edited
        */
       async edit(data) {
-        if (!Object.keys(data).length) {
-          this.setFormMessage("Все поля должны быть заполнены правильно", "error");
+        if (!Object.keys(data).some((key) => data[key].file || data.model)) {
+          this.setFormMessage("Поля должны быть заполнены правильно", "error");
         } else {
           const token = this.$store.getters["auth.store/getToken"];
           const fd = new FormData();

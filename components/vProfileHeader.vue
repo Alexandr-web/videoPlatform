@@ -13,26 +13,26 @@
           {{ user.nickname }}
           <span class="profile__header-followers-count">{{ getValidNumberFormat(user.followersId.length) }}</span>
         </div>
-        <button
+        <vFollowBtn
           v-if="isGuest"
-          :disabled="pendingFollowing"
-          class="profile__header-follow-btn follow-btn"
-          :class="{
-            'follow-btn--disabled': follow,
-          }"
-          @click="setFollow(followingId)"
-        >{{ follow ? "Вы подписаны" : "Подписаться" }}</button>
+          :classes="['profile__header-follow-btn']"
+          :is-follow="follow"
+          :pending="pendingFollowing"
+          @byClick="setFollow(followingId)"
+        />
       </div>
     </div>
   </header>
 </template>
 
 <script>
+  import vFollowBtn from "@/components/vFollowBtn";
   import setFollowMixin from "@/mixins/setFollow";
   import getValidNumberFormatMixin from "@/mixins/getValidNumberFormat";
 
   export default {
     name: "ProfileHeaderComponent",
+    components: { vFollowBtn, },
     mixins: [setFollowMixin, getValidNumberFormatMixin],
     props: {
       user: {

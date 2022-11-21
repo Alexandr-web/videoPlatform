@@ -9,3 +9,9 @@
     transform: rotateZ(360deg);
   }
 }
+
+@keyframes titleLineToDown {
+  100% {
+    transform: translateY(-75%);
+  }
+}

@@ -16,7 +16,8 @@
         <div class="container">
           <vVideoPageHeader
             :pending-set-rate="pendingSetRate"
-            :hide-follow-btn="followingUserIsCurrentUser"
+            :show-follow-btn="!followingUserIsCurrentUser"
+            :show-edit-btn="followingUserIsCurrentUser"
             :follow="follow"
             :pending-following="pendingFollowing"
             :likes="likesCount"
@@ -52,6 +53,7 @@
     },
     mixins: [getValidTimeFormatMixin, getValidUrlVideoDataFileMixin, getValidAvatarUrlMixin, setFollowMixin],
     layout: "default",
+    // Checking if the video exists in the database
     validate({ store, params: { id, }, }) {
       const token = store.getters["auth.store/getToken"];
       const res = store.dispatch("video.store/getOne", { token, id, });

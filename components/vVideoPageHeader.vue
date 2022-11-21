@@ -42,18 +42,19 @@
         </div>
       </div>
     </div>
-    <div
-      v-if="!hideFollowBtn"
-      class="video-page__info-header-subscribe-block"
-    >
-      <button
-        class="video-page__info-follow-btn follow-btn"
-        :class="{
-          'follow-btn--disabled': follow,
-        }"
+    <div class="video-page__info-header-block video-page__info-header-buttons">
+      <vFollowBtn
+        v-if="showFollowBtn"
         :pending="pendingFollowing"
-        @click="$emit('setFollow', getVideo.author.id)"
-      >{{ follow ? "Вы подписаны" : "Подписаться" }}</button>
+        :classes="['video-page__info-header-buttons-btn']"
+        :is-follow="follow"
+        @byClick="$emit('setFollow', getVideo.author.id)"
+      />
+      <nuxt-link
+        v-if="showEditBtn"
+        class="video-page__info-header-buttons-btn edit-btn"
+        :to="`/video/${getVideo.id}/edit`"
+      >Редактировать</nuxt-link>
     </div>
   </header>
 </template>
@@ -61,6 +62,7 @@
 <script>
   import vLikeIcon from "@/components/icons/vLikeIcon";
   import vDislikeIcon from "@/components/icons/vDislikeIcon";
+  import vFollowBtn from "@/components/vFollowBtn";
   import getValidNumberFormatMixin from "@/mixins/getValidNumberFormat";
 
   export default {
@@ -68,6 +70,7 @@
     components: {
       vDislikeIcon,
       vLikeIcon,
+      vFollowBtn,
     },
     mixins: [getValidNumberFormatMixin],
     props: {
@@ -75,7 +78,11 @@
         type: Boolean,
         required: true,
       },
-      hideFollowBtn: {
+      showFollowBtn: {
+        type: Boolean,
+        required: true,
+      },
+      showEditBtn: {
         type: Boolean,
         required: true,
       },

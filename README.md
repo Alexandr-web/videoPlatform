@@ -24,10 +24,12 @@ With this project, you can upload and share your own videos, as well as view and
 ## Profile history page
 <img src="./readmeImages/profileHistory.jpg" alt="Profile history page" />
 
+## Edit page
+<img src="./readmeImages/edit.jpg" alt="Edit page" />
+
 ## Video page
 <img src="./readmeImages/videoPage1.jpg" alt="Video page" />
 <img src="./readmeImages/videoPage2.jpg" alt="Video page" />
-<img src="./readmeImages/videoPage3.jpg" alt="Video page" />
 
 ## Build Setup
 

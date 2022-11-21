@@ -277,37 +277,39 @@
        * @param {object} e Event object
        */
       setHotkeys(e) {
-        e.preventDefault();
+        if ([32, 70, 39, 37].includes(e.keyCode)) {
+          e.preventDefault();
 
-        switch (e.keyCode) {
-          // Space
-          case 32:
-            this.setPlay();
-            break;
-          // F key
-          case 70:
-            if (!this.getFullscreen) {
-              this.$store.commit("video.store/setFullscreen", true);
-            }
-            break;
-          // Arrow right
-          case 39:
-            // Fast forward video 5 seconds
-            if (!this.loading) {
-              this.getVideoElement.currentTime += this.rewindTime;
-              this.rewindVideo = true;
-              this.isFastForwardVideo = true;
-            }
-            break;
-          // Arrow left
-          case 37:
-            // Rewind video by 5 seconds
-            if (!this.loading) {
-              this.getVideoElement.currentTime -= this.rewindTime;
-              this.rewindVideo = true;
-              this.isFastForwardVideo = false;
-            }
-            break;
+          switch (e.keyCode) {
+            // Space
+            case 32:
+              this.setPlay();
+              break;
+            // F key
+            case 70:
+              if (!this.getFullscreen) {
+                this.$store.commit("video.store/setFullscreen", true);
+              }
+              break;
+            // Arrow right
+            case 39:
+              // Fast forward video 5 seconds
+              if (!this.loading) {
+                this.getVideoElement.currentTime += this.rewindTime;
+                this.rewindVideo = true;
+                this.isFastForwardVideo = true;
+              }
+              break;
+            // Arrow left
+            case 37:
+              // Rewind video by 5 seconds
+              if (!this.loading) {
+                this.getVideoElement.currentTime -= this.rewindTime;
+                this.rewindVideo = true;
+                this.isFastForwardVideo = false;
+              }
+              break;
+          }
         }
       },
       setPlay() {

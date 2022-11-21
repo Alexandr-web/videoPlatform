@@ -1,6 +1,7 @@
 <template>
   <main class="main pt-120 pb-20">
     <div class="container">
+      <h1 class="title">Главная</h1>
       <ul
         v-if="videos.length"
         class="videos"

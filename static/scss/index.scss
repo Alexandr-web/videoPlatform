@@ -1024,9 +1024,22 @@
       top: 120px;
       z-index: 999;
 
-      &-subscribe-block {
+      &-block {
+        &:not(:last-child) {
+          margin-right: 10px;
+        }
+      }
+
+      &-buttons {
         display: flex;
+        align-items: center;
         justify-content: flex-end;
+
+        &-btn {
+          &:not(:last-child) {
+            margin-right: 15px;
+          }
+        }
       }
     }
 
@@ -1072,20 +1085,53 @@
   transform: rotateZ(0deg);
 }
 
-.follow-btn {
-  border: 2px solid $red;
-  color: $red;
+.title {
+  margin-bottom: 15px;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  padding-left: 15px;
+  overflow-y: hidden;
+  border-radius: 5px 0 0 5px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: left;
+    width: 3px;
+    height: 150px;
+    background: linear-gradient(to bottom, $blue, $green, $red);
+    transform: translateY(0);
+    animation: titleLineToDown 3s infinite alternate;
+  }
+}
+
+.btn {
   background: transparent;
   padding: 10px;
   border-radius: 10px;
   cursor: pointer;
   font-family: "Golos UI", sans-serif;
+}
+
+.follow-btn {
+  border: 2px solid $red;
+  color: $red;
+  @extend .btn;
 
   &--disabled {
     opacity: .8;
     color: $grey;
     border-color: $grey;
   }
+}
+
+.edit-btn {
+  border: 2px solid $blue;
+  color: $blue;
+  @extend .btn;
 }
 
 .pt-120 {

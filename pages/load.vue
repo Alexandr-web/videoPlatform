@@ -1,6 +1,7 @@
 <template>
   <div class="load-page pt-120 pb-20">
     <div class="container">
+      <h1 class="title">Загрузка видео</h1>
       <div class="load-page__block">
         <vForm
           :classes="['load-page__form']"
