@@ -639,6 +639,17 @@
   }
 }
 
+.video-edit {
+  &__block {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__form {
+    width: 500px;
+  }
+}
+
 .videoplayer {
   position: relative;
   overflow: hidden;

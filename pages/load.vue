@@ -10,7 +10,7 @@
           :is-video="true"
           :res-request="resRequest"
           @sendReq="loadVideo"
-          @setError="setError"
+          @setMessage="setFormMessage"
         />
       </div>
     </div>
@@ -18,68 +18,47 @@
 </template>
 
 <script>
+  import handleFormMessagesMixin from "@/mixins/handleFormMessages";
   import vForm from "@/components/vForm";
 
   export default {
     name: "LoadVideoPage",
     components: { vForm, },
+    mixins: [handleFormMessagesMixin],
     layout: "default",
     data: () => ({
       fields: {
         title: {
           title: "Название",
-          isMatchRegexp(val) {
-            return /.{6,}/g.test(val);
-          },
+          matchRegexpStr: ".{6,}",
           type: "text",
         },
         description: {
           title: "Описание",
-          isMatchRegexp(val) {
-            return /.{12,}/g.test(val);
-          },
+          matchRegexpStr: ".{12,}",
           type: "text",
         },
         video: {
           type: "file",
-          isMatchRegexp(val) {
-            return val instanceof File;
-          },
           typeFile: "video",
           accept: [".mp4", ".avi", ".mkv"],
         },
         poster: {
           type: "file",
-          isMatchRegexp(val) {
-            return val instanceof File;
-          },
           typeFile: "img",
           accept: [".jpg", ".jpeg", ".png", ".svg"],
         },
       },
       textButton: "Загрузить",
       pending: false,
-      resRequest: {
-        type: "",
-        message: "",
-      },
     }),
     head: { title: "Загрузка видео", },
     methods: {
-      setError(errMessage) {
-        this.resRequest = {
-          message: errMessage,
-          type: "error",
-        };
-      },
       loadVideo(data) {
         const isContainsRequiredItems = Object.keys(this.fields).every((key) => data[key]);
 
         if (!isContainsRequiredItems) {
-          this.resRequest = {
-            message: "Все поля должны быть заполнены правильно",
-            type: "error",
-          };
+          this.setFormMessage("Все поля должны быть заполнены правильно", "error");
         } else {
           const token = this.$store.getters["auth.store/getToken"];
           const fd = new FormData();
@@ -89,22 +68,18 @@
           const res = this.$store.dispatch("video.store/load", { fd, token, });
 
           this.pending = true;
-          this.resRequest = {
-            message: "",
-            type: "",
-          };
+          this.clearFormMessage();
 
           res.then(({ message, ok, type, }) => {
             this.pending = false;
-            this.resRequest = {
-              message,
-              type,
-            };
+            this.setFormMessage(message, type);
 
             if (ok) {
               this.$router.push("/");
             }
           }).catch((err) => {
+            this.setFormMessage("Произошла ошибка при отправке запроса", "error");
+
             throw err;
           });
         }

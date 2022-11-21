@@ -13,7 +13,7 @@
             :pending="pending"
             :res-request="resRequest"
             @sendReq="registration"
-            @setError="setError"
+            @setMessage="setFormMessage"
           />
           <div class="auth__callout">
             <p class="auth__callout-desc">
@@ -33,68 +33,48 @@
 </template>
 
 <script>
+  import handleFormMessagesMixin from "@/mixins/handleFormMessages";
   import vForm from "@/components/vForm";
 
   export default {
     name: "RegistrationPage",
     components: { vForm, },
+    mixins: [handleFormMessagesMixin],
     layout: "empty",
     data: () => ({
       fields: {
         avatar: {
           type: "file",
-          isMatchRegexp(val) {
-            return val instanceof File;
-          },
           typeFile: "img",
           isAvatar: true,
           accept: [".jpg", ".jpeg", ".png", ".svg"],
         },
         nickname: {
           title: "Никнейм",
-          isMatchRegexp(val) {
-            return /.{3,}/g.test(val);
-          },
+          matchRegexpStr: ".{3,}",
           type: "text",
         },
         email: {
           title: "Электронная почта",
-          isMatchRegexp(val) {
-            return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(val);
-          },
+          matchRegexpStr: "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
           type: "text",
         },
         password: {
           title: "Пароль",
-          isMatchRegexp(val) {
-            return /.{6,}/g.test(val);
-          },
+          matchRegexpStr: ".{6,}",
           type: "password",
         },
       },
       pending: false,
       textButton: "Зарегистрироваться",
-      resRequest: {
-        type: "",
-        message: "",
-      },
     }),
     head: { title: "Регистрация", },
     methods: {
-      setError(errMessage) {
-        this.resRequest = {
-          message: errMessage,
-          type: "error",
-        };
-      },
       registration(data) {
         const isContainsRequiredItems = Object.keys(this.fields).every((key) => key in data);
 
         if (!isContainsRequiredItems) {
-          this.resRequest = {
-            message: "Все поля должны быть заполнены правильно",
-            type: "error",
-          };
+          this.setFormMessage("Все поля должны быть заполнены правильно", "error");
         } else {
           const fd = new FormData();
 
@@ -103,22 +83,18 @@
           const res = this.$store.dispatch("auth.store/registration", fd);
 
           this.pending = true;
-          this.resRequest = {
-            message: "",
-            type: "",
-          };
+          this.clearFormMessage();
 
           res.then(({ ok, message, type, }) => {
             this.pending = false;
-            this.resRequest = {
-              message,
-              type,
-            };
+            this.setFormMessage(message, type);
 
             if (ok) {
               this.$router.push("/auth/login");
             }
           }).catch((err) => {
+            this.setFormMessage("Произошла ошибка при отправке запроса", "error");
+            
             throw err;
           });
         }

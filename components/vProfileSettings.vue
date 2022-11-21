@@ -7,17 +7,19 @@
       :pending="pending"
       :res-request="resRequest"
       @sendReq="edit"
-      @setError="setError"
+      @setMessage="setFormMessage"
     />
   </div>
 </template>
 
 <script>
+  import handleFormMessagesMixin from "@/mixins/handleFormMessages";
   import vForm from "@/components/vForm";
 
   export default {
     name: "ProfileSettingsComponent",
     components: { vForm, },
+    mixins: [handleFormMessagesMixin],
     props: {
       user: {
         type: Object,
@@ -28,41 +30,28 @@
       fields: {
         avatar: {
           type: "file",
-          isMatchRegexp(val) {
-            return val instanceof File;
-          },
           typeFile: "img",
           isAvatar: true,
           accept: [".jpg", ".jpeg", ".png", ".svg"],
         },
         nickname: {
           title: "Никнейм",
-          isMatchRegexp(val) {
-            return /.{3,}/g.test(val);
-          },
+          matchRegexpStr: ".{3,}",
           type: "text",
         },
         email: {
           title: "Электронная почта",
-          isMatchRegexp(val) {
-            return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(val);
-          },
+          matchRegexpStr: "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
           type: "text",
         },
         password: {
           title: "Пароль",
-          isMatchRegexp(val) {
-            return /.{6,}/g.test(val);
-          },
+          matchRegexpStr: ".{6,}",
           type: "password",
         },
       },
       pending: false,
       textButton: "Сохранить",
-      resRequest: {
-        type: "",
-        message: "",
-      },
     }),
     // Defining a default value depending on the element type of the fields object
     created() {
@@ -83,25 +72,12 @@
     },
     methods: {
       /**
-       * Initializing an error by passing its message to the resRequest object, which prints the message
-       * @param {string} errMessage Error message
-       */
-      setError(errMessage) {
-        this.resRequest = {
-          message: errMessage,
-          type: "error",
-        };
-      },
-      /**
        * Submits a profile change request
        * @param {object} data Data that was validated when filling out the form
        */
       edit(data) {
         if (!Object.keys(data).length) {
-          this.resRequest = {
-            type: "error",
-            message: "Все поля должны быть заполнены правильно",
-          };
+          this.setFormMessage("Все поля должны быть заполнены правильно", "error");
         } else {
           const token = this.$store.getters["auth.store/getToken"];
           const fd = new FormData();
@@ -113,22 +89,18 @@
           const res = this.$store.dispatch("user.store/edit", { token, fd, id: userId, });
 
           this.pending = true;
-          this.resRequest = {
-            type: "",
-            message: "",
-          };
+          this.clearFormMessage();
 
           res.then(({ ok, message, type, }) => {
             this.pending = false;
-            this.resRequest = {
-              message,
-              type,
-            };
+            this.setFormMessage(message, type);
 
             if (ok) {
               this.$router.go(0);
             }
           }).catch((err) => {
+            this.setFormMessage("Произошла ошибка при отправке запроса", "error");
+
             throw err;
           });
         }

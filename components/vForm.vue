@@ -76,7 +76,7 @@
           v-model.trim="dataForm[fieldKey].model"
           class="form__input"
           :class="{
-            'form__input--invalid': !fields[fieldKey].isMatchRegexp(dataForm[fieldKey].model) && dataForm[fieldKey].model.length,
+            'form__input--invalid': !fieldIsMatch(fieldKey) && dataForm[fieldKey].model.length,
           }"
           :type="fields[fieldKey].type"
         >
@@ -95,9 +95,7 @@
       }"
       type="submit"
       :disabled="pending"
-    >
-      {{ textButton }}
-    </button>
+    >{{ textButton }}</button>
     <div
       v-if="Object.values(resRequest).every(Boolean)"
       class="form__res-request"
@@ -108,9 +106,7 @@
           'form__res-request--error': resRequest.type === 'error',
           'form__res-request--success': resRequest.type === 'success',
         }"
-      >
-        {{ resRequest.message }}
-      </p>
+      >{{ resRequest.message }}</p>
     </div>
   </form>
 </template>
@@ -169,10 +165,13 @@
       getFieldsKeys() {
         return Object.keys(this.fields);
       },
+      getDataFormKeys() {
+        return Object.keys(this.dataForm);
+      },
     },
     // Creating similar elements in the dataForm object that contain the keys needed to check the validation
     created() {
-      Object.keys(this.fields).map((key) => {
+      this.getFieldsKeys.map((key) => {
         if (this.fields[key].type !== "file") {
           this.dataForm[key] = { model: this.fields[key].model || "", };
         } else {
@@ -186,16 +185,28 @@
       });
     },
     methods: {
+      /**
+       * Validity check field
+       * @param {string} key The key of the field element that we will check
+       */
+      fieldIsMatch(key) {
+        const itemForm = this.dataForm[key];
+        const field = this.fields[key];
+
+        // For the field that contains the file
+        if (field.type === "file") {
+          return itemForm.file instanceof File;
+        }
+
+        // For normal string values
+        const regexp = new RegExp(field.matchRegexpStr);
+
+        return regexp.test(itemForm.model);
+      },
       // Sends values that pass validation
       sendReq() {
-        const data = Object
-          .keys(this.dataForm)
-          .filter((key) => {
-            const itemForm = this.dataForm[key];
-            
-            return this.fields[key].isMatchRegexp(itemForm["file" in itemForm ? "file" : "model"]);
-          })
-          .reduce((acc, key) => {
+        const data = this.getDataFormKeys
+          .filter((key) => this.fieldIsMatch(key)).reduce((acc, key) => {
             acc[key] = this.dataForm[key];
 
             return acc;
@@ -204,7 +215,10 @@
         // If there is a video, then we send its data with the main data
         this.$emit("sendReq", this.isVideo ? { ...data, ...this.video, } : data);
       },
-      // Assigns the time and duration of the video when it is fully loaded
+      /**
+       * Assigns the time and duration of the video when it is fully loaded
+       * @param {object} e Event object
+       */
       videoIsLoad(e) {
         this.video.time = this.getValidTimeFormat(e.target.duration);
         this.video.duration = e.target.duration;
@@ -215,7 +229,7 @@
        * @param {string} val The new value for the element of the dataForm object
        */
       setOneKeyAtDataForm(key, val) {
-        this.dataForm = Object.keys(this.dataForm).reduce((acc, dataKey) => {
+        this.dataForm = this.getDataFormKeys.reduce((acc, dataKey) => {
           if (dataKey !== key) {
             acc[dataKey] = this.dataForm[dataKey];
           } else {
@@ -236,6 +250,7 @@
         if (file) {
           const reader = new FileReader();
 
+          // Clear
           this.setOneKeyAtDataForm(fieldKey, {
             file: null,
             src: null,
@@ -243,7 +258,10 @@
             loading: true,
           });
 
+          // Read
           reader.readAsDataURL(file);
+
+          // Success
           reader.addEventListener("load", () => {
             this.setOneKeyAtDataForm(fieldKey, {
               file,
@@ -253,23 +271,25 @@
             });
           });
           
+          // Error
           reader.addEventListener("error", () => {
             this.setOneKeyAtDataForm(fieldKey, {
               ...this.dataForm[fieldKey],
               error: true,
             });
 
-            this.$emit("setError", `Произошла ошибка при скачивании файла: ${reader.error}`);
+            this.$emit("setFormMessage", `Произошла ошибка при скачивании файла: ${reader.error}`, "error");
 
             throw reader.error;
           });
         } else {
+          // Error
           this.setOneKeyAtDataForm(fieldKey, {
             ...this.dataForm[fieldKey],
             error: true,
           });
 
-          this.$emit("setError", "Произошла ошибка при скачивании файла");
+          this.$emit("setFormMessage", "Произошла ошибка при скачивании файла", "error");
         }
       },
     },
