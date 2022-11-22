@@ -2,7 +2,10 @@
   <div class="video-edit pt-120 pb-20">
     <div class="container">
       <h1 class="title">Редактирование</h1>
-      <div class="video-edit__block">
+      <div
+        v-if="videoDataIsLoad"
+        class="video-edit__block"
+      >
         <vForm
           :classes="['video-edit__form']"
           :fields="fields"
@@ -65,6 +68,7 @@
           accept: [".jpg", ".jpeg", ".png", ".svg"],
         },
       },
+      videoDataIsLoad: false,
       textButton: "Редактировать",
       pending: false,
     }),
@@ -95,6 +99,8 @@
               }
             }
           });
+
+          this.videoDataIsLoad = true;
         }
       } catch (err) {
         throw err;
