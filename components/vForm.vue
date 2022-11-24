@@ -248,8 +248,6 @@
         const file = e.currentTarget.files[0];
 
         if (file) {
-          const reader = new FileReader();
-
           // Clear
           this.setOneKeyAtDataForm(fieldKey, {
             file: null,
@@ -258,43 +256,15 @@
             loading: true,
           });
 
-          // Reading a file as a video
-          if (/^video/.test(file.type)) {
-            const blob = new Blob([file], { type: file.type, });
-            const url = URL.createObjectURL(blob);
+          const blob = new Blob([file], { type: file.type, });
+          const url = URL.createObjectURL(blob);
 
-            this.setOneKeyAtDataForm(fieldKey, {
-              file,
-              src: url,
-              error: false,
-              loading: false,
-            });
-          } else {
-            // Reading a file as an image
-            reader.readAsDataURL(file);
-
-            // Success
-            reader.addEventListener("load", () => {
-              this.setOneKeyAtDataForm(fieldKey, {
-                file,
-                src: reader.result,
-                error: false,
-                loading: false,
-              });
-            });
-            
-            // Error
-            reader.addEventListener("error", () => {
-              this.setOneKeyAtDataForm(fieldKey, {
-                ...this.dataForm[fieldKey],
-                error: true,
-              });
-
-              this.$emit("setFormMessage", `Произошла ошибка при скачивании файла: ${reader.error}`, "error");
-
-              throw reader.error;
-            });
-          }
+          this.setOneKeyAtDataForm(fieldKey, {
+            file,
+            src: url,
+            error: false,
+            loading: false,
+          });
         } else {
           // Error
           this.setOneKeyAtDataForm(fieldKey, {

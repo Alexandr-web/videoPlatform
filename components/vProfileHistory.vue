@@ -71,7 +71,7 @@
     // Getting viewed videos
     async fetch() {
       try {
-        const token = this.$store.getters["auth.store/getToken"];
+        const token = this.getToken;
         const { myVideos = this.filter.myVideos, search = "", } = this.$route.query;
         const { id, } = this.$store.getters["user.store/getUser"];
         const { ok, videos, } = await this.$store.dispatch("user.store/getHistory", {
@@ -107,8 +107,18 @@
         throw err;
       }
     },
+    computed: {
+      getToken() {
+        return this.$store.getters["auth.store/getToken"];
+      },
+    },
     watch: {
+      // Call the fetch tool when query parameters are updated
       "$route.query": "$fetch",
+      /**
+       * Redirecting the user to a new path by adding the old parameters
+       * @param {string} val New value of query myVideos
+       */
       "filter.myVideos": function (val) {
         const oldQuery = Object.keys(this.$route.query).reduce((acc, key) => {
           acc[key] = this.$route.query[key];
@@ -120,6 +130,10 @@
       },
     },
     methods: {
+      /**
+       * Redirecting the user to a new path by adding old parameters
+       * @param {string} val The value of the query parameter search
+       */
       setSearchQuery(val) {
         const oldQuery = Object.keys(this.$route.query).reduce((acc, key) => {
           acc[key] = this.$route.query[key];

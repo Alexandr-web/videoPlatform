@@ -35,7 +35,7 @@
     data: () => ({ channels: [], }),
     async fetch() {
       try {
-        const token = this.$store.getters["auth.store/getToken"];
+        const token = this.getToken;
         const { id, } = this.user;
         const { ok, followings, } = await this.$store.dispatch("user.store/getFollowings", { token, id, });
 
@@ -58,6 +58,11 @@
       } catch (err) {
         throw err;
       }
+    },
+    computed: {
+      getToken() {
+        return this.$store.getters["auth.store/getToken"];
+      },
     },
   };
 </script>

@@ -7,6 +7,9 @@ export default {
     getUser() {
       return this.$store.getters["user.store/getUser"];
     },
+    getToken() {
+      return this.$store.getters["auth.store/getToken"];
+    },
   },
   methods: {
     /**
@@ -15,7 +18,7 @@ export default {
      * @returns {promise} Request result
      */
     setFollow(followingId) {
-      const token = this.$store.getters["auth.store/getToken"];
+      const token = this.getToken;
       const { id, } = this.getUser;
       const res = this.$store.dispatch("user.store/setFollowing", { token, currentUserId: id, followingUserId: followingId, });
 

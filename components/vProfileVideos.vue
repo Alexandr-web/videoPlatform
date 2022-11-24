@@ -35,7 +35,7 @@
     data: () => ({ videos: [], }),
     async fetch() {
       try {
-        const token = this.$store.getters["auth.store/getToken"];
+        const token = this.getToken;
         const { ok, videos, } = await this.$store.dispatch("user.store/getVideos", { token, id: this.user.id, });
 
         if (ok) {
@@ -64,6 +64,11 @@
       } catch (err) {
         throw err;
       }
+    },
+    computed: {
+      getToken() {
+        return this.$store.getters["auth.store/getToken"];
+      },
     },
   };
 </script>

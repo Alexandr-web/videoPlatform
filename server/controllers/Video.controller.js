@@ -44,6 +44,10 @@ class Video {
     try {
       const allVideos = await VideoModel.findAll({ order: [["createdAt", "DESC"]], });
 
+      if (!allVideos) {
+        return res.status(200).json({ ok: true, videos: [], status: 200, type: "success", });
+      }
+
       // Getting video data (author, title, description, ...)
       const promises = allVideos.map((video) => {
         return User.findOne({ where: { id: video.userId, }, })
@@ -87,6 +91,11 @@ class Video {
       }
 
       const video = await VideoModel.findOne({ where: { id, }, });
+
+      if (!video) {
+        return res.status(404).json({ ok: false, message: "Такого видео не существует", status: 404, type: "error", });
+      }
+
       const author = await User.findOne({ where: { id: video.userId, }, });
       const authorData = Object
         .keys(author.dataValues)

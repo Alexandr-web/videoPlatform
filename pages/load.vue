@@ -54,6 +54,11 @@
       pending: false,
     }),
     head: { title: "Загрузка видео", },
+    computed: {
+      getToken() {
+        return this.$store.getters["auth.store/getToken"];
+      },
+    },
     methods: {
       loadVideo(data) {
         const isContainsRequiredItems = Object.keys(this.fields).every((key) => data[key]);
@@ -61,7 +66,7 @@
         if (!isContainsRequiredItems) {
           this.setFormMessage("Все поля должны быть заполнены правильно", "error");
         } else {
-          const token = this.$store.getters["auth.store/getToken"];
+          const token = this.getToken;
           const fd = new FormData();
 
           Object.keys(data).map((key) => fd.append(key, typeof data[key] === "object" ? data[key]["file" in data[key] ? "file" : "model"] : data[key]));

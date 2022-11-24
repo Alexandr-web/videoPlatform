@@ -44,8 +44,8 @@
           <div
             class="videoplayer__progress-line"
             @click="setDistanceVideoByClick($event)"
-            @mouseleave.stop="chunkVideo.hide = true"
-            @mousemove.stop="switchingVideoChunkPosition($event)"
+            @mouseleave="chunkVideo.hide = true"
+            @mousemove="switchingVideoChunkPosition($event)"
           >
             <div
               class="videoplayer__progress-slider"
@@ -264,13 +264,14 @@
        * @param {object} e Event object
        */
       switchingVideoChunkPosition(e) {
+        const x = e.layerX;
+
         // Position entry
-        this.chunkVideo.left = e.layerX;
+        this.chunkVideo.left = x;
         this.chunkVideo.hide = false;
 
         // Recording time
         const widthLine = e.currentTarget.offsetWidth;
-        const x = e.layerX;
 
         if (x >= 0 && x <= widthLine) {
           const duration = this.getVideoElement.duration;

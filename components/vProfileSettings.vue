@@ -53,6 +53,11 @@
       pending: false,
       textButton: "Сохранить",
     }),
+    computed: {
+      getToken() {
+        return this.$store.getters["auth.store/getToken"];
+      },
+    },
     // Defining a default value depending on the element type of the fields object
     created() {
       Object.keys(this.user).map((key) => {
@@ -79,7 +84,7 @@
         if (!Object.keys(data).length) {
           this.setFormMessage("Все поля должны быть заполнены правильно", "error");
         } else {
-          const token = this.$store.getters["auth.store/getToken"];
+          const token = this.getToken;
           const fd = new FormData();
           const { id: userId, } = this.user;
           

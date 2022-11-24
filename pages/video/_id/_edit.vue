@@ -75,7 +75,7 @@
     // Getting video by id from the server
     async fetch() {
       try {
-        const token = this.$store.getters["auth.store/getToken"];
+        const token = this.getToken;
         const { id: videoId, } = this.$route.params;
         const { ok, video, } = await this.$store.dispatch("video.store/getOne", { token, id: videoId, });
 
@@ -107,6 +107,11 @@
       }
     },
     head: { title: "Редактирование видео", },
+    computed: {
+      getToken() {
+        return this.$store.getters["auth.store/getToken"];
+      },
+    },
     methods: {
       /**
        * Video data editing
@@ -116,7 +121,7 @@
         if (!Object.keys(data).some((key) => data[key].file || data.model)) {
           this.setFormMessage("Поля должны быть заполнены правильно", "error");
         } else {
-          const token = this.$store.getters["auth.store/getToken"];
+          const token = this.getToken;
           const fd = new FormData();
           const { id: videoId, } = this.$route.params;
 
