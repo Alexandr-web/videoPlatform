@@ -44,17 +44,23 @@
     </div>
     <div class="video-page__info-header-block video-page__info-header-buttons">
       <vFollowBtn
-        v-if="showFollowBtn"
+        v-if="!authorIsCurrentUser"
         :pending="pendingFollowing"
         :classes="['video-page__info-header-buttons-btn']"
         :is-follow="follow"
         @byClick="$emit('setFollow', getVideo.author.id)"
       />
       <nuxt-link
-        v-if="showEditBtn"
+        v-if="authorIsCurrentUser"
         class="video-page__info-header-buttons-btn edit-btn"
         :to="`/video/${getVideo.id}/edit`"
       >Редактировать</nuxt-link>
+      <vRemoveBtn
+        v-if="authorIsCurrentUser"
+        :classes="['video-page__info-header-buttons-btn']"
+        :pending="pendingRemove"
+        @remove="$emit('removeVideo', getVideo.id)"
+      />
     </div>
   </header>
 </template>
@@ -63,6 +69,7 @@
   import vLikeIcon from "@/components/icons/vLikeIcon";
   import vDislikeIcon from "@/components/icons/vDislikeIcon";
   import vFollowBtn from "@/components/vFollowBtn";
+  import vRemoveBtn from "@/components/vRemoveBtn";
   import getValidNumberFormatMixin from "@/mixins/getValidNumberFormat";
 
   export default {
@@ -71,6 +78,7 @@
       vDislikeIcon,
       vLikeIcon,
       vFollowBtn,
+      vRemoveBtn,
     },
     mixins: [getValidNumberFormatMixin],
     props: {
@@ -78,19 +86,19 @@
         type: Boolean,
         required: true,
       },
-      showFollowBtn: {
+      pendingFollowing: {
         type: Boolean,
         required: true,
       },
-      showEditBtn: {
+      pendingRemove: {
+        type: Boolean,
+        required: true,
+      },
+      authorIsCurrentUser: {
         type: Boolean,
         required: true,
       },
       follow: {
-        type: Boolean,
-        required: true,
-      },
-      pendingFollowing: {
         type: Boolean,
         required: true,
       },

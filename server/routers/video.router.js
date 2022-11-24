@@ -28,6 +28,7 @@ router.get("/api", videoController.getAll);
 router.get("/api/:id", isAuth, videoController.getOne);
 router.put("/:id/view", isAuth, videoController.setView);
 router.put("/:id/rate", isAuth, videoController.setRate);
+router.delete("/:id/delete", isAuth, videoController.remove);
 router.put("/:id/edit", isAuth, upload.fields([
   {
     name: "video",

@@ -3,6 +3,7 @@ const User = require("../models/User.model");
 const setLike = require("../helpers/setLike");
 const setDislike = require("../helpers/setDislike");
 const removeFile = require("../helpers/removeFile");
+const { Op, } = require("sequelize");
 
 class Video {
   // Upload video file
@@ -266,6 +267,51 @@ class Video {
       await video.update(videoData);
 
       return res.status(200).json({ ok: true, message: "Видео отредактировано", status: 200, type: "success", });
+    } catch (err) {
+      console.log(err);
+
+      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+    }
+  }
+
+  // Deletes video data by his id
+  async remove(req, res) {
+    try {
+      if (!req.isAuth) {
+        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
+      }
+
+      const { id, } = req.params;
+
+      if (!id || isNaN(+id)) {
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
+      }
+
+      const video = await VideoModel.findOne({ where: { id, }, });
+
+      if (!video) {
+        return res.status(404).json({ ok: false, message: "Такого видео не существует", status: 404, type: "error", });
+      }
+
+      if (video.userId !== parseInt(req.userId)) {
+        return res.status(403).json({ ok: false, message: "У вас нет доступа для удаления этого видео", status: 403, type: "error", });
+      }
+
+      const usersWhoseHistoryContainsThisVideo = await User.findAll({ where: { history: { [Op.contains]: [parseInt(id)], }, }, });
+
+      // Delete this video from user history
+      usersWhoseHistoryContainsThisVideo.map((user) => {
+        user.update({ history: user.history.filter((videoId) => videoId !== parseInt(id)), });
+      });
+
+      // Deleting video file
+      await removeFile([__dirname, "../../", process.env.VIDEO_DATA_FILES_FOLDER, video.src], res);
+      // Deleting video poster
+      await removeFile([__dirname, "../../", process.env.VIDEO_DATA_FILES_FOLDER, video.poster], res);
+      // Removing videos from the database
+      await video.destroy();
+
+      return res.status(200).json({ ok: true, message: "Видео удалено", status: 200, type: "success", });
     } catch (err) {
       console.log(err);
 

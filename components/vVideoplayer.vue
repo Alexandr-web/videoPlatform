@@ -44,8 +44,8 @@
           <div
             class="videoplayer__progress-line"
             @click="setDistanceVideoByClick($event)"
-            @mouseleave="chunkVideo.hide = true"
-            @mousemove="switchingVideoChunkPosition($event)"
+            @mouseleave.stop="chunkVideo.hide = true"
+            @mousemove.stop="switchingVideoChunkPosition($event)"
           >
             <div
               class="videoplayer__progress-slider"
@@ -213,15 +213,22 @@
       getPlay(play) {
         const video = this.getVideoElement;
 
+        this.loading = true;
+
         if (video) {
           const promise = fetch(video.src)
             .then((res) => res.blob())
-            .then(() => video.play());
+            .then(() => {
+              this.loading = false;
+              video.play();
+            });
             
           if (promise !== undefined) {
             promise
-              .then(() => video[play ? "play" : "pause"]())
-              .catch((err) => {
+              .then(() => {
+                this.loading = false;
+                video[play ? "play" : "pause"]();
+              }).catch((err) => {
                 throw err;
               });
           }
@@ -294,28 +301,22 @@
             // Arrow right
             case 39:
               // Fast forward video 5 seconds
-              if (!this.loading) {
-                this.getVideoElement.currentTime += this.rewindTime;
-                this.rewindVideo = true;
-                this.isFastForwardVideo = true;
-              }
+              this.getVideoElement.currentTime += this.rewindTime;
+              this.rewindVideo = true;
+              this.isFastForwardVideo = true;
               break;
             // Arrow left
             case 37:
               // Rewind video by 5 seconds
-              if (!this.loading) {
-                this.getVideoElement.currentTime -= this.rewindTime;
-                this.rewindVideo = true;
-                this.isFastForwardVideo = false;
-              }
+              this.getVideoElement.currentTime -= this.rewindTime;
+              this.rewindVideo = true;
+              this.isFastForwardVideo = false;
               break;
           }
         }
       },
       setPlay() {
-        if (!this.loading) {
-          this.$store.commit("video.store/setPlay", !this.getPlay);
-        }
+        this.$store.commit("video.store/setPlay", !this.getPlay);
       },
       endedHandler() {
         this.$store.commit("video.store/setPlay", false);
@@ -340,16 +341,14 @@
        * @param {object} e Event object
        */
       setDistanceVideoByClick(e) {
-        if (!this.loading) {
-          const widthLine = e.currentTarget.offsetWidth;
-          const x = e.layerX;
+        const widthLine = e.currentTarget.offsetWidth;
+        const x = e.layerX;
 
-          if (x >= 0 && x <= widthLine) {
-            const duration = this.getVideoElement.duration;
+        if (x >= 0 && x <= widthLine) {
+          const duration = this.getVideoElement.duration;
 
-            this.distanceVideo = Math.ceil((x / widthLine) * 100);
-            this.getVideoElement.currentTime = (this.distanceVideo * duration) / 100;
-          }
+          this.distanceVideo = Math.ceil((x / widthLine) * 100);
+          this.getVideoElement.currentTime = (this.distanceVideo * duration) / 100;
         }
       },
       // Changing the current video time

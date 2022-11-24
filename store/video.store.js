@@ -169,5 +169,28 @@ export default {
         throw err;
       }
     },
+
+    /**
+     * Sends a request to delete a video by id
+     * @param {string} token User token
+     * @param {number|string} id Video id 
+     * @returns {promise} Request result
+     */
+    async remove({ }, { token, id, }) {
+      try {
+        const res = await fetch(`${host}/video/${id}/delete`, {
+          method: "DELETE",
+          headers: {
+            "Accept-Type": "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
   },
 };

@@ -15,17 +15,18 @@
       <div class="video-page__info-block">
         <div class="container">
           <vVideoPageHeader
-            :pending-set-rate="pendingSetRate"
-            :show-follow-btn="!followingUserIsCurrentUser"
-            :show-edit-btn="followingUserIsCurrentUser"
+            :author-is-current-user="authorIsCurrentUser"
             :follow="follow"
-            :pending-following="pendingFollowing"
             :likes="likesCount"
             :dislikes="dislikesCount"
             :is-like="isLike"
             :is-dislike="isDislike"
+            :pending-set-rate="pendingSetRate"
+            :pending-following="pendingFollowing"
+            :pending-remove="pendingRemove"
             @setFollow="setFollow"
             @setRate="setRate"
+            @removeVideo="removeVideo"
           />
           <div class="video-page__info-main">
             <h1 class="video-page__info-title">{{ getVideo.title }}</h1>
@@ -66,7 +67,8 @@
     },
     data: () => ({
       pendingSetRate: false,
-      followingUserIsCurrentUser: false,
+      pendingRemove: false,
+      authorIsCurrentUser: false,
       likesCount: 0,
       dislikesCount: 0,
       isLike: false,
@@ -75,7 +77,7 @@
     // Getting video data
     async fetch() {
       try {
-        const token = this.$store.getters["auth.store/getToken"];
+        const token = this.getToken;
         const { id, } = this.$route.params;
         const { ok, video, } = await this.$store.dispatch("video.store/getOne", { token, id, });
 
@@ -93,7 +95,7 @@
           this.follow = video.author.followersId.includes(userId);
 
           // The current user is the user he wants to follow
-          this.followingUserIsCurrentUser = video.author.id === userId;
+          this.authorIsCurrentUser = video.author.id === userId;
 
           // Recording the number of positive and negative ratings
           this.likesCount = video.likes.length;
@@ -130,6 +132,9 @@
       getUser() {
         return this.$store.getters["user.store/getUser"];
       },
+      getToken() {
+        return this.$store.getters["auth.store/getToken"];
+      },
     },
     methods: {
       /**
@@ -137,7 +142,7 @@
        * @param {boolean} isLike Liked this video
        */
       setRate(isLike) {
-        const token = this.$store.getters["auth.store/getToken"];
+        const token = this.getToken;
         const { id, } = this.$route.params;
         const res = this.$store.dispatch("video.store/setRate", {
           token,
@@ -156,6 +161,26 @@
 
             this.isLike = positiveRating;
             this.isDislike = negativeRating;
+          }
+        }).catch((err) => {
+          throw err;
+        });
+      },
+      /**
+       * Delete video by its id
+       * @param {number} videoId Video id
+       */
+      removeVideo(videoId) {
+        const token = this.getToken;
+        const res = this.$store.dispatch("video.store/remove", { token, id: videoId, });
+
+        this.pendingRemove = true;
+
+        res.then(({ ok, }) => {
+          this.pendingRemove = false;
+          
+          if (ok) {
+            this.$router.push("/");
           }
         }).catch((err) => {
           throw err;

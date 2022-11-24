@@ -258,30 +258,43 @@
             loading: true,
           });
 
-          // Read
-          reader.readAsDataURL(file);
+          // Reading a file as a video
+          if (/^video/.test(file.type)) {
+            const blob = new Blob([file], { type: file.type, });
+            const url = URL.createObjectURL(blob);
 
-          // Success
-          reader.addEventListener("load", () => {
             this.setOneKeyAtDataForm(fieldKey, {
               file,
-              src: reader.result,
+              src: url,
               error: false,
               loading: false,
             });
-          });
-          
-          // Error
-          reader.addEventListener("error", () => {
-            this.setOneKeyAtDataForm(fieldKey, {
-              ...this.dataForm[fieldKey],
-              error: true,
+          } else {
+            // Reading a file as an image
+            reader.readAsDataURL(file);
+
+            // Success
+            reader.addEventListener("load", () => {
+              this.setOneKeyAtDataForm(fieldKey, {
+                file,
+                src: reader.result,
+                error: false,
+                loading: false,
+              });
             });
+            
+            // Error
+            reader.addEventListener("error", () => {
+              this.setOneKeyAtDataForm(fieldKey, {
+                ...this.dataForm[fieldKey],
+                error: true,
+              });
 
-            this.$emit("setFormMessage", `Произошла ошибка при скачивании файла: ${reader.error}`, "error");
+              this.$emit("setFormMessage", `Произошла ошибка при скачивании файла: ${reader.error}`, "error");
 
-            throw reader.error;
-          });
+              throw reader.error;
+            });
+          }
         } else {
           // Error
           this.setOneKeyAtDataForm(fieldKey, {
