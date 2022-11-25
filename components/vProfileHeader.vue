@@ -6,13 +6,13 @@
         <div
           class="profile__header-avatar"
           :class="{
-            'profile__header-avatar-skeleton': loadingAvatar,
+            'profile__header-avatar-skeleton': loadingElement,
           }"
         >
           <img
             class="profile__header-avatar-image"
             :src="user.avatar"
-            @load="setLoadingAvatar(false)"
+            @load="dataElementIsLoaded"
           >
         </div>
         <div class="profile__header-nickname">
@@ -35,12 +35,12 @@
   import vFollowBtn from "@/components/vFollowBtn";
   import setFollowMixin from "@/mixins/setFollow";
   import getValidNumberFormatMixin from "@/mixins/getValidNumberFormat";
-  import loadingAvatarMixin from "@/mixins/loadingAvatar";
+  import loadingElementDataMixin from "@/mixins/loadingElementData";
 
   export default {
     name: "ProfileHeaderComponent",
     components: { vFollowBtn, },
-    mixins: [setFollowMixin, getValidNumberFormatMixin, loadingAvatarMixin],
+    mixins: [setFollowMixin, getValidNumberFormatMixin, loadingElementDataMixin],
     props: {
       user: {
         type: Object,

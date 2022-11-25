@@ -10,7 +10,6 @@
           :pending="pending"
           :res-request="resRequest"
           :is-video="true"
-          :on-skeleton="!videoDataIsLoad"
           @setMessage="setFormMessage"
           @sendReq="edit"
         />
@@ -107,10 +106,7 @@
           return acc;
         }, { ...videoParams, });
 
-        return {
-          fields,
-          videoDataIsLoad: true,
-        };
+        return { fields, };
       } catch (err) {
         throw err;
       }

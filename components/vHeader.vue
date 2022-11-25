@@ -31,13 +31,13 @@
           <nuxt-link
             class="header__user-avatar"
             :to="`/user/${getUser.id}?tab=videos`"
-            :class="{ 'header__user-avatar-skeleton': loadingAvatar, }"
+            :class="{ 'header__user-avatar-skeleton': loadingElement, }"
           >
             <img
               class="header__user-avatar-image"
               :src="getUser.avatar"
               :alt="getUser.nickname"
-              @load="setLoadingAvatar(false)"
+              @load="dataElementIsLoaded"
             >
           </nuxt-link>
         </div>
@@ -48,12 +48,12 @@
 
 <script>
   import vSearch from "@/components/vSearch";
-  import loadingAvatarMixin from "@/mixins/loadingAvatar";
+  import loadingElementDataMixin from "@/mixins/loadingElementData";
 
   export default {
     name: "HeaderComponent",
     components: { vSearch, },
-    mixins: [loadingAvatarMixin],
+    mixins: [loadingElementDataMixin],
     data: () => ({
       menu: [
         {

@@ -7,13 +7,13 @@
       <div
         class="channel-card__avatar"
         :class="{
-          'channel-card__avatar-skeleton': loadingAvatar,
+          'channel-card__avatar-skeleton': loadingElement,
         }"
       >
         <img
           class="channel-card__avatar-img"
           :src="channel.avatar"
-          @load="setLoadingAvatar(false)"
+          @load="dataElementIsLoaded"
         />
       </div>
       <h3 class="channel-card__nickname">{{ channel.nickname }}</h3>
@@ -24,11 +24,11 @@
 
 <script>
   import getValidNumberFormatMixin from "@/mixins/getValidNumberFormat";
-  import loadingAvatarMixin from "@/mixins/loadingAvatar";
+  import loadingElementDataMixin from "@/mixins/loadingElementData";
 
   export default {
     name: "ChannelCardComponent",
-    mixins: [getValidNumberFormatMixin, loadingAvatarMixin],
+    mixins: [getValidNumberFormatMixin, loadingElementDataMixin],
     props: {
       channel: {
         type: Object,

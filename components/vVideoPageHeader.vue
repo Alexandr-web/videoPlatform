@@ -8,13 +8,13 @@
         <div
           class="video-page__info-user-avatar"
           :class="{
-            'video-page__info-user-link-skeleton': loadingAvatar,
+            'video-page__info-user-link-skeleton': loadingElement,
           }"
         >
           <img
             class="video-page__info-user-avatar-img"
             :src="getVideo.author.avatar"
-            @load="setLoadingAvatar(false)"
+            @load="dataElementIsLoaded"
           >
         </div>
         <div class="video-page__info-user-nickname">{{ getVideo.author.nickname }}</div>
@@ -79,7 +79,7 @@
   import vFollowBtn from "@/components/vFollowBtn";
   import vRemoveBtn from "@/components/vRemoveBtn";
   import getValidNumberFormatMixin from "@/mixins/getValidNumberFormat";
-  import loadingAvatarMixin from "@/mixins/loadingAvatar";
+  import loadingElementDataMixin from "@/mixins/loadingElementData";
 
   export default {
     name: "VideoPageHeaderComponent",
@@ -89,7 +89,7 @@
       vFollowBtn,
       vRemoveBtn,
     },
-    mixins: [getValidNumberFormatMixin, loadingAvatarMixin],
+    mixins: [getValidNumberFormatMixin, loadingElementDataMixin],
     props: {
       pendingSetRate: {
         type: Boolean,

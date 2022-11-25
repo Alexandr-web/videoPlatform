@@ -8,7 +8,7 @@
       v-for="(fieldKey, index) in getFieldsKeys"
       :key="index"
       class="form__field"
-      :class="{ 'form__field-skeleton': onSkeleton, }"
+      :class="{ 'form__field-skeleton': dataForm[fieldKey].loading, }"
     >
       <label
         v-if="fields[fieldKey].type === 'file'"
@@ -29,10 +29,6 @@
           v-if="fields[fieldKey].typeFile === 'img'"
           class="form__file-view"
         >
-          <vLoader
-            v-if="dataForm[fieldKey].loading"
-            :classes="['form__loader-file']"
-          />
           <vCameraIcon
             v-if="!dataForm[fieldKey].src && !dataForm[fieldKey].loading"
             :classes="['form__file-view-icon']"
@@ -40,20 +36,17 @@
           <img
             v-if="dataForm[fieldKey].src"
             class="form__file-img"
+            :src="dataForm[fieldKey].src"
             :class="{
               'form__file-img--avatar': fields[fieldKey].isAvatar,
             }"
-            :src="dataForm[fieldKey].src"
+            @load="setOneKeyAtDataForm(fieldKey, { ...dataForm[fieldKey], loading: false, })"
           />
         </div>
         <div
           v-if="fields[fieldKey].typeFile === 'video'"
           class="form__file-view"
         >
-          <vLoader
-            v-if="dataForm[fieldKey].loading"
-            :classes="['form__loader-file']"
-          />
           <vVideoIcon
             v-if="!dataForm[fieldKey].src && !dataForm[fieldKey].loading"
             :classes="['form__file-view-icon']"
@@ -63,7 +56,7 @@
             class="form__file-video"
             :src="dataForm[fieldKey].src"
             controls
-            @loadedmetadata="videoIsLoad($event)"
+            @loadedmetadata="videoIsLoad($event, fieldKey)"
           ></video>
         </div>
       </label>
@@ -115,7 +108,6 @@
 <script>
   import vCameraIcon from "@/components/icons/vCameraIcon";
   import vVideoIcon from "@/components/icons/vVideoIcon";
-  import vLoader from "@/components/vLoader";
   import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
 
   export default {
@@ -123,7 +115,6 @@
     components: {
       vCameraIcon,
       vVideoIcon,
-      vLoader,
     },
     mixins: [getValidTimeFormatMixin],
     props: {
@@ -144,10 +135,6 @@
         required: true,
       },
       isVideo: {
-        type: Boolean,
-        default: false,
-      },
-      onSkeleton: {
         type: Boolean,
         default: false,
       },
@@ -184,7 +171,7 @@
             file: null,
             src: this.fields[key].src || "",
             error: false,
-            loading: false,
+            loading: Boolean(this.fields[key].src),
           };
         }
       });
@@ -223,10 +210,12 @@
       /**
        * Assigns the time and duration of the video when it is fully loaded
        * @param {object} e Event object
+       * @param {string} key The key of the element to change
        */
-      videoIsLoad(e) {
+      videoIsLoad(e, key) {
         this.video.time = this.getValidTimeFormat(e.target.duration);
         this.video.duration = e.target.duration;
+        this.setOneKeyAtDataForm(key, { ...this.dataForm[key], loading: false, });
       },
       /**
        * Replacing the value of the dataForm element by key
@@ -255,23 +244,22 @@
         if (file) {
           // Clear
           this.setOneKeyAtDataForm(fieldKey, {
+            ...this.dataForm[fieldKey],
             file: null,
             src: null,
             error: false,
-            loading: true,
           });
 
-          setTimeout(() => {
-            const blob = new Blob([file], { type: file.type, });
-            const url = URL.createObjectURL(blob);
+          const blob = new Blob([file], { type: file.type, });
+          const url = URL.createObjectURL(blob);
 
-            this.setOneKeyAtDataForm(fieldKey, {
-              file,
-              src: url,
-              error: false,
-              loading: false,
-            });
-          }, 0);
+          this.setOneKeyAtDataForm(fieldKey, {
+            ...this.dataForm[fieldKey],
+            file,
+            src: url,
+            error: false,
+            loading: true,
+          });
         } else {
           // Error
           this.setOneKeyAtDataForm(fieldKey, {

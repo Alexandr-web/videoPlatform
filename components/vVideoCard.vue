@@ -4,10 +4,14 @@
       class="video-card__inner"
       :to="`/video/${card.id}`"
     >
-      <div class="video-card__picture">
+      <div
+        class="video-card__picture"
+        :class="{ 'skeleton': loadingElement, }"
+      >
         <img
           class="video-card__poster"
           :src="card.poster"
+          @load="dataElementIsLoaded"
         >
         <div class="video-card__time">{{ card.time }}</div>
       </div>
@@ -38,11 +42,12 @@
 <script>
   import vViewsIcon from "@/components/icons/vViewsIcon";
   import getValidNumberFormatMixin from "@/mixins/getValidNumberFormat";
+  import loadingElementDataMixin from "@/mixins/loadingElementData";
 
   export default {
     name: "VideoCardComponent",
     components: { vViewsIcon, },
-    mixins: [getValidNumberFormatMixin],
+    mixins: [getValidNumberFormatMixin, loadingElementDataMixin],
     props: {
       card: {
         type: Object,
