@@ -182,5 +182,22 @@ export default {
         throw err;
       }
     },
+
+    /**
+     * Gets a valid avatar url
+     * @param {string} path original path
+     * @return {string} valid url avatar
+     */
+    async getValidAvatarUrl({ }, path) {
+      try {
+        if (/^\/\_nuxt\//.test(path)) {
+          return path;
+        }
+
+        return require(`@/avatars/${path}`);
+      } catch (err) {
+        throw err;
+      }
+    },
   },
 };

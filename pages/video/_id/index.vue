@@ -41,8 +41,6 @@
 <script>
   import vVideoplayer from "@/components/vVideoplayer";
   import vVideoPageHeader from "@/components/vVideoPageHeader";
-  import getValidUrlVideoDataFileMixin from "@/mixins/getValidUrlVideoDataFile";
-  import getValidAvatarUrlMixin from "@/mixins/getValidAvatarUrl";
   import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
   import setFollowMixin from "@/mixins/setFollow";
 
@@ -52,7 +50,7 @@
       vVideoplayer,
       vVideoPageHeader,
     },
-    mixins: [getValidTimeFormatMixin, getValidUrlVideoDataFileMixin, getValidAvatarUrlMixin, setFollowMixin],
+    mixins: [getValidTimeFormatMixin, setFollowMixin],
     layout: "default",
     // Checking if the video exists in the database
     validate({ store, params: { id, }, }) {
@@ -86,9 +84,9 @@
 
         if (ok) {
           const { poster: videoPoster, src: srcVideo, } = video;
-          const poster = await this.getValidUrlVideoDataFile(videoPoster);
-          const src = await this.getValidUrlVideoDataFile(srcVideo);
-          const authorAvatar = await this.getValidAvatarUrl(video.author.avatar);
+          const poster = await this.$store.dispatch("video.store/getValidUrlVideoDataFile", videoPoster);
+          const src = await this.$store.dispatch("video.store/getValidUrlVideoDataFile", srcVideo);
+          const authorAvatar = await this.$store.dispatch("user.store/getValidAvatarUrl", video.author.avatar);
           const { id: userId, } = this.getUser;
 
           // Whether the current user is following the author of the video

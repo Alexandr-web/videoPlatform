@@ -48,7 +48,6 @@
   import vSearch from "@/components/vSearch";
   import vVideoCard from "@/components/vVideoCard";
   import vNothing from "@/components/vNothing";
-  import getValidUrlVideoDataFileMixin from "@/mixins/getValidUrlVideoDataFile";
 
   export default {
     name: "ProfileHistoryComponent",
@@ -57,7 +56,6 @@
       vVideoCard,
       vNothing,
     },
-    mixins: [getValidUrlVideoDataFileMixin],
     props: {
       user: {
         type: Object,
@@ -88,8 +86,8 @@
           this.videos = [];
 
           videos.map((video) => {
-            const posterRes = this.getValidUrlVideoDataFile(video.poster);
-            const videoRes = this.getValidUrlVideoDataFile(video.src);
+            const posterRes = this.$store.dispatch("video.store/getValidUrlVideoDataFile", video.poster);
+            const videoRes = this.$store.dispatch("video.store/getValidUrlVideoDataFile", video.src);
 
             Promise.all([posterRes, videoRes])
               .then(([poster, src]) => {

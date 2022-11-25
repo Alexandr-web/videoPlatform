@@ -8,6 +8,7 @@
       v-for="(fieldKey, index) in getFieldsKeys"
       :key="index"
       class="form__field"
+      :class="{ 'skeleton': onSkeleton, }"
     >
       <label
         v-if="fields[fieldKey].type === 'file'"
@@ -146,6 +147,10 @@
         type: Boolean,
         default: false,
       },
+      onSkeleton: {
+        type: Boolean,
+        default: false,
+      },
       resRequest: {
         type: Object,
         default: () => ({
@@ -256,15 +261,17 @@
             loading: true,
           });
 
-          const blob = new Blob([file], { type: file.type, });
-          const url = URL.createObjectURL(blob);
+          setTimeout(() => {
+            const blob = new Blob([file], { type: file.type, });
+            const url = URL.createObjectURL(blob);
 
-          this.setOneKeyAtDataForm(fieldKey, {
-            file,
-            src: url,
-            error: false,
-            loading: false,
-          });
+            this.setOneKeyAtDataForm(fieldKey, {
+              file,
+              src: url,
+              error: false,
+              loading: false,
+            });
+          }, 0);
         } else {
           // Error
           this.setOneKeyAtDataForm(fieldKey, {

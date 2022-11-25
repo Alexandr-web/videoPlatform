@@ -17,7 +17,6 @@
 <script>
   import vChannelCard from "@/components/vChannelCard";
   import vNothing from "@/components/vNothing";
-  import getValidAvatarUrlMixin from "@/mixins/getValidAvatarUrl";
 
   export default {
     name: "ProfileChannelsComponent",
@@ -25,7 +24,6 @@
       vChannelCard,
       vNothing,
     },
-    mixins: [getValidAvatarUrlMixin],
     props: {
       user: {
         type: Object,
@@ -33,6 +31,7 @@
       },
     },
     data: () => ({ channels: [], }),
+    // Get all users that are being followed
     async fetch() {
       try {
         const token = this.getToken;
@@ -44,7 +43,7 @@
             const { avatar, } = following;
 
             // Filling channels with a valid avatar url
-            this.getValidAvatarUrl(avatar)
+            this.$store.dispatch("user.store/getValidAvatarUrl", avatar)
               .then((newAvatar) => {
                 this.channels.push({
                   ...following,

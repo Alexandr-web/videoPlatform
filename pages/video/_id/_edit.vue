@@ -2,17 +2,15 @@
   <div class="video-edit pt-120 pb-20">
     <div class="container">
       <h1 class="title">Редактирование</h1>
-      <div
-        v-if="videoDataIsLoad"
-        class="video-edit__block"
-      >
+      <div class="video-edit__block">
         <vForm
           :classes="['video-edit__form']"
           :fields="fields"
-          :text-button="textButton"
+          text-button="Редактировать"
           :pending="pending"
           :res-request="resRequest"
           :is-video="true"
+          :on-skeleton="!videoDataIsLoad"
           @setMessage="setFormMessage"
           @sendReq="edit"
         />
@@ -23,13 +21,12 @@
 
 <script>
   import handleFormMessagesMixin from "@/mixins/handleFormMessages";
-  import getValidUrlVideoDataFileMixin from "@/mixins/getValidUrlVideoDataFile";
   import vForm from "@/components/vForm";
 
   export default {
     name: "EditVideoPage",
     components: { vForm, },
-    mixins: [getValidUrlVideoDataFileMixin, handleFormMessagesMixin],
+    mixins: [handleFormMessagesMixin],
     /**
      * We get the video from the server by the id parameter
      * Also determine the author of this video
@@ -45,67 +42,80 @@
           throw err;
         });
     },
-    data: () => ({
-      fields: {
-        title: {
-          title: "Название",
-          matchRegexpStr: ".{6,}",
-          type: "text",
-        },
-        description: {
-          title: "Описание",
-          matchRegexpStr: ".{12,}",
-          type: "text",
-        },
-        src: {
-          type: "file",
-          typeFile: "video",
-          accept: [".mp4", ".avi", ".mkv"],
-        },
-        poster: {
-          type: "file",
-          typeFile: "img",
-          accept: [".jpg", ".jpeg", ".png", ".svg"],
-        },
-      },
-      videoDataIsLoad: false,
-      textButton: "Редактировать",
-      pending: false,
-    }),
     // Getting video by id from the server
-    async fetch() {
+    async asyncData({ store, params: { id: videoId, }, }) {
       try {
-        const token = this.getToken;
-        const { id: videoId, } = this.$route.params;
-        const { ok, video, } = await this.$store.dispatch("video.store/getOne", { token, id: videoId, });
+        const token = store.getters["auth.store/getToken"];
+        const { ok, video, } = await store.dispatch("video.store/getOne", { token, id: videoId, });
 
-        if (ok) {
-          const { poster, src, } = video;
-          const validPoster = await this.getValidUrlVideoDataFile(poster);
-          const validVideoSrc = await this.getValidUrlVideoDataFile(src);
-          const videoData = {
-            ...video,
-            src: validVideoSrc,
-            poster: validPoster,
+        if (!ok) {
+          return {
+            fields: [],
+            videoDataIsLoad: true,
           };
-
-          // Writing initial data to a form
-          Object.keys(videoData).map((key) => {
-            if (key in this.fields) {
-              if (["src", "poster"].includes(key)) {
-                this.fields[key].src = videoData[key];
-              } else {
-                this.fields[key].model = videoData[key];
-              }
-            }
-          });
-
-          this.videoDataIsLoad = true;
         }
+
+        const { poster, src, } = video;
+        const validPoster = await store.dispatch("video.store/getValidUrlVideoDataFile", poster);
+        const validVideoSrc = await store.dispatch("video.store/getValidUrlVideoDataFile", src);
+
+        // Contains video data from the server
+        const videoData = {
+          ...video,
+          src: validVideoSrc,
+          poster: validPoster,
+        };
+        
+        // Contains the data that will be in the edit form
+        const videoParams = {
+          title: {
+            title: "Название",
+            matchRegexpStr: ".{6,}",
+            type: "text",
+            model: "",
+          },
+          description: {
+            title: "Описание",
+            matchRegexpStr: ".{12,}",
+            type: "text",
+            model: "",
+          },
+          src: {
+            type: "file",
+            typeFile: "video",
+            accept: [".mp4", ".avi", ".mkv"],
+            src: "",
+          },
+          poster: {
+            type: "file",
+            typeFile: "img",
+            accept: [".jpg", ".jpeg", ".png", ".svg"],
+            src: "",
+          },
+        };
+
+        // Writing initial data to a form
+        const fields = Object.keys(videoData).reduce((acc, key) => {
+          if (key in videoParams) {
+            if (["src", "poster"].includes(key)) {
+              acc[key].src = videoData[key];
+            } else {
+              acc[key].model = videoData[key];
+            }
+          }
+
+          return acc;
+        }, { ...videoParams, });
+
+        return {
+          fields,
+          videoDataIsLoad: true,
+        };
       } catch (err) {
         throw err;
       }
     },
+    data: () => ({ pending: false, }),
     head: { title: "Редактирование видео", },
     computed: {
       getToken() {

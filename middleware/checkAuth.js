@@ -1,5 +1,4 @@
 import jwtDecode from "jwt-decode";
-import getValidAvatarUrl from "../helpers/getValidAvatarUrl";
 
 /**
  * This middleware is used on all pages, except pages with authorization
@@ -26,7 +25,7 @@ export default async ({ store, redirect, }) => {
       return redirect("/auth/login");
     }
 
-    getValidAvatarUrl(res.user.avatar).then((avatar) => {
+    store.dispatch("user.store/getValidAvatarUrl", res.user.avatar).then((avatar) => {
       store.commit("user.store/setUser", {
         ...res.user,
         avatar,

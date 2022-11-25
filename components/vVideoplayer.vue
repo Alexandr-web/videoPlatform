@@ -17,12 +17,8 @@
         @timeupdate="timeupdateHandler"
         @ended="endedHandler"
         @progress="loading = true"
-        @loadstart="loading = true"
-        @stalled="loading = true"
         @waiting="loading = true"
-        @loadedmetadata="loading = false"
         @loadeddata="loading = false"
-        @canplay="loading = false"
         @playing="loading = false"
       ></video>
       <vVideoplayerLoaderWindow v-if="loading" />

@@ -192,5 +192,18 @@ export default {
         throw err;
       }
     },
+
+    /**
+     * Gets valid url of the video file or poster
+     * @param {string} path url
+     * @return {string} valid data file
+     */
+    async getValidUrlVideoDataFile({ }, path) {
+      if (/^\/\_nuxt\//.test(path)) {
+        return path;
+      }
+
+      return require(`@/videoDataFiles/${path}`);
+    },
   },
 };

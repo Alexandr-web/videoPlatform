@@ -20,7 +20,6 @@
 <script>
   import vVideoCard from "@/components/vVideoCard";
   import vNothing from "@/components/vNothing";
-  import getValidUrlVideoDataFileMixin from "@/mixins/getValidUrlVideoDataFile";
 
   export default {
     name: "MainPage",
@@ -28,28 +27,37 @@
       vVideoCard,
       vNothing,
     },
-    mixins: [getValidUrlVideoDataFileMixin],
     layout: "default",
-    data: () => ({ videos: [], }),
-    async fetch() {
+    // Getting all videos from the database
+    async asyncData({ store, }) {
       try {
-        const { ok, videos, } = await this.$store.dispatch("video.store/getAll");
+        const { ok, videos, } = await store.dispatch("video.store/getAll");
 
-        if (ok) {
-          videos.map((video) => {
-            const { poster, createdAt, } = video;
+        if (!ok) {
+          return { videos: [], };
+        }
 
-            this.getValidUrlVideoDataFile(poster).then((validPoster) => {
-              this.videos.push({
+        // Contains promises where videos with valid data
+        const promises = videos.map((video) => {
+          const { poster, createdAt, } = video;
+
+          return store.dispatch("video.store/getValidUrlVideoDataFile", poster)
+            .then((validPoster) => {
+              return {
                 ...video,
                 poster: validPoster,
                 date: new Date(createdAt).toLocaleDateString(),
-              });
+              };
             }).catch((err) => {
               throw err;
             });
+        });
+
+        return Promise.all(promises)
+          .then((videosArr) => ({ videos: videosArr, }))
+          .catch((err) => {
+            throw err;
           });
-        }
       } catch (err) {
         throw err;
       }
