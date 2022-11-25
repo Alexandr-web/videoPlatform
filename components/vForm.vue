@@ -8,7 +8,7 @@
       v-for="(fieldKey, index) in getFieldsKeys"
       :key="index"
       class="form__field"
-      :class="{ 'skeleton': onSkeleton, }"
+      :class="{ 'form__field-skeleton': onSkeleton, }"
     >
       <label
         v-if="fields[fieldKey].type === 'file'"

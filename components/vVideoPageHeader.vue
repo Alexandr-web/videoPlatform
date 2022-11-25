@@ -5,10 +5,18 @@
         class="video-page__info-user-link"
         :to="`/user/${getVideo.author.id}?tab=videos`"
       >
-        <img
+        <div
           class="video-page__info-user-avatar"
-          :src="getVideo.author.avatar"
+          :class="{
+            'video-page__info-user-link-skeleton': loadingAvatar,
+          }"
         >
+          <img
+            class="video-page__info-user-avatar-img"
+            :src="getVideo.author.avatar"
+            @load="setLoadingAvatar(false)"
+          >
+        </div>
         <div class="video-page__info-user-nickname">{{ getVideo.author.nickname }}</div>
       </nuxt-link>
     </div>
@@ -71,6 +79,7 @@
   import vFollowBtn from "@/components/vFollowBtn";
   import vRemoveBtn from "@/components/vRemoveBtn";
   import getValidNumberFormatMixin from "@/mixins/getValidNumberFormat";
+  import loadingAvatarMixin from "@/mixins/loadingAvatar";
 
   export default {
     name: "VideoPageHeaderComponent",
@@ -80,7 +89,7 @@
       vFollowBtn,
       vRemoveBtn,
     },
-    mixins: [getValidNumberFormatMixin],
+    mixins: [getValidNumberFormatMixin, loadingAvatarMixin],
     props: {
       pendingSetRate: {
         type: Boolean,

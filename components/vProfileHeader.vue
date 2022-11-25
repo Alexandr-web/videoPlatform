@@ -3,10 +3,16 @@
     <div class="container">
       <div class="profile__header-inner">
         <div class="profile__header-background"></div>
-        <div class="profile__header-avatar">
+        <div
+          class="profile__header-avatar"
+          :class="{
+            'profile__header-avatar-skeleton': loadingAvatar,
+          }"
+        >
           <img
             class="profile__header-avatar-image"
             :src="user.avatar"
+            @load="setLoadingAvatar(false)"
           >
         </div>
         <div class="profile__header-nickname">
@@ -29,11 +35,12 @@
   import vFollowBtn from "@/components/vFollowBtn";
   import setFollowMixin from "@/mixins/setFollow";
   import getValidNumberFormatMixin from "@/mixins/getValidNumberFormat";
+  import loadingAvatarMixin from "@/mixins/loadingAvatar";
 
   export default {
     name: "ProfileHeaderComponent",
     components: { vFollowBtn, },
-    mixins: [setFollowMixin, getValidNumberFormatMixin],
+    mixins: [setFollowMixin, getValidNumberFormatMixin, loadingAvatarMixin],
     props: {
       user: {
         type: Object,
