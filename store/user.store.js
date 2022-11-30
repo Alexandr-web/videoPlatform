@@ -21,7 +21,7 @@ export default {
      */
     async getOne({ }, id) {
       try {
-        const res = await fetch(`${host}/user/api/${id}`, {
+        const res = await fetch(`${host}/api/user/${id}`, {
           method: "GET",
           headers: { "Accept-Type": "application/json", },
         });
@@ -40,7 +40,7 @@ export default {
      */
     async getVideos({ }, { token, id, }) {
       try {
-        const res = await fetch(`${host}/user/api/${id}/videos`, {
+        const res = await fetch(`${host}/api/user/${id}/videos`, {
           method: "GET",
           headers: {
             "Accept-Type": "application/json",
@@ -62,7 +62,7 @@ export default {
      */
     async getFollowers({ }, { token, id, }) {
       try {
-        const res = await fetch(`${host}/user/api/${id}/followers`, {
+        const res = await fetch(`${host}/api/user/${id}/followers`, {
           method: "GET",
           headers: {
             "Accept-Type": "application/json",
@@ -84,7 +84,7 @@ export default {
      */
     async getFollowings({ }, { token, id, }) {
       try {
-        const res = await fetch(`${host}/user/api/${id}/followings`, {
+        const res = await fetch(`${host}/api/user/${id}/followings`, {
           method: "GET",
           headers: {
             "Accept-Type": "application/json",
@@ -120,7 +120,7 @@ export default {
      */
     async edit({ }, { token, fd, id, }) {
       try {
-        const res = await fetch(`${host}/user/${id}/edit`, {
+        const res = await fetch(`${host}/api/user/${id}/edit`, {
           method: "PUT",
           headers: {
             "Accept-Type": "application/json",
@@ -144,7 +144,7 @@ export default {
      */
     async setFollowing({ }, { token, currentUserId, followingUserId, }) {
       try {
-        const res = await fetch(`${host}/user/${currentUserId}/following/${followingUserId}`, {
+        const res = await fetch(`${host}/api/user/${currentUserId}/following/${followingUserId}`, {
           method: "POST",
           headers: {
             "Accept-Type": "application/json",
@@ -169,7 +169,7 @@ export default {
      */
     async getHistory({ }, { token, id, myVideos, search, }) {
       try {
-        const res = await fetch(`${host}/user/api/${id}/history?myVideos=${myVideos}&search=${search}`, {
+        const res = await fetch(`${host}/api/user/${id}/history?myVideos=${myVideos}&search=${search}`, {
           method: "GET",
           headers: {
             "Accept-Type": "application/json",

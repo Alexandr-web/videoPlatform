@@ -48,7 +48,7 @@ export default {
      */
     async setView({ }, { videoId, token, }) {
       try {
-        const res = await fetch(`${host}/video/${videoId}/view`, {
+        const res = await fetch(`${host}/api/video/${videoId}/view`, {
           method: "PUT",
           headers: {
             "Accept-Type": "application/json",
@@ -71,7 +71,7 @@ export default {
      */
     async load({ }, { fd, token, }) {
       try {
-        const res = await fetch(`${host}/video/load`, {
+        const res = await fetch(`${host}/api/video/load`, {
           method: "POST",
           headers: {
             "Accept-Type": "application/json",
@@ -89,7 +89,7 @@ export default {
     // Gets all videos from the database
     async getAll() {
       try {
-        const res = await fetch(`${host}/video/api`, {
+        const res = await fetch(`${host}/api/video`, {
           method: "GET",
           headers: { "Accept-Type": "application/json", },
         });
@@ -108,7 +108,7 @@ export default {
      */
     async getOne({ }, { token, id, }) {
       try {
-        const res = await fetch(`${host}/video/api/${id}`, {
+        const res = await fetch(`${host}/api/video/${id}`, {
           method: "GET",
           headers: {
             "Accept-Type": "application/json",
@@ -131,7 +131,7 @@ export default {
      */
     async setRate({ }, { token, id, isLike, }) {
       try {
-        const res = await fetch(`${host}/video/${id}/rate?isLike=${isLike}`, {
+        const res = await fetch(`${host}/api/video/${id}/rate?isLike=${isLike}`, {
           method: "PUT",
           headers: {
             "Accept-Type": "application/json",
@@ -155,7 +155,7 @@ export default {
      */
     async edit({ }, { token, id, fd, }) {
       try {
-        const res = await fetch(`${host}/video/${id}/edit`, {
+        const res = await fetch(`${host}/api/video/${id}/edit`, {
           method: "PUT",
           headers: {
             "Accept-Type": "application/json",
@@ -178,7 +178,7 @@ export default {
      */
     async remove({ }, { token, id, }) {
       try {
-        const res = await fetch(`${host}/video/${id}/delete`, {
+        const res = await fetch(`${host}/api/video/${id}/delete`, {
           method: "DELETE",
           headers: {
             "Accept-Type": "application/json",

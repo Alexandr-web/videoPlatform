@@ -16,8 +16,8 @@ const authRouter = require("./routers/auth.router");
 const videoRouter = require("./routers/video.router");
 const userRouter = require("./routers/user.router");
 
-app.use("/auth", authRouter);
-app.use("/video", videoRouter);
-app.use("/user", userRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/video", videoRouter);
+app.use("/api/user", userRouter);
 
 module.exports = app;

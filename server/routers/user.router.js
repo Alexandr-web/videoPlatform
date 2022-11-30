@@ -14,11 +14,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage, });
 
-router.get("/api/:id", userController.getOne);
-router.get("/api/:id/videos", isAuth, userController.getVideos);
-router.get("/api/:id/followers", isAuth, userController.getFollowers);
-router.get("/api/:id/followings", isAuth, userController.getFollowings);
-router.get("/api/:id/history", isAuth, userController.getHistory);
+router.get("/:id", userController.getOne);
+router.get("/:id/videos", isAuth, userController.getVideos);
+router.get("/:id/followers", isAuth, userController.getFollowers);
+router.get("/:id/followings", isAuth, userController.getFollowings);
+router.get("/:id/history", isAuth, userController.getHistory);
 router.put("/:id/edit", isAuth, upload.single("avatar"), userController.edit);
 router.post("/:currentUserId/following/:followingUserId", isAuth, userController.setFollowing);
 
