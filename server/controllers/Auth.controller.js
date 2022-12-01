@@ -7,9 +7,10 @@ class Auth {
   async registration(req, res) {
     try {
       const body = req.body;
+      const bodyKeys = Object.keys(body);
 
       // When requesting, there must be required data
-      if (!Object.keys(body).every((key) => ["nickname", "email", "password"].includes(key)) || !req.file) {
+      if (!bodyKeys.length || !bodyKeys.every((key) => ["nickname", "email", "password"].includes(key)) || !req.file) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
@@ -42,9 +43,10 @@ class Auth {
   async login(req, res) {
     try {
       const body = req.body;
+      const bodyKeys = Object.keys(body);
 
       // When requesting, there must be required data
-      if (!Object.keys(body).every((key) => ["email", "password"].includes(key))) {
+      if (!bodyKeys.length || !bodyKeys.every((key) => ["email", "password"].includes(key))) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 

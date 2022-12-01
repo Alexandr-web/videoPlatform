@@ -15,10 +15,11 @@ class Video {
 
       const body = req.body;
       const files = req.files || {};
+      const dataKeys = Object.keys({ ...body, ...files, });
       const requiredParams = ["title", "description", "video", "poster", "time", "duration"];
 
       // When requesting, there must be required data
-      if (!Object.keys({ ...body, ...files, }).every((key) => requiredParams.includes(key))) {
+      if (!dataKeys.length || !dataKeys.every((key) => requiredParams.includes(key))) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
@@ -239,9 +240,10 @@ class Video {
       const { id, } = req.params;
       const body = req.body;
       const files = req.files || {};
+      const keysData = Object.keys({ ...body, ...files, });
       const optionalParams = ["title", "description", "video", "poster", "time", "duration"];
 
-      if (!id || isNaN(id) || !Object.keys({ ...body, ...files, }).some((key) => optionalParams.includes(key))) {
+      if (!keysData.length || !id || isNaN(id) || !keysData.some((key) => optionalParams.includes(key))) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 

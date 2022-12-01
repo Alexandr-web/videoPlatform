@@ -145,14 +145,11 @@ class User {
 
       const { id, } = req.params;
       const body = req.body;
+      const bodyKeys = Object.keys(body);
       const file = req.file;
 
-      if (!id || isNaN(+id)) {
-        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
-      }
-
       // When requesting, there must be required data
-      if (!Object.keys(body).some((key) => ["nickname", "email", "password"].includes(key)) && !file) {
+      if (!id || isNaN(+id) || !bodyKeys.length || (!bodyKeys.some((key) => ["nickname", "email", "password"].includes(key)) && !file)) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
@@ -169,7 +166,7 @@ class User {
       // All data that needs to be changed will be stored here.
       const userData = {};
 
-      Object.keys(body).map((key) => {
+      bodyKeys.map((key) => {
         if (key !== "password") {
           userData[key] = body[key];
         }
