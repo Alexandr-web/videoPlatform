@@ -1,5 +1,5 @@
 <template>
-  <div class="profile__tab profile__tab-videos pb-20 pt-20">
+  <div class="profile__tab profile__tab-favorites pb-20 pt-20">
     <header class="profile__tab-header">
       <vSearch :classes="['profile__tab-header-search']" />
     </header>
@@ -23,7 +23,7 @@
   import vSearch from "@/components/vSearch";
 
   export default {
-    name: "ProfileVideosComponent",
+    name: "ProfileFavoritesComponent",
     components: {
       vVideoCard,
       vNothing,
@@ -36,13 +36,15 @@
       },
     },
     data: () => ({ videos: [], }),
+    // Getting liked videos
     async fetch() {
       try {
         const token = this.getToken;
+        const { id: userId, } = this.user;
         const { search, } = this.$route.query;
-        const { ok, videos, } = await this.$store.dispatch("user.store/getVideos", {
+        const { videos, ok, } = await this.$store.dispatch("user.store/getFavorites", {
+          id: userId,
           token,
-          id: this.user.id,
           search: search || "",
         });
 
@@ -50,25 +52,17 @@
           this.videos = [];
 
           videos.map((video) => {
-            const { poster, createdAt, } = video;
+            const { poster, } = video;
+            const pPoster = this.$store.dispatch("video.store/getValidUrlVideoDataFile", poster);
 
-            // Completing a video with a valid poster
-            this.$store.dispatch("video.store/getValidUrlVideoDataFile", poster)
-              .then((validPoster) => {
-                const { id, nickname, } = this.user;
-
-                this.videos.push({
-                  ...video,
-                  poster: validPoster,
-                  date: new Date(createdAt).toLocaleDateString(),
-                  author: {
-                    id,
-                    nickname,
-                  },
-                });
-              }).catch((err) => {
-                throw err;
+            pPoster.then((validPoster) => {
+              this.videos.push({
+                ...video,
+                poster: validPoster,
               });
+            }).catch((err) => {
+              throw err;
+            });
           });
         }
       } catch (err) {

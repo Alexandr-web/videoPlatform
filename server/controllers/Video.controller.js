@@ -304,15 +304,15 @@ class Video {
         return res.status(404).json({ ok: false, message: "Такого видео не существует", status: 404, type: "error", });
       }
 
-      if (video.userId !== parseInt(req.userId)) {
+      if (video.userId !== +req.userId) {
         return res.status(403).json({ ok: false, message: "У вас нет доступа для удаления этого видео", status: 403, type: "error", });
       }
 
-      const usersWhoseHistoryContainsThisVideo = await User.findAll({ where: { history: { [Op.contains]: [parseInt(id)], }, }, });
+      const usersWhoseHistoryContainsThisVideo = await User.findAll({ where: { history: { [Op.contains]: [+id], }, }, });
 
       // Delete this video from user history
       usersWhoseHistoryContainsThisVideo.map((user) => {
-        user.update({ history: user.history.filter((videoId) => videoId !== parseInt(id)), });
+        user.update({ history: user.history.filter((videoId) => videoId !== +id), });
       });
 
       // Deleting video file

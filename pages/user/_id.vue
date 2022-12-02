@@ -26,6 +26,10 @@
             v-if="$route.query.tab === 'channels'"
             :user="user"
           />
+          <vProfileFavorites
+            v-if="$route.query.tab === 'liked'"
+            :user="user"
+          />
           <vProfileHistory
             v-if="$route.query.tab === 'history'"
             :user="user"
@@ -43,6 +47,7 @@
   import vProfileSettings from "@/components/vProfileSettings";
   import vProfileChannels from "@/components/vProfileChannels";
   import vProfileHistory from "@/components/vProfileHistory";
+  import vProfileFavorites from "@/components/vProfileFavorites";
 
   export default {
     name: "ProfilePage",
@@ -53,6 +58,7 @@
       vProfileChannels,
       vProfileNav,
       vProfileHistory,
+      vProfileFavorites,
     },
     layout: "default",
     validate({ store, params: { id, }, query: { tab, }, }) {
@@ -63,7 +69,7 @@
       const res = store.dispatch("user.store/getOne", id);
       const currentUser = store.getters["user.store/getUser"];
       const queryForGuest = ["videos", "channels"];
-      const queryForOwner = ["videos", "settings", "channels", "history", "search", "myVideos"];
+      const queryForOwner = ["videos", "settings", "channels", "history", "liked", "search"];
 
       return res
         .then(({ ok, user, }) => {

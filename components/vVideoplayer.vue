@@ -316,6 +316,13 @@
         this.$store.commit("video.store/setPlay", !this.getPlay);
       },
       endedHandler() {
+        const token = this.getToken;
+        const { id, } = this.getVideo;
+
+        // Increasing video views
+        this.$store.dispatch("video.store/setView", { token, videoId: id, });
+
+        // Stop video
         this.$store.commit("video.store/setPlay", false);
       },
       /**

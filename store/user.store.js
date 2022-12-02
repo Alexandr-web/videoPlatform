@@ -38,9 +38,9 @@ export default {
      * @param {number|string} id User id
      * @returns {promise} Request result
      */
-    async getVideos({ }, { token, id, }) {
+    async getVideos({ }, { token, id, search, }) {
       try {
-        const res = await fetch(`${host}/api/user/${id}/videos`, {
+        const res = await fetch(`${host}/api/user/${id}/videos?search=${search}`, {
           method: "GET",
           headers: {
             "Accept-Type": "application/json",
@@ -163,13 +163,34 @@ export default {
      * Sends a request to get a user's history
      * @param {string} token User token
      * @param {number|string} id User id
-     * @param {boolean} myVideos We take all videos, including the video of the current user
      * @param {string} search We take a video, by this value
      * @returns {promise} Request result
      */
-    async getHistory({ }, { token, id, myVideos, search, }) {
+    async getHistory({ }, { token, id, search, }) {
       try {
-        const res = await fetch(`${host}/api/user/${id}/history?myVideos=${myVideos}&search=${search}`, {
+        const res = await fetch(`${host}/api/user/${id}/history?search=${search}`, {
+          method: "GET",
+          headers: {
+            "Accept-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
+
+    /**
+     * Sends a request to get liked videos
+     * @param {string} token User token
+     * @param {string|number} id User id
+     * @returns {promise} Request result
+     */
+    async getFavorites({ }, { token, id, search, }) {
+      try {
+        const res = await fetch(`${host}/api/user/${id}/favorites?search=${search}`, {
           method: "GET",
           headers: {
             "Accept-Type": "application/json",

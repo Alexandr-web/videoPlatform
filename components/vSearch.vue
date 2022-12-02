@@ -8,13 +8,12 @@
       class="search__input"
       type="text"
       placeholder="Поиск"
-      @input="$emit('writing', search)"
-      @keydown.enter="$emit('enter', search)"
-      @blur="$emit('writed', search)"
+      @keydown.enter="setSearchQuery"
+      @blur="setSearchQuery"
     >
     <button
       class="search__btn"
-      @click="$emit('byClick', search)"
+      @click="setSearchQuery"
     >
       <vSearchIcon :classes="['search__icon']" />
     </button>
@@ -34,5 +33,17 @@
       },
     },
     data: () => ({ search: "", }),
+    methods: {
+      // Redirecting the user to a new path by adding old parameters
+      setSearchQuery() {
+        const oldQuery = Object.keys(this.$route.query).reduce((acc, key) => {
+          acc[key] = this.$route.query[key];
+
+          return acc;
+        }, {});
+
+        this.$router.push({ query: { ...oldQuery, search: this.search, }, });
+      },
+    },
   };
 </script>

@@ -43,12 +43,30 @@ class User {
       }
 
       const { id, } = req.params;
+      const { search, } = req.query;
 
-      if (!id || isNaN(+id)) {
+      if (!id || isNaN(+id) || search === undefined) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
-      const allVideos = await Video.findAll({ where: { userId: id, }, });
+      const defaultFindParams = { userId: id, };
+
+      // Options by which we will search for videos
+      const findParams = Object.keys(defaultFindParams).reduce((acc, key) => {
+        // The data must match the search
+        if (search.length > 2) {
+          acc[Op.or] = [
+            { title: { [Op.substring]: search, }, },
+            { description: { [Op.substring]: search, }, }
+          ];
+        }
+
+        acc[key] = defaultFindParams[key];
+
+        return acc;
+      }, {});
+
+      const allVideos = await Video.findAll({ where: findParams, });
       const validVideos = allVideos.map(({ dataValues, }) => dataValues);
 
       return res.status(200).json({ ok: true, videos: validVideos, status: 200, type: "success", });
@@ -252,9 +270,9 @@ class User {
       }
 
       const { id, } = req.params;
-      const { myVideos, search, } = req.query;
+      const { search, } = req.query;
 
-      if ([id, myVideos, search].some((val) => val === undefined) || isNaN(id)) {
+      if (!id || isNaN(+id) || search === undefined) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
@@ -277,11 +295,6 @@ class User {
                 { title: { [Op.substring]: search, }, },
                 { description: { [Op.substring]: search, }, }
               ];
-            }
-
-            // Should not contain the video of the current user
-            if (!JSON.parse(myVideos)) {
-              videoOpt.userId = { [Op.ne]: req.userId, };
             }
 
             videoOpt[key] = defaultFindOptions[key];
@@ -314,6 +327,80 @@ class User {
       return Promise.all(promises)
         .then((videos) => {
           return res.status(200).json({ ok: true, videos: videos.filter(Boolean), status: 200, type: "success", });
+        }).catch((err) => {
+          console.log(err);
+
+          return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+        });
+    } catch (err) {
+      console.log(err);
+
+      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+    }
+  }
+
+  // Gets the user's liked videos by their id
+  async getFavorites(req, res) {
+    try {
+      if (!req.isAuth) {
+        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+      }
+
+      const { id: userId, } = req.params;
+      const { search, } = req.query;
+
+      if (!userId || isNaN(+userId) || search === undefined) {
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
+      }
+
+      const user = await UserModel.findOne({ where: { id: userId, }, });
+
+      if (!user) {
+        return res.status(404).json({ ok: false, message: "Такого пользователя не существует", status: 404, type: "error", });
+      }
+
+      const defaultFindOptions = { likes: { [Op.contains]: [+userId], }, };
+
+      // Options by which we will search for videos
+      const findOptions = Object.keys(defaultFindOptions).reduce((acc, key) => {
+        // The data must match the search
+        if (search.length > 2) {
+          acc[Op.or] = [
+            { title: { [Op.substring]: search, }, },
+            { description: { [Op.substring]: search, }, }
+          ];
+        }
+
+        acc[key] = defaultFindOptions[key];
+
+        return acc;
+      }, {});
+
+      const likedVideos = await Video.findAll({ where: findOptions, });
+
+      if (!likedVideos.length) {
+        return res.status(200).json({ ok: true, videos: [], status: 200, type: "success", });
+      }
+
+      // We collect videos together with their authors
+      const promises = likedVideos.map((video) => {
+        return UserModel.findOne({ where: { id: video.userId, }, })
+          .then(({ id, nickname, }) => ({
+            ...video.dataValues,
+            author: {
+              id,
+              nickname,
+            },
+          })).catch((err) => {
+            console.log(err);
+
+            return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+          });
+      });
+
+      return Promise.all(promises)
+        .then((videos) => {
+          return res.status(200).json({ ok: true, videos, status: 200, type: "success", });
         }).catch((err) => {
           console.log(err);
 
