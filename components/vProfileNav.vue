@@ -52,7 +52,7 @@
       navList: [
         {
           name: "Видео",
-          to: "?tab=videos&search=",
+          to: "?tab=videos",
         },
         {
           name: "Настройки",
@@ -65,12 +65,12 @@
         },
         {
           name: "Понравившиеся",
-          to: "?tab=liked&search=",
+          to: "?tab=liked",
           onlyOwner: true,
         },
         {
           name: "История",
-          to: "?tab=history&search=",
+          to: "?tab=history",
           onlyOwner: true,
         }
       ],

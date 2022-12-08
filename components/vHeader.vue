@@ -63,7 +63,10 @@
         {
           title: "Загрузить",
           to: "/load",
-          id: "load",
+        },
+        {
+          title: "Создать плейлист",
+          to: "/playlist/add",
         }
       ],
     }),

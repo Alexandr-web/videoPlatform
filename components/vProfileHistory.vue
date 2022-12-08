@@ -47,19 +47,19 @@
           id,
           search: search || "",
         });
-
+        console.log(videos);
         if (ok) {
           this.videos = [];
 
           videos.map((video) => {
-            const { poster, } = video;
+            const { poster, createdAt, } = video;
             const posterRes = this.$store.dispatch("video.store/getValidUrlVideoDataFile", poster);
 
-            posterRes
-              .then((validPoster) => {
+            posterRes.then((validPoster) => {
                 this.videos.push({
                   ...video,
                   poster: validPoster,
+                  date: new Date(createdAt).toLocaleDateString(),
                 });
               }).catch((err) => {
                 throw err;

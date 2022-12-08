@@ -52,13 +52,14 @@
           this.videos = [];
 
           videos.map((video) => {
-            const { poster, } = video;
+            const { poster, createdAt, } = video;
             const pPoster = this.$store.dispatch("video.store/getValidUrlVideoDataFile", poster);
 
             pPoster.then((validPoster) => {
               this.videos.push({
                 ...video,
                 poster: validPoster,
+                date: new Date(createdAt).toLocaleDateString(),
               });
             }).catch((err) => {
               throw err;

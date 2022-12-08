@@ -309,6 +309,11 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 15px;
+
+  &-by-two {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
 }
 
 .video-card {
@@ -392,11 +397,22 @@
 
   &__footer {
     padding-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
   }
 
   &__link {
     color: $blue;
     font-size: 12px;
+    margin-right: 10px;
+  }
+}
+
+.add-playlist {
+  &__form {
+    width: 900px;
+    margin: 0 auto;
   }
 }
 
@@ -1057,6 +1073,76 @@
   }
 }
 
+.playlist-page {
+  &__inner {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__header {
+    position: relative;
+    height: 30vh;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  &__controls {
+    display: flex;
+    padding-left: 10px;
+
+    &-btn {
+      &:not(:last-child) {
+        margin-right: 10px;
+      }
+    }
+  }
+
+  &__heading {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__subtitle {
+    color: $grey;
+    font-size: 16px;
+    font-family: "Roboto Mono", sans-serif;
+    font-weight: 400;
+    margin-top: 5px;
+  }
+
+  &__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+
+    &::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: linear-gradient(to bottom, transparent, $black);
+    }
+
+    &-poster {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__main {
+    padding-top: 15px;
+  }
+}
+
 .btn {
   padding: 10px;
   border-radius: 10px;
@@ -1088,6 +1174,43 @@
   border-color: $red;
   color: $red;
   @extend .btn;
+}
+
+.checkbox {
+  cursor: pointer;
+
+  &__input {
+    display: none;
+
+    &:checked + div {
+      &::before {
+        background: $green;
+        transform: translateX(200%);
+      }
+    }
+  }
+
+  &__style {
+    width: 50px;
+    height: 20px;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: $black;
+    padding: 2px;
+
+    &::before {
+      content: "";
+      display: block;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: $grey;
+      transform: translateX(0);
+      transition: transform, background, .3s;
+    }
+  }
 }
 
 .skeleton {

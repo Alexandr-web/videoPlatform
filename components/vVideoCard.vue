@@ -35,6 +35,25 @@
       >
         {{ card.author.nickname }}
       </nuxt-link>
+      <div
+        v-if="showSelection"
+        class="video-card__selection"
+      >
+        <label
+          class="checkbox"
+          :for="`checkbox-${card.id}`"
+          :title="card.checked ? 'Исключить из плейлиста' : 'Включить в плейлист'"
+        >
+          <input
+            :id="`checkbox-${card.id}`"
+            class="checkbox__input"
+            type="checkbox"
+            :checked="card.checked"
+            @change="$emit('chooseCard', { ...card, checked: !card.checked, })"
+          >
+          <div class="checkbox__style"></div>
+        </label>
+      </div>
     </footer>
   </div>
 </template>
@@ -52,6 +71,10 @@
       card: {
         type: Object,
         required: true,
+      },
+      showSelection: {
+        type: Boolean,
+        default: false,
       },
     },
   };

@@ -43,15 +43,15 @@ class User {
       }
 
       const { id, } = req.params;
-      const { search, } = req.query;
+      const { search = "", } = req.query;
 
-      if (!id || isNaN(+id) || search === undefined) {
+      if (!id || isNaN(+id)) {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
       const defaultFindParams = { userId: id, };
 
-      // Options by which we will search for videos
+      // // Options by which we will search for videos
       const findParams = Object.keys(defaultFindParams).reduce((acc, key) => {
         // The data must match the search
         if (search.length > 2) {
@@ -66,10 +66,32 @@ class User {
         return acc;
       }, {});
 
-      const allVideos = await Video.findAll({ where: findParams, });
-      const validVideos = allVideos.map(({ dataValues, }) => dataValues);
+      const videos = await Video.findAll({ where: findParams, });
 
-      return res.status(200).json({ ok: true, videos: validVideos, status: 200, type: "success", });
+      if (!videos.length) {
+        return res.status(200).json({ ok: true, videos: [], status: 200, type: "success", });
+      }
+
+      const promises = videos.map((video) => {
+        return UserModel.findOne({ where: { id: video.userId, }, })
+          .then(({ id: authorId, nickname, }) => ({
+            ...video.dataValues,
+            author: { id: authorId, nickname, },
+          })).catch((err) => {
+            console.log(err);
+
+            return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+          });
+      });
+
+      return Promise.all(promises)
+        .then((videosArr) => {
+          return res.status(200).json({ ok: true, videos: videosArr, status: 200, type: "success", });
+        }).catch((err) => {
+          console.log(err);
+
+          return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+        });
     } catch (err) {
       console.log(err);
 

@@ -170,6 +170,9 @@
       getVolume() {
         return this.$store.getters["video.store/getVolume"];
       },
+      getToken() {
+        return this.$store.getters["auth.store/getToken"];
+      },
       getVideoElement() {
         return this.$refs.video;
       },
@@ -315,15 +318,19 @@
       setPlay() {
         this.$store.commit("video.store/setPlay", !this.getPlay);
       },
-      endedHandler() {
-        const token = this.getToken;
-        const { id, } = this.getVideo;
+      async endedHandler() {
+        try {
+          const token = this.getToken;
+          const { id, } = this.getVideo;
 
-        // Increasing video views
-        this.$store.dispatch("video.store/setView", { token, videoId: id, });
+          // Increasing video views
+          await this.$store.dispatch("video.store/setView", { token, videoId: id, });
 
-        // Stop video
-        this.$store.commit("video.store/setPlay", false);
+          // Stop video
+          this.$store.commit("video.store/setPlay", false);
+        } catch (err) {
+          throw err;
+        }
       },
       /**
        * Setting sound value on click on a line

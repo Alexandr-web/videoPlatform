@@ -40,7 +40,7 @@ export default {
      */
     async getVideos({ }, { token, id, search, }) {
       try {
-        const res = await fetch(`${host}/api/user/${id}/videos?search=${search}`, {
+        const res = await fetch(`${host}/api/user/${id}/videos?search=${search || ""}`, {
           method: "GET",
           headers: {
             "Accept-Type": "application/json",

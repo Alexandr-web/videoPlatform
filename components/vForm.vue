@@ -82,6 +82,7 @@
         >{{ fields[fieldKey].title }}</span>
       </label>
     </div>
+    <slot name="additionalField"></slot>
     <button
       class="form__submit"
       :class="{

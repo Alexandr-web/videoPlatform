@@ -55,16 +55,10 @@
             // Completing a video with a valid poster
             this.$store.dispatch("video.store/getValidUrlVideoDataFile", poster)
               .then((validPoster) => {
-                const { id, nickname, } = this.user;
-
                 this.videos.push({
                   ...video,
                   poster: validPoster,
                   date: new Date(createdAt).toLocaleDateString(),
-                  author: {
-                    id,
-                    nickname,
-                  },
                 });
               }).catch((err) => {
                 throw err;
