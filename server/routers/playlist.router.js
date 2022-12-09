@@ -5,7 +5,7 @@ const playlistController = require("../controllers/Playlist.controller");
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, process.env.AVATARS_FILES_FOLDER);
+    cb(null, process.env.PLAYLIST_POSTERS_FOLDER);
   },
   filename(req, file, cb) {
     cb(null, `${Date.now()}-${file.originalname}`);

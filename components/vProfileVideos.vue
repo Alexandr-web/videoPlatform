@@ -5,7 +5,7 @@
     </header>
     <ul
       v-if="videos.length"
-      class="videos"
+      class="cards"
     >
       <vVideoCard
         v-for="(video, index) in videos"

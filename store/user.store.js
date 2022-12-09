@@ -205,6 +205,28 @@ export default {
     },
 
     /**
+     * Sends a request to get the user's playlists by their id
+     * @param {string|number} id User id
+     * @param {string} token User token
+     * @return {promise} Request result
+     */
+    async getPlaylists({ }, { id, token, }) {
+      try {
+        const res = await fetch(`${host}/api/user/${id}/playlists`, {
+          method: "GET",
+          headers: {
+            "Accept-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
+
+    /**
      * Gets a valid avatar url
      * @param {string} path original path
      * @return {string} valid url avatar

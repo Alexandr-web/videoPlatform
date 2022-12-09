@@ -60,6 +60,10 @@
           onlyOwner: true,
         },
         {
+          name: "Плейлисты",
+          to: "?tab=playlists",
+        },
+        {
           name: "Каналы",
           to: "?tab=channels",
         },

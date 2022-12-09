@@ -20,6 +20,7 @@ router.get("/:id/followers", isAuth, userController.getFollowers);
 router.get("/:id/followings", isAuth, userController.getFollowings);
 router.get("/:id/history", isAuth, userController.getHistory);
 router.get("/:id/favorites", isAuth, userController.getFavorites);
+router.get("/:id/playlists", isAuth, userController.getPlaylists);
 router.put("/:id/edit", isAuth, upload.single("avatar"), userController.edit);
 router.post("/:currentUserId/following/:followingUserId", isAuth, userController.setFollowing);
 

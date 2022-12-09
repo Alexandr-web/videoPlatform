@@ -14,7 +14,7 @@
       >
         <template v-slot:additionalField>
           <div class="form__field">
-            <ul class="videos videos-by-two">
+            <ul class="cards cards-by-two">
               <vVideoCard
                 v-for="(video, index) in videos"
                 :key="index"
@@ -39,6 +39,7 @@
   import vVideoCard from "@/components/vVideoCard";
   import vNothing from "@/components/vNothing";
   import handleFormMessagesMixin from "@/mixins/handleFormMessages";
+  import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
 
   export default {
     name: "AddPlaylistPage",
@@ -47,7 +48,7 @@
       vNothing,
       vVideoCard,
     },
-    mixins: [handleFormMessagesMixin],
+    mixins: [handleFormMessagesMixin, getValidTimeFormatMixin],
     layout: "default",
     // Get all user videos
     async asyncData({ store, }) {
@@ -103,8 +104,20 @@
       getChooseCardsId() {
         return this.videos.filter(({ checked, }) => checked).map(({ id, }) => id);
       },
+      getChooseCards() {
+        return this.videos.filter(({ checked, }) => checked);
+      },
+      getTotalPlaylistTime() {
+        return this.getChooseCards.reduce((time, { duration, }) => {
+          time += duration;
+          return time;
+        }, 0);
+      },
       getToken() {
         return this.$store.getters["auth.store/getToken"];
+      },
+      getUser() {
+        return this.$store.getters["user.store/getUser"];
       },
     },
     methods: {
@@ -114,45 +127,42 @@
        */
       addPlaylist(data) {
         if (!Object.keys(this.fields).every((key) => data[key]) || !this.getChooseCardsId.length) {
-          this.setFormMessage({
-            message: "Все поля должны быть заполнены правильно",
-            type: "error",
-          });
+          this.setFormMessage("Все поля должны быть заполнены правильно", "error");
 
           return;
         }
 
         const token = this.getToken;
         const fd = new FormData();
-        
-        // Videos
-        fd.append("videos", JSON.stringify(this.getChooseCardsId));
+        const reqData = {
+          ...data,
+          time: this.getValidTimeFormat(this.getTotalPlaylistTime),
+          duration: this.getTotalPlaylistTime,
+          videos: JSON.stringify(this.getChooseCardsId),
+        };
 
-        // Other playlist data
-        Object.keys(data).map((key) => {
-          fd.append(key, data[key]["file" in data[key] ? "file" : "model"]);
+        Object.keys(reqData).map((key) => {
+          if (typeof reqData[key] !== "object" || Array.isArray(reqData[key])) {
+            fd.append(key, reqData[key]);
+          } else {
+            fd.append(key, reqData[key]["file" in reqData[key] ? "file" : "model"]);
+          }
         });
 
         const res = this.$store.dispatch("playlist.store/add", { token, fd, });
 
         this.pending = true;
+        this.clearFormMessage();
 
-        res
-          .then(({ ok, message, type, }) => {
+        res.then(({ ok, message, type, }) => {
             this.pending = false;
-            this.setFormMessage({
-              message,
-              type,
-            });
+            this.setFormMessage(message, type);
 
             if (ok) {
-              this.$router.push("/");
+              this.$router.push(`/user/${this.getUser.id}?tab=playlists`);
             }
           }).catch((err) => {
-            this.setFormMessage({
-              message: `Произошла ошибка сервера: ${err}`,
-              type: "error",
-            });
+            this.setFormMessage(`Произошла ошибка сервера: ${err}`, "error");
           });
       },
       chooseCardHandler(card) {

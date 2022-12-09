@@ -39,12 +39,23 @@ class Playlist {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
-      const videos = await Video.findAll({ where: { playlistId: id, }, });
-      const promises = videos.map((video) => {
-        return User.findOne({ where: { id: video.userId, }, })
-          .then(({ id: authorId, nickname, }) => ({
+      const playlist = await PlaylistModel.findOne({ where: { id, }, });
+
+      if (!playlist) {
+        return res.status(404).json({ ok: false, message: "Такого плейлиста не существует", status: 404, type: "error", });
+      }
+
+      // We get videos and their authors
+      const promisesVideos = playlist.videosId.map((videoId) => {
+        return Video.findOne({ where: { id: videoId, }, })
+          .then((video) => {
+            return Promise.all([User.findOne({ where: { id: video.userId, }, }), video]);
+          }).then(([{ id: authorId, nickname, }, video]) => ({
             ...video.dataValues,
-            author: { id: authorId, nickname, },
+            author: {
+              id: authorId,
+              nickname,
+            },
           })).catch((err) => {
             console.log(err);
 
@@ -52,9 +63,10 @@ class Playlist {
           });
       });
 
-      return Promise.all(promises)
-        .then((arrVideos) => ({ status: 200, videos: arrVideos, type: "success", }))
-        .catch((err) => {
+      return Promise.all(promisesVideos)
+        .then((arrVideos) => {
+          return res.status(200).json({ ok: true, status: 200, videos: arrVideos, type: "success", });
+        }).catch((err) => {
           console.log(err);
 
           return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
@@ -66,9 +78,29 @@ class Playlist {
     }
   }
 
+  // Adding a playlist to the database
   async add(req, res) {
     try {
-      // ...
+      if (!req.isAuth) {
+        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+      }
+
+      const body = req.body;
+      const file = req.file;
+      const requiredData = ["title", "time", "videos", "duration"];
+
+      if (!Object.keys(body).every((key) => requiredData.includes(key)) || !file) {
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
+      }
+
+      await PlaylistModel.create({
+        ...body,
+        videosId: JSON.parse(body.videos),
+        poster: file.filename,
+        userId: req.userId,
+      });
+
+      return res.status(200).json({ ok: true, message: "Плейлист создан", status: 200, type: "success", });
     } catch (err) {
       console.log(err);
 

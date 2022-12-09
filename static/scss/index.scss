@@ -305,14 +305,13 @@
   }
 }
 
-.videos {
+.cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 15px;
 
   &-by-two {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
   }
 }
 
@@ -894,6 +893,53 @@
   }
 }
 
+.playlist-card {
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    color: $white;
+  }
+
+  &__poster {
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 10px;
+
+    &-skeleton {
+      @extend .skeleton;
+      border-radius: 8px;
+    }
+
+    &-img {
+      width: 350px;
+      height: 250px;
+      object-fit: cover;
+    }
+  }
+
+  &__heading {
+    display: flex;
+    flex-direction: column;
+
+    &-item {
+      &:not(:last-child) {
+        margin-bottom: 5px;
+      }
+    }
+  }
+
+  &__title {
+    font-size: 16px;
+  }
+
+  &__subtitle {
+    font-size: 14px;
+    color: $grey;
+    font-family: "Roboto Mono", sans-serif;
+    font-weight: 400;
+  }
+}
+
 .video-page {
   &__inner {
     display: flex;
@@ -1102,6 +1148,12 @@
   &__heading {
     display: flex;
     flex-direction: column;
+
+    &-item {
+      &:not(:last-child) {
+        margin-bottom: 5px;
+      }
+    }
   }
 
   &__subtitle {
@@ -1109,7 +1161,6 @@
     font-size: 16px;
     font-family: "Roboto Mono", sans-serif;
     font-weight: 400;
-    margin-top: 5px;
   }
 
   &__background {
@@ -1132,9 +1183,14 @@
     }
 
     &-poster {
+      height: 100%;
+    }
+
+    &-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      aspect-ratio: 16 / 9;
     }
   }
 

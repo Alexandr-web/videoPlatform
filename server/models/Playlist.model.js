@@ -10,8 +10,16 @@ module.exports = sequelize.define("playlist", {
     type: DataTypes.TEXT,
     required: true,
   },
+  videosId: {
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
+    defaultValue: [],
+  },
   time: {
     type: DataTypes.TEXT,
+    required: true,
+  },
+  duration: {
+    type: DataTypes.FLOAT,
     required: true,
   },
   id: {

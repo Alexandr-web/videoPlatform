@@ -75,8 +75,8 @@ export default {
           headers: {
             "Accept-Type": "application/json",
             Authorization: `Bearer ${token || ""}`,
-            body: fd,
           },
+          body: fd,
         });
 
         return res.json();

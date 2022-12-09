@@ -1,5 +1,6 @@
 const UserModel = require("../models/User.model");
 const Video = require("../models/Video.model");
+const Playlist = require("../models/Playlist.model");
 const removeFile = require("../helpers/removeFile");
 const bcrypt = require("bcrypt");
 const { Op, } = require("sequelize");
@@ -428,6 +429,35 @@ class User {
 
           return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
         });
+    } catch (err) {
+      console.log(err);
+
+      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+    }
+  }
+
+  // Gets the user's playlists from the database by their id
+  async getPlaylists(req, res) {
+    try {
+      if (!req.isAuth) {
+        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+      }
+
+      const { id: userId, } = req.params;
+
+      if (!userId || isNaN(+userId)) {
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
+      }
+
+      const user = await UserModel.findOne({ where: { id: userId, }, });
+
+      if (!user) {
+        return res.status(404).json({ ok: false, message: "Такого пользователя не существует", status: 404, type: "error", });
+      }
+
+      const playlists = await Playlist.findAll({ where: { userId, }, });
+
+      return res.status(200).json({ ok: true, playlists, status: 200, type: "success", });
     } catch (err) {
       console.log(err);
 

@@ -3,32 +3,46 @@
     <div class="playlist-page__inner">
       <header class="playlist-page__header">
         <div class="playlist-page__background">
-          <img
+          <div
             class="playlist-page__background-poster"
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKpF-mNhihSds3MwEhpwEWusxfju3U_-kNAA&usqp=CAU"
-            alt="название плейлиста"
+            :class="{ 'skeleton': loadingElement, }"
           >
+            <img
+              class="playlist-page__background-img"
+              :src="getPlaylist.poster"
+              :alt="getPlaylist.title"
+              @load="dataElementIsLoaded"
+            >
+          </div>
         </div>
         <div class="playlist-page__heading">
-          <h1 class="playlist-page__title">Название плейлиста</h1>
-          <h3 class="playlist-page__subtitle">Просмотр займет 41 минут</h3>
+          <h1 class="playlist-page__heading-item playlist-page__title">{{ getPlaylist.title }}</h1>
+          <h3 class="playlist-page__heading-item playlist-page__subtitle">Общее время {{ getPlaylist.time }}</h3>
+          <h3 class="playlist-page__heading-item playlist-page__subtitle">Всего {{ getPlaylist.videosId.length }} видео</h3>
         </div>
-        <div class="playlist-page__controls">
-          <button class="playlist-page__controls-btn btn remove-btn">Удалить</button>
+        <div
+          v-if="!isGuest"
+          class="playlist-page__controls"
+        >
+          <vRemoveBtn
+            :classes="['playlist-page__controls-btn']"
+            :pending="pendingRemove"
+            @remove="removePlaylist"
+          />
           <nuxt-link
             class="playlist-page__controls-btn btn edit-btn"
-            to="/playlist/id/edit"
+            :to="`/playlist/${getPlaylist.id}/edit`"
           >Изменить</nuxt-link>
         </div>
       </header>
       <main class="playlist-page__main">
         <div class="container">
           <ul
-            v-if="videos.length"
-            class="videos"
+            v-if="getPlaylistVideos.length"
+            class="cards"
           >
             <vVideoCard
-              v-for="(video, index) in videos"
+              v-for="(video, index) in getPlaylistVideos"
               :key="index"
               :card="video"
             />
@@ -41,10 +55,16 @@
 
 <script>
   import vVideoCard from "@/components/vVideoCard";
+  import vRemoveBtn from "@/components/vRemoveBtn";
+  import loadingElementDataMixin from "@/mixins/loadingElementData";
 
   export default {
     name: "PlaylistPage",
-    components: { vVideoCard, },
+    components: {
+      vVideoCard,
+      vRemoveBtn,
+    },
+    mixins: [loadingElementDataMixin],
     layout: "default",
     // Checking for the existence of a playlist
     validate({ store, params: { id, }, }) {
@@ -65,14 +85,12 @@
     async asyncData({ store, params: { id, }, }) {
       try {
         const token = store.getters["auth.store/getToken"];
+        const currentUser = store.getters["user.store/getUser"];
         const { ok: resPlaylistIsOk, playlist, } = await store.dispatch("playlist.store/getOne", { token, id, });
         const { ok: resVideosIsOk, videos, } = await store.dispatch("playlist.store/getVideos", { token, id, });
 
         if (!resPlaylistIsOk || !resVideosIsOk) {
-          return {
-            playlist: {},
-            videos: [],
-          };
+          return { isGuest: true, };
         }
 
         const poster = await store.dispatch("playlist.store/getValidUrlPlaylistPoster", playlist.poster);
@@ -87,16 +105,13 @@
         return Promise.all(promises)
           .then((videosArr) => {
             const donePlaylist = { ...playlist, poster, };
-
+            
             // Set a playlist in the store
             store.commit("playlist.store/setPlaylist", donePlaylist);
             // Set a list videos in the store
             store.commit("playlist.store/setListVideos", videosArr);
-            
-            return {
-              playlist: donePlaylist,
-              videos: videosArr,
-            };
+
+            return { isGuest: playlist.userId !== currentUser.id, };
           }).catch((err) => {
             throw err;
           });
@@ -104,6 +119,20 @@
         throw err;
       }
     },
+    data: () => ({ pendingRemove: false, }),
     head: { title: "Просмотр плейлиста", },
+    computed: {
+      getPlaylist() {
+        return this.$store.getters["playlist.store/getPlaylist"];
+      },
+      getPlaylistVideos() {
+        return this.$store.getters["playlist.store/getListVideos"];
+      },
+    },
+    methods: {
+      removePlaylist() {
+        console.log("remove playlist");
+      },
+    },
   };
 </script>

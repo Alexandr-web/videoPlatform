@@ -19,7 +19,7 @@
             :user="user"
           />
           <vProfileSettings
-            v-if="$route.query.tab === 'settings' && !isGuest"
+            v-if="$route.query.tab === 'settings'"
             :user="user"
           />
           <vProfileChannels
@@ -32,6 +32,10 @@
           />
           <vProfileHistory
             v-if="$route.query.tab === 'history'"
+            :user="user"
+          />
+          <vProfilePlaylists
+            v-if="$route.query.tab === 'playlists'"
             :user="user"
           />
         </div>
@@ -48,6 +52,7 @@
   import vProfileChannels from "@/components/vProfileChannels";
   import vProfileHistory from "@/components/vProfileHistory";
   import vProfileFavorites from "@/components/vProfileFavorites";
+  import vProfilePlaylists from "@/components/vProfilePlaylists";
 
   export default {
     name: "ProfilePage",
@@ -59,6 +64,7 @@
       vProfileNav,
       vProfileHistory,
       vProfileFavorites,
+      vProfilePlaylists,
     },
     layout: "default",
     validate({ store, params: { id, }, query: { tab, }, }) {
@@ -68,8 +74,8 @@
 
       const res = store.dispatch("user.store/getOne", id);
       const currentUser = store.getters["user.store/getUser"];
-      const queryForGuest = ["videos", "channels"];
-      const queryForOwner = ["videos", "settings", "channels", "history", "liked", "search"];
+      const queryForGuest = ["videos", "channels", "playlists", "search"];
+      const queryForOwner = ["settings", "history", "liked"].concat(queryForGuest);
 
       return res
         .then(({ ok, user, }) => {
@@ -83,7 +89,7 @@
     async asyncData({ store, params: { id: userId, }, }) {
       try {
         const { ok, user, } = await store.dispatch("user.store/getOne", userId);
-
+        
         if (!ok) {
           return {
             user: {},
