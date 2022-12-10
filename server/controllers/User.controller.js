@@ -46,7 +46,7 @@ class User {
       const { id, } = req.params;
       const { search = "", } = req.query;
 
-      if (!id || isNaN(+id)) {
+      if (!id || isNaN(+id) || typeof search !== "string") {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
@@ -293,9 +293,9 @@ class User {
       }
 
       const { id, } = req.params;
-      const { search, } = req.query;
+      const { search = "", } = req.query;
 
-      if (!id || isNaN(+id) || search === undefined) {
+      if (!id || isNaN(+id) || typeof search !== "string") {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
@@ -370,9 +370,9 @@ class User {
       }
 
       const { id: userId, } = req.params;
-      const { search, } = req.query;
+      const { search = "", } = req.query;
 
-      if (!userId || isNaN(+userId) || search === undefined) {
+      if (!userId || isNaN(+userId) || typeof search !== "string") {
         return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
       }
 
