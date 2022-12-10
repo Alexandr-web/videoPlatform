@@ -180,9 +180,13 @@
        * @param {object} card playlist card
        */
       chooseCardHandler(card) {
-        const indexCard = this.videos.findIndex(({ id, }) => id === card.id);
+        this.videos = this.videos.map((video) => {
+          if (video.id === card.id) {
+            video = card;
+          }
 
-        this.$set(this.videos, indexCard, card);
+          return video;
+        });
       },
     },
   };

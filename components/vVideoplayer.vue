@@ -360,18 +360,25 @@
       setPlay() {
         this.$store.commit("video.store/setPlay", !this.getPlay);
       },
-      async endedHandler() {
-        try {
-          const token = this.getToken;
-          const { id, } = this.getVideo;
+      endedHandler() {
+        const token = this.getToken;
+        const { id, } = this.getVideo;
 
+        if (this.getPlaylistVideos.length <= 1) {
           // Increasing video views
-          await this.$store.dispatch("video.store/setView", { token, videoId: id, });
+          this.$store.dispatch("video.store/setView", { token, videoId: id, });
 
           // Stop video
           this.$store.commit("video.store/setPlay", false);
-        } catch (err) {
-          throw err;
+        } else {
+          // Increasing video views
+          this.$store.dispatch("video.store/setView", { token, videoId: id, })
+            .then(() => {
+              // Set next video
+              this.switchToNewVideo();
+            }).catch((err) => {
+              throw err;
+            });
         }
       },
       /**
