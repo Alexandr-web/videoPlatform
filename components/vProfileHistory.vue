@@ -21,6 +21,7 @@
   import vSearch from "@/components/vSearch";
   import vVideoCard from "@/components/vVideoCard";
   import vNothing from "@/components/vNothing";
+  import setPlaylistToLocalStorageMixin from "@/mixins/setPlaylistToLocalStorage";
 
   export default {
     name: "ProfileHistoryComponent",
@@ -29,6 +30,7 @@
       vVideoCard,
       vNothing,
     },
+    mixins: [setPlaylistToLocalStorageMixin],
     props: {
       user: {
         type: Object,
@@ -78,6 +80,12 @@
     watch: {
       // Call the fetch tool when query parameters are updated
       "$route.query": "$fetch",
+    },
+    mounted() {
+      if (this.videos.length) {
+        this.$store.commit("playlist.store/setListVideos", this.videos);
+        this.setPlaylistToLocalStorage(this.videos);
+      }
     },
   };
 </script>

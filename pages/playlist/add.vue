@@ -40,6 +40,7 @@
   import vNothing from "@/components/vNothing";
   import handleFormMessagesMixin from "@/mixins/handleFormMessages";
   import getValidTimeFormatMixin from "@/mixins/getValidTimeFormat";
+  import setPlaylistToLocalStorageMixin from "@/mixins/setPlaylistToLocalStorage";
 
   export default {
     name: "AddPlaylistPage",
@@ -48,7 +49,7 @@
       vNothing,
       vVideoCard,
     },
-    mixins: [handleFormMessagesMixin, getValidTimeFormatMixin],
+    mixins: [handleFormMessagesMixin, getValidTimeFormatMixin, setPlaylistToLocalStorageMixin],
     layout: "default",
     // Get all user videos
     async asyncData({ store, }) {
@@ -76,8 +77,11 @@
         });
 
         return Promise.all(promises)
-          .then((videosArr) => ({ videos: videosArr, }))
-          .catch((err) => {
+          .then((videosArr) => {
+            store.commit("playlist.store/setListVideos", videosArr);
+
+            return { videos: videosArr, };
+          }).catch((err) => {
             throw err;
           });
       } catch (err) {
@@ -120,6 +124,11 @@
         return this.$store.getters["user.store/getUser"];
       },
     },
+    mounted() {
+      if (this.videos) {
+        this.setPlaylistToLocalStorage(this.videos);
+      }
+    },
     methods: {
       /**
        * Adding a playlist
@@ -141,6 +150,7 @@
           videos: JSON.stringify(this.getChooseCardsId),
         };
 
+        // Fill form data
         Object.keys(reqData).map((key) => {
           if (typeof reqData[key] !== "object" || Array.isArray(reqData[key])) {
             fd.append(key, reqData[key]);
@@ -165,6 +175,10 @@
             this.setFormMessage(`Произошла ошибка сервера: ${err}`, "error");
           });
       },
+      /**
+       * Toggles playlist selection
+       * @param {object} card playlist card
+       */
       chooseCardHandler(card) {
         const indexCard = this.videos.findIndex(({ id, }) => id === card.id);
 

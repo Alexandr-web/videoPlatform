@@ -695,6 +695,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    &:not([disabled]) {
+      &:hover > svg {
+        fill: $white;
+      }
+    }
   }
 
   &__loading {
@@ -713,10 +719,6 @@
   &__icon {
     fill: $grey;
     transition: fill .3s;
-
-    &:hover {
-      fill: $white;
-    }
 
     &-fullscreen {
       width: 20px;

@@ -57,6 +57,7 @@
   import vVideoCard from "@/components/vVideoCard";
   import vRemoveBtn from "@/components/vRemoveBtn";
   import loadingElementDataMixin from "@/mixins/loadingElementData";
+  import setPlaylistToLocalStorageMixin from "@/mixins/setPlaylistToLocalStorage";
 
   export default {
     name: "PlaylistPage",
@@ -64,7 +65,7 @@
       vVideoCard,
       vRemoveBtn,
     },
-    mixins: [loadingElementDataMixin],
+    mixins: [loadingElementDataMixin, setPlaylistToLocalStorageMixin],
     layout: "default",
     // Checking for the existence of a playlist
     validate({ store, params: { id, }, }) {
@@ -76,7 +77,7 @@
       const res = store.dispatch("playlist.store/getOne", { token, id, });
 
       return res
-        .then(({ ok, }) => ok)
+        .then(({ ok, playlist, }) => Boolean(playlist) && ok)
         .catch((err) => {
           throw err;
         });
@@ -90,7 +91,10 @@
         const { ok: resVideosIsOk, videos, } = await store.dispatch("playlist.store/getVideos", { token, id, });
 
         if (!resPlaylistIsOk || !resVideosIsOk) {
-          return { isGuest: true, };
+          return {
+            isGuest: true,
+            videos: [],
+          };
         }
 
         const poster = await store.dispatch("playlist.store/getValidUrlPlaylistPoster", playlist.poster);
@@ -111,7 +115,10 @@
             // Set a list videos in the store
             store.commit("playlist.store/setListVideos", videosArr);
 
-            return { isGuest: playlist.userId !== currentUser.id, };
+            return {
+              isGuest: playlist.userId !== currentUser.id,
+              videos: videosArr,
+            };
           }).catch((err) => {
             throw err;
           });
@@ -128,10 +135,37 @@
       getPlaylistVideos() {
         return this.$store.getters["playlist.store/getListVideos"];
       },
+      getUser() {
+        return this.$store.getters["user.store/getUser"];
+      },
+      getToken() {
+        return this.$store.getters["auth.store/getToken"];
+      },
+    },
+    mounted() {
+      if (this.videos) {
+        this.setPlaylistToLocalStorage(this.videos);
+      }
     },
     methods: {
+      // Deleting a playlist
       removePlaylist() {
-        console.log("remove playlist");
+        const token = this.getToken;
+        const { id: playlistId, } = this.$route.params;
+        const { id: userId, } = this.getUser;
+        const res = this.$store.dispatch("playlist.store/remove", { token, id: playlistId, });
+
+        this.pendingRemove = true;
+
+        res.then(({ ok, }) => {
+          this.pendingRemove = false;
+
+          if (ok) {
+            this.$router.push(`/user/${userId}?tab=playlists`);
+          }
+        }).catch((err) => {
+          throw err;
+        });
       },
     },
   };

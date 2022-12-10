@@ -86,6 +86,29 @@ export default {
     },
 
     /**
+     * Sends a request to delete a playlist by its id
+     * @param {string} token User token
+     * @param {string|number} id Playlist id
+     * @returns {promise} Request result
+     */
+    async remove({ }, { token, id, }) {
+      try {
+        const res = await fetch(`${host}/api/playlist/${id}/remove`, {
+          method: "DELETE",
+          headers: {
+            "Accept-Type": "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token || ""}`,
+          },
+        });
+
+        return res.json();
+      } catch (err) {
+        throw err;
+      }
+    },
+
+    /**
      * Gets valid url of the playlist poster
      * @param {string} path url
      * @return {string} valid data file

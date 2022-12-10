@@ -17,7 +17,6 @@
         @timeupdate="timeupdateHandler"
         @ended="endedHandler"
         @progress="loading = true"
-        @waiting="loading = true"
         @loadeddata="loading = false"
         @playing="loading = false"
       ></video>
@@ -80,7 +79,11 @@
           </div>
         </div>
         <div class="videoplayer__controls-block videoplayer__controls-state">
-          <button class="videoplayer__btn">
+          <button
+            class="videoplayer__btn"
+            :disabled="getPlaylistVideos.length <= 1"
+            @click="switchToNewVideo(true)"
+          >
             <vPrevIcon :classes="['videoplayer__icon', 'videoplayer__icon-prev']" />
           </button>
           <button
@@ -96,7 +99,11 @@
               :classes="['videoplayer__icon', 'videoplayer__icon-play']"
             />
           </button>
-          <button class="videoplayer__btn">
+          <button
+            class="videoplayer__btn"
+            :disabled="getPlaylistVideos.length <= 1"
+            @click="switchToNewVideo(false)"
+          >
             <vNextIcon :classes="['videoplayer__icon', 'videoplayer__icon-next']" />
           </button>
         </div>
@@ -172,6 +179,9 @@
       },
       getToken() {
         return this.$store.getters["auth.store/getToken"];
+      },
+      getPlaylistVideos() {
+        return this.$store.getters["playlist.store/getListVideos"];
       },
       getVideoElement() {
         return this.$refs.video;
@@ -256,8 +266,40 @@
     },
     mounted() {
       window.addEventListener("keydown", this.setHotkeys);
+
+      this.setLocalPlaylist();
     },
     methods: {
+      setLocalPlaylist() {
+        const localPlaylist = localStorage.getItem("playlistVideos");
+
+        if (localPlaylist) {
+          this.$store.commit("playlist.store/setListVideos", JSON.parse(localPlaylist));
+        }
+      },
+      /**
+       * Switches videos in a playlist
+       * @param {boolean} toPrev Switch to previous video
+       */
+      switchToNewVideo(toPrev) {
+        const { id: currentVideoId, } = this.getVideo;
+        const lenPlaylist = this.getPlaylistVideos.length;
+        const indexCurrentVideo = this.getPlaylistVideos.findIndex(({ id, }) => id === currentVideoId);
+
+        if (indexCurrentVideo !== -1) {
+          if (toPrev) {
+            // Set previous video
+            const { id: newVideoId, } = this.getPlaylistVideos[indexCurrentVideo <= 0 ? lenPlaylist - 1 : indexCurrentVideo - 1];
+
+            this.$router.push(`/video/${newVideoId}`);
+          } else {
+            // Set next video
+            const { id: newVideoId, } = this.getPlaylistVideos[indexCurrentVideo >= lenPlaylist - 1 ? 0 : indexCurrentVideo + 1];
+
+            this.$router.push(`/video/${newVideoId}`);
+          }
+        }
+      },
       /**
        * Determines the position of the video segment, as well as its time
        * @param {object} e Event object

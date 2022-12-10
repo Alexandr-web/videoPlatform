@@ -1,6 +1,7 @@
 const PlaylistModel = require("../models/Playlist.model");
 const Video = require("../models/Video.model");
 const User = require("../models/User.model");
+const removeFile = require("../helpers/removeFile");
 
 class Playlist {
   // Gets a playlist by its id from the database
@@ -101,6 +102,42 @@ class Playlist {
       });
 
       return res.status(200).json({ ok: true, message: "Плейлист создан", status: 200, type: "success", });
+    } catch (err) {
+      console.log(err);
+
+      return res.status(500).json({ ok: false, message: "Произошла ошибка сервера", status: 500, type: "error", });
+    }
+  }
+
+  // Removes a playlist from the database
+  async remove(req, res) {
+    try {
+      if (!req.isAuth) {
+        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+      }
+
+      const { id, } = req.params;
+
+      if (!id || isNaN(+id)) {
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
+      }
+
+      const playlist = await PlaylistModel.findOne({ where: { id, }, });
+
+      if (!playlist) {
+        return res.status(404).json({ ok: false, message: "Такого плейлиста не существует", status: 404, type: "error", });
+      }
+
+      if (playlist.userId !== req.userId) {
+        return res.status(403).json({ ok: false, message: "У вас нет доступа для удаления этого плейлиста", status: 403, type: "error", });
+      }
+
+      // Remove poster file at playlist
+      await removeFile([__dirname, "../../", "playlistPosters", playlist.poster], res);
+      // Delete playlist from database
+      await playlist.destroy();
+
+      return res.status(200).json({ ok: true, message: "Плейлист удален", status: 200, type: "success", });
     } catch (err) {
       console.log(err);
 

@@ -20,6 +20,7 @@
 <script>
   import vVideoCard from "@/components/vVideoCard";
   import vNothing from "@/components/vNothing";
+  import setPlaylistToLocalStorageMixin from "@/mixins/setPlaylistToLocalStorage";
 
   export default {
     name: "MainPage",
@@ -27,6 +28,7 @@
       vVideoCard,
       vNothing,
     },
+    mixins: [setPlaylistToLocalStorageMixin],
     layout: "default",
     // Getting all videos from the database
     async asyncData({ store, }) {
@@ -54,8 +56,11 @@
         });
 
         return Promise.all(promises)
-          .then((videosArr) => ({ videos: videosArr, }))
-          .catch((err) => {
+          .then((videosArr) => {
+            store.commit("playlist.store/setListVideos", videosArr);
+
+            return { videos: videosArr, };
+          }).catch((err) => {
             throw err;
           });
       } catch (err) {
@@ -63,5 +68,10 @@
       }
     },
     head: { title: "Главная", },
+    mounted() {
+      if (this.videos) {
+        this.setPlaylistToLocalStorage(this.videos);
+      }
+    },
   };
 </script>
