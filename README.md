@@ -10,11 +10,10 @@ With this project, you can upload and share your own videos, as well as view and
 <img src="./.github/example/main.jpg" alt="Main page" />
 
 ## Load video page
-<img src="./.github/example/load.jpg" alt="Load video page" />
+<img src="./.github/example/loadVideo.jpg" alt="Load video page" />
 
-## Add playlist pages
+## Add playlist page
 <img src="./.github/example/addPlaylist.jpg" alt="Add playlist page" />
-<img src="./.github/example/addPlaylist2.jpg" alt="Add playlist page" />
 
 ## Playlist page
 <img src="./.github/example/playlistPage.jpg" alt="Playlist page" />
@@ -30,12 +29,6 @@ With this project, you can upload and share your own videos, as well as view and
 
 ## Profile playlists page
 <img src="./.github/example/profilePlaylists.jpg" alt="Profile playlists page" />
-
-## Profile favorites page
-<img src="./.github/example/profileFavorites.jpg" alt="Profile favorites page" />
-
-## Profile history page
-<img src="./.github/example/profileHistory.jpg" alt="Profile history page" />
 
 ## Edit video page
 <img src="./.github/example/editVideo.jpg" alt="Edit video page" />
