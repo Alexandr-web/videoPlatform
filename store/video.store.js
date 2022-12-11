@@ -86,10 +86,14 @@ export default {
       }
     },
 
-    // Gets all videos from the database
-    async getAll() {
+    /**
+     * Gets all videos from the database
+     * @param {string|undefined} search Search line (title, description)
+     * @returns {promise} Request result
+     */
+    async getAll({ }, search) {
       try {
-        const res = await fetch(`${host}/api/video`, {
+        const res = await fetch(`${host}/api/video?search=${search}`, {
           method: "GET",
           headers: { "Accept-Type": "application/json", },
         });

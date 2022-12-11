@@ -16,9 +16,11 @@
         :src="getVideo.src"
         @timeupdate="timeupdateHandler"
         @ended="endedHandler"
-        @progress="loading = true"
         @loadeddata="loading = false"
+        @canplay="loading = false"
         @playing="loading = false"
+        @progress="loading = true"
+        @loadstart="loading = true"
       ></video>
       <vVideoplayerLoaderWindow v-if="loading" />
       <vVideoplayerRewindVideoWindow

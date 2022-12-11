@@ -52,7 +52,7 @@ class User {
 
       const defaultFindParams = { userId: id, };
 
-      // // Options by which we will search for videos
+      // Options by which we will search for videos
       const findParams = Object.keys(defaultFindParams).reduce((acc, key) => {
         // The data must match the search
         if (search.length > 2) {

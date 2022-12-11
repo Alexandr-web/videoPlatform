@@ -1,7 +1,11 @@
 <template>
   <div
     class="search"
-    :class="classes.filter(Boolean).join(' ')"
+    :class="{
+      'search-gaps-top': gapsTop,
+      'search-gaps-bottom': gapsBottom,
+      'search-gaps-tb': gapsTB,
+    }"
   >
     <input
       v-model.trim="search"
@@ -27,9 +31,17 @@
     name: "SearchComponent",
     components: { vSearchIcon, },
     props: {
-      classes: {
-        type: Array,
-        default: () => ([]),
+      gapsTop: {
+        type: Boolean,
+        default: false,
+      },
+      gapsBottom: {
+        type: Boolean,
+        default: false,
+      },
+      gapsTB: {
+        type: Boolean,
+        default: false,
       },
     },
     data: () => ({ search: "", }),

@@ -2,6 +2,9 @@
   <main class="main pt-120 pb-20">
     <div class="container">
       <h1 class="title">Главная</h1>
+      <div class="main__search">
+        <vSearch :gaps-bottom="true" />
+      </div>
       <ul
         v-if="videos.length"
         class="cards"
@@ -20,6 +23,7 @@
 <script>
   import vVideoCard from "@/components/vVideoCard";
   import vNothing from "@/components/vNothing";
+  import vSearch from "@/components/vSearch";
   import setPlaylistToLocalStorageMixin from "@/mixins/setPlaylistToLocalStorage";
 
   export default {
@@ -27,19 +31,19 @@
     components: {
       vVideoCard,
       vNothing,
+      vSearch,
     },
     mixins: [setPlaylistToLocalStorageMixin],
     layout: "default",
     // Getting all videos from the database
-    async asyncData({ store, }) {
+    async asyncData({ store, query: { search, }, }) {
       try {
-        const { ok, videos, } = await store.dispatch("video.store/getAll");
+        const { ok, videos, } = await store.dispatch("video.store/getAll", search || "");
 
         if (!ok) {
           return { videos: [], };
         }
 
-        // Contains promises where videos with valid data
         const promises = videos.map((video) => {
           const { poster, createdAt, } = video;
 
@@ -68,6 +72,8 @@
       }
     },
     head: { title: "Главная", },
+    // Call the fetch tool when query parameters are updated
+    watchQuery: ["search"],
     mounted() {
       if (this.videos) {
         this.setPlaylistToLocalStorage(this.videos);

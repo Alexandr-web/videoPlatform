@@ -1,7 +1,7 @@
 <template>
   <div class="profile__tab profile__tab-favorites pb-20 pt-20">
     <header class="profile__tab-header">
-      <vSearch :classes="['profile__tab-header-search']" />
+      <vSearch :gaps-bottom="true" />
     </header>
     <ul
       v-if="videos.length"

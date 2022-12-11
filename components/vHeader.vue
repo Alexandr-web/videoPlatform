@@ -2,9 +2,6 @@
   <header class="header">
     <div class="container">
       <nav class="header__nav">
-        <div class="header__block header__search">
-          <vSearch />
-        </div>
         <div class="header__block header__menu">
           <ul class="header__menu-list">
             <li
@@ -47,12 +44,10 @@
 </template>
 
 <script>
-  import vSearch from "@/components/vSearch";
   import loadingElementDataMixin from "@/mixins/loadingElementData";
 
   export default {
     name: "HeaderComponent",
-    components: { vSearch, },
     mixins: [loadingElementDataMixin],
     data: () => ({
       menu: [

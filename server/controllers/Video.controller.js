@@ -43,14 +43,32 @@ class Video {
   // Get all videos
   async getAll(req, res) {
     try {
-      const allVideos = await VideoModel.findAll({ order: [["createdAt", "DESC"]], });
+      const { search = "", } = req.query;
 
-      if (!allVideos) {
+      if (typeof search !== "string") {
+        return res.status(400).json({ ok: false, message: "Некорректные данные", status: 400, type: "error", });
+      }
+
+      const findParams = {};
+
+      if (search.length > 2) {
+        findParams[Op.or] = [
+          { title: { [Op.substring]: search, }, },
+          { description: { [Op.substring]: search, }, }
+        ];
+      }
+
+      const videos = await VideoModel.findAll({
+        order: [["createdAt", "DESC"]],
+        where: findParams,
+      });
+
+      if (!videos) {
         return res.status(200).json({ ok: true, videos: [], status: 200, type: "success", });
       }
 
       // Getting video data (author, title, description, ...)
-      const promises = allVideos.map((video) => {
+      const promises = videos.map((video) => {
         return User.findOne({ where: { id: video.userId, }, })
           .then(({ id, nickname, }) => {
             return {
@@ -64,8 +82,8 @@ class Video {
       });
 
       return Promise.all(promises)
-        .then((videos) => {
-          return res.status(200).json({ ok: true, status: 200, videos, type: "success", });
+        .then((videosArr) => {
+          return res.status(200).json({ ok: true, status: 200, videos: videosArr, type: "success", });
         }).catch((err) => {
           console.log(err);
 
