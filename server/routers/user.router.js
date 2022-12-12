@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/User.controller");
 const isAuth = require("../middleware/isAuth");
+const serverIsTooBusy = require("../middleware/serverIsTooBusy");
 const multer = require("multer");
+const rateLimit = require("express-rate-limit");
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     cb(null, process.env.AVATARS_FILES_FOLDER);
@@ -13,15 +15,25 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage, });
+const editLimit = rateLimit({
+  windowMs: 30 * 60 * 1000,
+  max: 10,
+  message: "Слишком много попыток изменения данных пользователя. Повторите еще раз через 5 минут",
+});
+const setFollowingLimit = rateLimit({
+  windowMs: 30 * 60 * 1000,
+  max: 50,
+  message: "Слишком много попыток совершить подписку на каналы. Повторите еще раз через 30 минут",
+});
 
-router.get("/:id", userController.getOne);
-router.get("/:id/videos", isAuth, userController.getVideos);
-router.get("/:id/followers", isAuth, userController.getFollowers);
-router.get("/:id/followings", isAuth, userController.getFollowings);
-router.get("/:id/history", isAuth, userController.getHistory);
-router.get("/:id/favorites", isAuth, userController.getFavorites);
-router.get("/:id/playlists", isAuth, userController.getPlaylists);
-router.put("/:id/edit", isAuth, upload.single("avatar"), userController.edit);
-router.post("/:currentUserId/following/:followingUserId", isAuth, userController.setFollowing);
+router.get("/:id", serverIsTooBusy, userController.getOne);
+router.get("/:id/videos", serverIsTooBusy, isAuth, userController.getVideos);
+router.get("/:id/followers", serverIsTooBusy, isAuth, userController.getFollowers);
+router.get("/:id/followings", serverIsTooBusy, isAuth, userController.getFollowings);
+router.get("/:id/history", serverIsTooBusy, isAuth, userController.getHistory);
+router.get("/:id/favorites", serverIsTooBusy, isAuth, userController.getFavorites);
+router.get("/:id/playlists", serverIsTooBusy, isAuth, userController.getPlaylists);
+router.put("/:id/edit", editLimit, serverIsTooBusy, isAuth, upload.single("avatar"), userController.edit);
+router.post("/:currentUserId/following/:followingUserId", setFollowingLimit, serverIsTooBusy, isAuth, userController.setFollowing);
 
 module.exports = router;

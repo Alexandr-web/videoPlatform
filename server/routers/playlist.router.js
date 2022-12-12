@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const isAuth = require("../middleware/isAuth");
+const serverIsTooBusy = require("../middleware/serverIsTooBusy");
 const playlistController = require("../controllers/Playlist.controller");
 const multer = require("multer");
+const rateLimit = require("express-rate-limit");
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     cb(null, process.env.PLAYLIST_POSTERS_FOLDER);
@@ -13,10 +15,15 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage, });
+const removeLimit = rateLimit({
+  windowMs: 30 * 60 * 1000,
+  max: 10,
+  message: "Слишком много попыток удаления плейлистов. Повторите еще раз через 30 минут",
+});
 
-router.get("/:id", isAuth, playlistController.getOne);
-router.get("/:id/videos", isAuth, playlistController.getVideos);
-router.delete("/:id/remove", isAuth, playlistController.remove);
-router.post("/add", isAuth, upload.single("poster"), playlistController.add);
+router.get("/:id", serverIsTooBusy, isAuth, playlistController.getOne);
+router.get("/:id/videos", serverIsTooBusy, isAuth, playlistController.getVideos);
+router.delete("/:id/remove", removeLimit, serverIsTooBusy, isAuth, playlistController.remove);
+router.post("/add", serverIsTooBusy, isAuth, upload.single("poster"), playlistController.add);
 
 module.exports = router;

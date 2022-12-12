@@ -10,7 +10,7 @@ class Video {
   async load(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const body = req.body;
@@ -100,7 +100,7 @@ class Video {
   async getOne(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
       }
 
       const { id, } = req.params;
@@ -142,7 +142,7 @@ class Video {
   async setView(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
       }
 
       const { id, } = req.params;
@@ -185,7 +185,7 @@ class Video {
   async setRate(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
       }
 
       const { params: { id, }, query: { isLike, }, } = req;
@@ -252,7 +252,7 @@ class Video {
   async edit(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
       }
 
       const { id, } = req.params;
@@ -307,7 +307,7 @@ class Video {
   async remove(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", type: "error", status: 403, });
       }
 
       const { id, } = req.params;

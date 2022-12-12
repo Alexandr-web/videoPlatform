@@ -8,7 +8,7 @@ class Playlist {
   async getOne(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { id, } = req.params;
@@ -31,7 +31,7 @@ class Playlist {
   async getVideos(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { id, } = req.params;
@@ -83,7 +83,7 @@ class Playlist {
   async add(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const body = req.body;
@@ -113,7 +113,7 @@ class Playlist {
   async remove(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { id, } = req.params;

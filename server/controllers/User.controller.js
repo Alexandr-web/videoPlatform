@@ -40,7 +40,7 @@ class User {
   async getVideos(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { id, } = req.params;
@@ -104,7 +104,7 @@ class User {
   async getFollowers(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { id, } = req.params;
@@ -145,7 +145,7 @@ class User {
   async getFollowings(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { id, } = req.params;
@@ -181,7 +181,7 @@ class User {
   async edit(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { id, } = req.params;
@@ -201,7 +201,7 @@ class User {
       }
 
       if (user.id !== req.userId) {
-        return res.status(403).json({ ok: false, message: "Нет доступа", status: 403, type: "error", });
+        return res.status(403).json({ ok: false, message: "Нет доступа для изменения данных этого пользователя", status: 403, type: "error", });
       }
 
       // All data that needs to be changed will be stored here.
@@ -239,7 +239,7 @@ class User {
   async setFollowing(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { followingUserId, currentUserId, } = req.params;
@@ -289,7 +289,7 @@ class User {
   async getHistory(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { id, } = req.params;
@@ -366,7 +366,7 @@ class User {
   async getFavorites(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { id: userId, } = req.params;
@@ -440,7 +440,7 @@ class User {
   async getPlaylists(req, res) {
     try {
       if (!req.isAuth) {
-        return res.status(403).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
+        return res.status(401).json({ ok: false, message: "Для выполнения данной операции нужно авторизоваться", status: 403, type: "error", });
       }
 
       const { id: userId, } = req.params;

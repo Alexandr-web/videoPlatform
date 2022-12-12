@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/Auth.controller");
 const multer = require("multer");
+const serverIsTooBusy = require("../middleware/serverIsTooBusy");
+const rateLimit = require("express-rate-limit");
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     cb(null, process.env.AVATARS_FILES_FOLDER);
@@ -13,7 +15,21 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage, });
 
-router.post("/registration", upload.single("avatar"), authController.registration);
-router.post("/login", authController.login);
+// Limit for registration
+const limiterRegistration = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: "Слишком много попыток регистрации. Повторите еще раз через 1 час",
+});
+
+// Limit for login
+const limiterLogin = rateLimit({
+  windowMs: 30 * 60 * 1000,
+  max: 15,
+  message: "Слишком много попыток входа. Повторите еще раз через 30 минут",
+});
+
+router.post("/registration", limiterRegistration, serverIsTooBusy, upload.single("avatar"), authController.registration);
+router.post("/login", limiterLogin, serverIsTooBusy, authController.login);
 
 module.exports = router;
