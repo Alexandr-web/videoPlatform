@@ -18,12 +18,26 @@ const upload = multer({ storage, });
 const editLimit = rateLimit({
   windowMs: 30 * 60 * 1000,
   max: 10,
-  message: "Слишком много попыток изменения данных пользователя. Повторите еще раз через 5 минут",
+  message: (req, res) => {
+    return res.status(429).json({
+      message: "Слишком много попыток изменения данных пользователя. Повторите еще раз через 5 минут",
+      status: 429,
+      type: "error",
+      ok: false,
+    });
+  },
 });
 const setFollowingLimit = rateLimit({
   windowMs: 30 * 60 * 1000,
   max: 50,
-  message: "Слишком много попыток совершить подписку на каналы. Повторите еще раз через 30 минут",
+  message: (req, res) => {
+    return res.status(429).json({
+      message: "Слишком много попыток совершить подписку на каналы. Повторите еще раз через 30 минут",
+      status: 429,
+      type: "error",
+      ok: false,
+    });
+  },
 });
 
 router.get("/:id", serverIsTooBusy, userController.getOne);

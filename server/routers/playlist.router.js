@@ -18,7 +18,14 @@ const upload = multer({ storage, });
 const removeLimit = rateLimit({
   windowMs: 30 * 60 * 1000,
   max: 10,
-  message: "Слишком много попыток удаления плейлистов. Повторите еще раз через 30 минут",
+  message: (req, res) => {
+    return res.status(429).json({
+      message: "Слишком много попыток удаления плейлистов. Повторите еще раз через 30 минут",
+      status: 429,
+      type: "error",
+      ok: false,
+    });
+  },
 });
 
 router.get("/:id", serverIsTooBusy, isAuth, playlistController.getOne);
